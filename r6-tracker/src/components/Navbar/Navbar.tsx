@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavItem {
@@ -66,9 +67,16 @@ export default function Navbar() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-r6 rounded-lg flex items-center justify-center">
-                <i className="pi pi-shield text-white text-lg"></i>
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gradient-r6 p-1">
+                <Image
+                  src="/images/logo/r6-logo.png"
+                  alt="R6 Tracker Logo"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
               <span className="text-xl font-bold text-r6-light">
                 R6 <span className="text-r6-primary">Tracker</span>

@@ -9,7 +9,7 @@
   --r6-dark-secondary: #1a1d26;
   --r6-light: #f8f9fa;
   
-  /* Glassmorphism avancé */
+  /* Glassmorphism avancÃ© */
   --glass-bg: rgba(255, 255, 255, 0.15);
   --glass-bg-strong: rgba(255, 255, 255, 0.25);
   --glass-border: rgba(255, 255, 255, 0.3);
@@ -21,17 +21,17 @@
   --glass-bg-dark-strong: rgba(12, 15, 22, 0.25);
   --glass-border-dark: rgba(12, 15, 22, 0.3);
   
-  /* Transitions optimisées */
+  /* Transitions optimisÃ©es */
   --transition-fast: all 0.15s ease-out;
   --transition-smooth: all 0.2s ease-out;
   --transition-bounce: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   
-  /* Variables par défaut */
+  /* Variables par dÃ©faut */
   --background: var(--r6-dark);
   --foreground: var(--r6-light);
 }
 
-/* Mode sombre par défaut pour R6 */
+/* Mode sombre par dÃ©faut pour R6 */
 html {
   background: var(--r6-dark);
   color: var(--r6-light);
@@ -45,7 +45,7 @@ body {
   position: relative;
 }
 
-/* Pattern de fond décoratif */
+/* Pattern de fond dÃ©coratif */
 body::before {
   content: '';
   position: fixed;
@@ -75,7 +75,7 @@ body::before {
   box-shadow: var(--glass-shadow);
 }
 
-/* Scrollbar personnalisée */
+/* Scrollbar personnalisÃ©e */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -182,7 +182,7 @@ body::before {
   border-color: var(--r6-primary);
 }
 
-/* Styles spéciaux pour les rangs */
+/* Styles spÃ©ciaux pour les rangs */
 .rank-copper { color: #cd7f32; }
 .rank-bronze { color: #cd7f32; }
 .rank-silver { color: #c0c0c0; }
@@ -191,7 +191,7 @@ body::before {
 .rank-diamond { color: #b9f2ff; }
 .rank-champion { color: #ff6b6b; }
 
-/* Responsivité */
+/* ResponsivitÃ© */
 @media (max-width: 768px) {
   body {
     font-size: 14px;

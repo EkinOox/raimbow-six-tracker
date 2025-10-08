@@ -4,6 +4,7 @@
 // Encodage: UTF-8
 
 import { motion } from 'framer-motion';
+import SectionHeader from '../../components/ui/SectionHeader';
 
 const maps = [
   { name: 'Clubhouse', type: 'Classique', icon: 'pi-home' },
@@ -25,18 +26,12 @@ export default function MapsPage() {
         className="max-w-6xl mx-auto"
       >
         {/* En-tête */}
-        <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-gradient-r6 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <i className="pi pi-map text-white text-2xl"></i>
-          </div>
-          <h1 className="text-4xl font-bold text-r6-light mb-4">
-            Cartes
-          </h1>
-          <p className="text-lg text-r6-light/70 max-w-2xl mx-auto">
-            Analysez vos performances sur chaque carte de Rainbow Six Siege. 
-            Identifiez vos points forts et améliorez votre maîtrise des maps.
-          </p>
-        </div>
+        <SectionHeader
+          title="Cartes"
+          description="Analysez vos performances sur chaque carte de Rainbow Six Siege. Identifiez vos points forts et améliorez votre maîtrise des maps."
+          icon="pi-map"
+          useLogo={true}
+        />
 
         {/* Grille des cartes en preview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">

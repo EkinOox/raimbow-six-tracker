@@ -5,6 +5,7 @@
 
 import { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import Navbar from '../Navbar/Navbar';
 
 interface LayoutProps {
@@ -67,8 +68,14 @@ export default function Layout({ children, className = '' }: LayoutProps) {
             {/* Logo et description */}
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-gradient-r6 rounded flex items-center justify-center">
-                  <i className="pi pi-shield text-white text-sm"></i>
+                <div className="relative w-6 h-6 rounded overflow-hidden bg-gradient-r6 p-0.5">
+                  <Image
+                    src="/images/logo/r6-logo.png"
+                    alt="R6 Tracker Logo"
+                    width={20}
+                    height={20}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <span className="text-lg font-bold text-r6-light">
                   R6 <span className="text-r6-primary">Tracker</span>

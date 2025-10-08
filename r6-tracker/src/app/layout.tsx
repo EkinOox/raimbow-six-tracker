@@ -4,13 +4,32 @@ import Layout from "../components/Layout/Layout";
 
 export const metadata: Metadata = {
   title: "R6 Tracker - Rainbow Six Siege Statistics",
-  description: "Suivez vos statistiques Rainbow Six Siege avec style. Interface moderne et données en temps réel.",
+  description: "Suivez vos statistiques Rainbow Six Siege avec style. Interface moderne et donnÃ©es en temps rÃ©el.",
   keywords: ["Rainbow Six Siege", "R6", "Statistiques", "Tracker", "Gaming"],
   authors: [{ name: "R6 Tracker Team" }],
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   openGraph: {
     title: "R6 Tracker - Rainbow Six Siege Statistics",
     description: "Suivez vos statistiques Rainbow Six Siege avec style",
     type: "website",
+    images: [
+      {
+        url: "/images/logo/r6-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "R6 Tracker Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "R6 Tracker - Rainbow Six Siege Statistics",
+    description: "Suivez vos statistiques Rainbow Six Siege avec style",
+    images: ["/images/logo/r6-logo.png"],
   },
 };
 

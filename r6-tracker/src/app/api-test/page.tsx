@@ -6,6 +6,7 @@
 import { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { R6MockApi } from '../../services/r6MockApi';
+import SectionHeader from '../../components/ui/SectionHeader';
 
 interface ApiTestResult {
   endpoint: string;
@@ -128,17 +129,13 @@ export default function ApiTestPage() {
         className="max-w-4xl mx-auto"
       >
         {/* En-tête */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-r6 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <i className="pi pi-cog text-white text-2xl"></i>
-          </div>
-          <h1 className="text-4xl font-bold text-r6-light mb-4">
-            Test API
-          </h1>
-          <p className="text-lg text-r6-light/70 max-w-2xl mx-auto">
-            Testez la connectivité de l&apos;API R6 et explorez les différents endpoints disponibles.
-          </p>
-        </div>
+        <SectionHeader
+          title="Test API"
+          description="Testez la connectivité de l'API R6 et explorez les différents endpoints disponibles."
+          icon="pi-cog"
+          useLogo={true}
+          className="mb-8"
+        />
 
         {/* Bouton de test */}
         <div className="card-glass mb-8">

@@ -4,6 +4,7 @@
 // Encodage: UTF-8
 
 import { motion } from 'framer-motion';
+import SectionHeader from '../../components/ui/SectionHeader';
 
 const operators = [
   { name: 'Ash', type: 'Attaquant', icon: 'pi-bolt' },
@@ -25,18 +26,12 @@ export default function OperatorsPage() {
         className="max-w-6xl mx-auto"
       >
         {/* En-tête */}
-        <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-gradient-r6 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <i className="pi pi-users text-white text-2xl"></i>
-          </div>
-          <h1 className="text-4xl font-bold text-r6-light mb-4">
-            Opérateurs
-          </h1>
-          <p className="text-lg text-r6-light/70 max-w-2xl mx-auto">
-            Découvrez les statistiques détaillées par opérateur et optimisez votre gameplay 
-            avec les meilleurs personnages pour votre style de jeu.
-          </p>
-        </div>
+        <SectionHeader
+          title="Opérateurs"
+          description="Découvrez les statistiques détaillées par opérateur et optimisez votre gameplay avec les meilleurs personnages pour votre style de jeu."
+          icon="pi-users"
+          useLogo={true}
+        />
 
         {/* Grille des opérateurs en preview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">

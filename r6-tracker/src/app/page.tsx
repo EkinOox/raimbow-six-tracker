@@ -5,6 +5,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const features = [
   {
@@ -86,8 +87,18 @@ export default function HomePage() {
               transition={{ delay: 0.2, duration: 0.5 }}
               className="mb-8"
             >
-              <div className="w-24 h-24 bg-gradient-r6 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-r6-glow">
-                <i className="pi pi-shield text-white text-4xl"></i>
+              <div className="relative w-24 h-24 mx-auto mb-6">
+                <div className="absolute inset-0 bg-gradient-r6 rounded-2xl shadow-r6-glow opacity-80"></div>
+                <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/20 p-2">
+                  <Image
+                    src="/images/logo/r6-logo.png"
+                    alt="R6 Tracker Logo"
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-contain"
+                    priority
+                  />
+                </div>
               </div>
               <h1 className="text-5xl lg:text-7xl font-bold text-r6-light mb-4">
                 R6 <span className="text-r6-primary">Tracker</span>
