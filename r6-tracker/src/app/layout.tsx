@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Layout from "../components/Layout/Layout";
+import { ReduxProvider } from "../store/ReduxProvider";
 
 export const metadata: Metadata = {
   title: "R6 Tracker - Rainbow Six Siege Statistics",
@@ -47,9 +48,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <Layout>
-          {children}
-        </Layout>
+        <ReduxProvider>
+          <Layout>
+            {children}
+          </Layout>
+        </ReduxProvider>
       </body>
     </html>
   );

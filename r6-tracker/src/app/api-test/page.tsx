@@ -1,299 +1,247 @@
 'use client';
 
-// Page de test API
-// Encodage: UTF-8
-
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { R6MockApi } from '../../services/r6MockApi';
 import SectionHeader from '../../components/ui/SectionHeader';
+import { r6DataService } from '../../services/r6DataService';
+import { Platform, CompletePlayerData } from '../../types/r6-data-types';
 
-interface ApiTestResult {
-  endpoint: string;
-  status: 'success' | 'error' | 'loading';
-  data?: unknown;
-  error?: string;
-  duration?: number;
+interface TestResults {
+  connection: { success: boolean; message: string };
+  playerData: CompletePlayerData | null;
 }
 
 export default function ApiTestPage() {
-  const [testResults, setTestResults] = useState<ApiTestResult[]>([]);
-  const [isRunningTests, setIsRunningTests] = useState(false);
+  const [username, setUsername] = useState('Pengu');
+  const [platform, setPlatform] = useState<Platform>('uplay');
+  const [loading, setLoading] = useState(false);
+  const [testResults, setTestResults] = useState<TestResults | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const runApiTest = useCallback(async (
-    testName: string,
-    apiCall: () => Promise<unknown>
-  ): Promise<ApiTestResult> => {
-    const startTime = Date.now();
-    
+  const testR6DataApi = async () => {
+    if (!username) {
+      setError('Veuillez entrer un nom d\'utilisateur');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setTestResults(null);
+
     try {
-      const data = await apiCall();
-      const duration = Date.now() - startTime;
-      
-      return {
-        endpoint: testName,
-        status: 'success',
-        data,
-        duration
-      };
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      
-      return {
-        endpoint: testName,
-        status: 'error',
-        error: error instanceof Error ? error.message : 'Erreur inconnue',
-        duration
-      };
-    }
-  }, []);
+      console.log(`Test avec ${username} sur ${platform}...`);
 
-  const runAllTests = useCallback(async () => {
-    setIsRunningTests(true);
-    setTestResults([]);
-    
-    const tests = [
-      {
-        name: 'Test de Connexion',
-        call: () => R6MockApi.testConnection()
-      },
-      {
-        name: 'Validation Nom d\'Utilisateur',
-        call: () => Promise.resolve(R6MockApi.validateUsername('TestUser123'))
-      },
-      {
-        name: 'Stats Générales (PC)',
-        call: () => R6MockApi.getGeneralStats('pc', 'TestUser123')
-      },
-      {
-        name: 'Stats Ranked (PC)',
-        call: () => R6MockApi.getRankedStats('pc', 'TestUser123')
-      },
-      {
-        name: 'Stats Casual (PC)',
-        call: () => R6MockApi.getCasualStats('pc', 'TestUser123')
-      },
-      {
-        name: 'Stats Générales (Xbox)',
-        call: () => R6MockApi.getGeneralStats('xbox', 'XboxGamer456')
-      },
-      {
-        name: 'Stats Générales (PSN)',
-        call: () => R6MockApi.getGeneralStats('psn', 'PSNPlayer789')
-      },
-      {
-        name: 'Validation Nom Invalide',
-        call: () => Promise.resolve(R6MockApi.validateUsername('ab'))
-      },
-    ];
+      // Test simple des informations du joueur
+      const playerData = await r6DataService.getCompletePlayerData(username, platform);
+      console.log('Données du joueur récupérées:', playerData);
 
-    for (const test of tests) {
-      const result = await runApiTest(test.name, test.call);
-      setTestResults(prev => [...prev, result]);
-    }
-    
-    setIsRunningTests(false);
-  }, [runApiTest]);
+      setTestResults({
+        connection: { 
+          success: true, 
+          message: 'Connexion réussie à r6-data.js avec support console' 
+        },
+        playerData
+      });
 
-  const getStatusIcon = (status: ApiTestResult['status']) => {
-    switch (status) {
-      case 'success':
-        return 'pi-check-circle';
-      case 'error':
-        return 'pi-times-circle';
-      case 'loading':
-        return 'pi-spinner pi-spin';
-      default:
-        return 'pi-question';
-    }
-  };
-
-  const getStatusColor = (status: ApiTestResult['status']) => {
-    switch (status) {
-      case 'success':
-        return 'text-green-400';
-      case 'error':
-        return 'text-red-400';
-      case 'loading':
-        return 'text-r6-accent';
-      default:
-        return 'text-r6-light/60';
+    } catch (err) {
+      console.error('Erreur test API:', err);
+      setError(err instanceof Error ? err.message : 'Erreur inconnue');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto"
-      >
-        {/* En-tête */}
-        <SectionHeader
-          title="Test API"
-          description="Testez la connectivité de l'API R6 et explorez les différents endpoints disponibles."
-          icon="pi-cog"
-          useLogo={true}
-          className="mb-8"
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-8">
+      <div className="max-w-6xl mx-auto">
+        <SectionHeader 
+          title="Test API r6-data.js"
+          description="Interface de test pour le nouveau service API Rainbow Six Siege"
         />
 
-        {/* Bouton de test */}
-        <div className="card-glass mb-8">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-r6-light mb-4">
-              Tests Automatisés
-            </h2>
-            <p className="text-r6-light/70 mb-6">
-              Lancez une série de tests pour vérifier le bon fonctionnement de tous les endpoints API.
-            </p>
-            
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={runAllTests}
-              disabled={isRunningTests}
-              className="btn-r6 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isRunningTests ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                  <span>Tests en cours...</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <i className="pi pi-play"></i>
-                  <span>Lancer les Tests</span>
-                </div>
-              )}
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Résultats des tests */}
-        {testResults.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="card-glass"
-          >
-            <h3 className="text-xl font-semibold text-r6-light mb-6">
-              Résultats des Tests
-            </h3>
-            
-            <div className="space-y-4">
-              {testResults.map((result, index) => (
-                <motion.div
-                  key={result.endpoint}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center justify-between p-4 bg-glass-bg/20 rounded-lg border border-glass-border/20"
-                >
-                  <div className="flex items-center space-x-3">
-                    <i className={`pi ${getStatusIcon(result.status)} ${getStatusColor(result.status)} text-lg`}></i>
-                    <div>
-                      <div className="font-medium text-r6-light">
-                        {result.endpoint}
-                      </div>
-                      {result.error && (
-                        <div className="text-sm text-red-400">
-                          {result.error}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    {result.duration && (
-                      <div className="text-sm text-r6-light/60">
-                        {result.duration}ms
-                      </div>
-                    )}
-                    <div className={`text-sm font-medium ${getStatusColor(result.status)}`}>
-                      {result.status === 'success' ? 'Succès' : 
-                       result.status === 'error' ? 'Échec' : 'En cours...'}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Résumé */}
-            {testResults.length > 0 && !isRunningTests && (
-              <div className="mt-6 pt-6 border-t border-glass-border/20">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-green-400">
-                      {testResults.filter(r => r.status === 'success').length}
-                    </div>
-                    <div className="text-sm text-r6-light/70">Succès</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-red-400">
-                      {testResults.filter(r => r.status === 'error').length}
-                    </div>
-                    <div className="text-sm text-r6-light/70">Échecs</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-r6-accent">
-                      {Math.round(testResults.reduce((acc, r) => acc + (r.duration || 0), 0) / testResults.length)}ms
-                    </div>
-                    <div className="text-sm text-r6-light/70">Latence Moy.</div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {/* Informations sur l'API */}
-        <motion.div
+        {/* Formulaire de test */}
+        <motion.div 
+          className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card-glass mt-8"
         >
-          <h3 className="text-xl font-semibold text-r6-light mb-4">
-            Informations sur l&apos;API
-          </h3>
+          <h2 className="text-2xl font-bold text-white mb-6">Test du Service r6-data.js avec Support Console</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="mb-4 p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-200">
+            <strong>✨ Nouveau :</strong> Support complet pour Xbox et PlayStation ! Teste maintenant avec des joueurs console.
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
-              <h4 className="font-medium text-r6-light mb-2">Endpoints Disponibles</h4>
-              <ul className="space-y-1 text-sm text-r6-light/70">
-                <li>• Test de connexion</li>
-                <li>• Validation des noms d&apos;utilisateur</li>
-                <li>• Statistiques générales</li>
-                <li>• Statistiques ranked</li>
-                <li>• Statistiques casual</li>
-              </ul>
+              <label className="block text-sm font-medium text-blue-200 mb-2">
+                Nom d&apos;utilisateur
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Ex: Pengu"
+              />
             </div>
             
             <div>
-              <h4 className="font-medium text-r6-light mb-2">Plateformes Supportées</h4>
-              <ul className="space-y-1 text-sm text-r6-light/70">
-                <li>• PC (Uplay)</li>
-                <li>• Xbox Live</li>
-                <li>• PlayStation Network</li>
-                <li>• Console (Générique)</li>
-              </ul>
+              <label className="block text-sm font-medium text-blue-200 mb-2">
+                Plateforme
+              </label>
+              <select
+                value={platform}
+                onChange={(e) => setPlatform(e.target.value as Platform)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="uplay">PC (Ubisoft Connect)</option>
+                <option value="steam">PC (Steam)</option>
+                <option value="playstation">PlayStation</option>
+                <option value="xbox">Xbox</option>
+              </select>
+            </div>
+            
+            <div className="flex items-end">
+              <button
+                onClick={testR6DataApi}
+                disabled={loading}
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Test en cours...' : 'Tester l\'API'}
+              </button>
             </div>
           </div>
-          
-          <div className="mt-6 p-4 bg-r6-accent/10 rounded-lg border border-r6-accent/20">
-            <div className="flex items-start space-x-2">
-              <i className="pi pi-info-circle text-r6-accent text-lg mt-0.5"></i>
-              <div>
-                <div className="font-medium text-r6-accent mb-1">API Mock</div>
-                <div className="text-sm text-r6-light/70">
-                  Cette application utilise une API mock pour la démonstration. 
-                  Les données sont générées de manière cohérente pour les tests.
-                </div>
-              </div>
+
+          {error && (
+            <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 mb-6">
+              <strong>Erreur:</strong> {error}
             </div>
-          </div>
+          )}
         </motion.div>
-      </motion.div>
+
+        {/* Résultats */}
+        {testResults && (
+          <motion.div 
+            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            {/* Test de connexion */}
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+              <h3 className="text-xl font-bold text-white mb-4">Test de Connexion</h3>
+              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                testResults.connection.success 
+                  ? 'bg-green-500/20 text-green-200 border border-green-500/30' 
+                  : 'bg-red-500/20 text-red-200 border border-red-500/30'
+              }`}>
+                {testResults.connection.success ? '✅ Succès' : '❌ Échec'}
+              </div>
+              <p className="text-white/70 mt-2">{testResults.connection.message}</p>
+            </div>
+
+            {/* Informations du joueur */}
+            {testResults.playerData && (
+              <>
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Informations du Joueur</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-blue-400">{testResults.playerData.info.username}</p>
+                      <p className="text-white/70 text-sm">Nom</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-400">{testResults.playerData.info.level}</p>
+                      <p className="text-white/70 text-sm">Niveau</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-yellow-400">{testResults.playerData.info.xp.toLocaleString()}</p>
+                      <p className="text-white/70 text-sm">XP Total</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-purple-400">{testResults.playerData.info.platform}</p>
+                      <p className="text-white/70 text-sm">Plateforme</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Statistiques générales */}
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Statistiques Générales</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-400">{testResults.playerData.stats.general.kills}</p>
+                      <p className="text-white/70 text-sm">Éliminations</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-red-400">{testResults.playerData.stats.general.deaths}</p>
+                      <p className="text-white/70 text-sm">Morts</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-yellow-400">{testResults.playerData.stats.general.kd}</p>
+                      <p className="text-white/70 text-sm">K/D Ratio</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-purple-400">{testResults.playerData.stats.general.winRate}%</p>
+                      <p className="text-white/70 text-sm">Taux de Victoire</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Statistiques Ranked */}
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Statistiques Ranked</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-orange-400">{testResults.playerData.stats.ranked.rankName}</p>
+                      <p className="text-white/70 text-sm">Rang Actuel</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-blue-400">{testResults.playerData.stats.ranked.mmr}</p>
+                      <p className="text-white/70 text-sm">MMR</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-400">{testResults.playerData.stats.ranked.wins}</p>
+                      <p className="text-white/70 text-sm">Victoires</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-red-400">{testResults.playerData.stats.ranked.losses}</p>
+                      <p className="text-white/70 text-sm">Défaites</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <p className="text-white/70">Meilleur rang: <span className="text-orange-300 font-semibold">{testResults.playerData.stats.ranked.maxRankName}</span> ({testResults.playerData.stats.ranked.maxMmr} MMR)</p>
+                  </div>
+                </div>
+
+                {/* Statistiques Casual */}
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Statistiques Casual</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-400">{testResults.playerData.stats.casual.wins}</p>
+                      <p className="text-white/70 text-sm">Victoires</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-red-400">{testResults.playerData.stats.casual.losses}</p>
+                      <p className="text-white/70 text-sm">Défaites</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-yellow-400">{testResults.playerData.stats.casual.kd}</p>
+                      <p className="text-white/70 text-sm">K/D Ratio</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-purple-400">{testResults.playerData.stats.casual.winRate}%</p>
+                      <p className="text-white/70 text-sm">Taux de Victoire</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

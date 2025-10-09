@@ -1,0 +1,76 @@
+// Types pour les opérateurs R6
+export interface Operator {
+  name: string;
+  safename: string;
+  realname: string;
+  birthplace: string;
+  age: string;
+  date_of_birth: string;
+  season_introduced: string;
+  health: number;
+  speed: string;
+  unit: string;
+  country_code: string;
+  roles: 'Attacker' | 'Defender';
+  side: 'ATK' | 'DEF';
+  icon_url: string;
+}
+
+// Types pour les armes R6
+export interface Weapon {
+  name: string;
+  type: string;
+  damage: number;
+  fireRate: number;
+  mobility: number;
+  capacity: number;
+  class: string;
+  availableFor: string[];
+}
+
+// Types pour les maps R6
+export interface Map {
+  name: string;
+  location: string;
+  releaseDate: string;
+  playlists: string;
+  mapReworked?: string;
+  image_url?: string;
+}
+
+// Types pour les filtres
+export interface OperatorFilters {
+  name?: string;
+  realname?: string;
+  birthplace?: string;
+  roles?: string;
+  side?: string;
+  health?: number;
+}
+
+export interface WeaponFilters {
+  name?: string;
+  type?: string;
+}
+
+export interface MapFilters {
+  name?: string;
+  location?: string;
+  playlists?: string;
+  releaseDate?: string;
+}
+
+// Types pour l'état Redux
+export interface ApiState<T> {
+  data: T[];
+  loading: boolean;
+  error: string | null;
+  lastFetch: number | null;
+  filters: Record<string, unknown>;
+}
+
+export interface RootState {
+  operators: ApiState<Operator>;
+  weapons: ApiState<Weapon>;
+  maps: ApiState<Map>;
+}
