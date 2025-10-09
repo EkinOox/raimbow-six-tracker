@@ -26,6 +26,9 @@ export interface Weapon {
   capacity: number;
   class: string;
   availableFor: string[];
+  image_url?: string;
+  family?: string;
+  operators?: string[];
 }
 
 // Types pour les maps R6

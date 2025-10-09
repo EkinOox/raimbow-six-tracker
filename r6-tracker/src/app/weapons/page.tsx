@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
 import { useWeapons } from '../../hooks/useR6Data';
-import { WeaponFilters } from '../../types/r6-api-types';
+import { WeaponFilters, Weapon } from '../../types/r6-api-types';
 
 const weaponTypes = ['Tous', 'Assault Rifle', 'SMG', 'LMG', 'Marksman Rifle', 'Sniper Rifle', 'Shotgun', 'Machine Pistol', 'Handgun'];
 const weaponFamilies = ['Tous', 'ATK', 'DEF'];
@@ -130,7 +130,7 @@ export default function WeaponsPage() {
           {/* Statistiques de filtrage */}
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>
-              {loading ? 'Chargement...' : `${weapons.length} arme(s) trouvée(s)`}
+              {loading ? 'Chargement...' : `${weapons?.length || 0} arme(s) trouvée(s)`}
             </span>
             {Object.keys(filters).length > 0 && (
               <button
@@ -160,7 +160,7 @@ export default function WeaponsPage() {
         )}
 
         {/* Loading state */}
-        {loading && weapons.length === 0 && (
+        {loading && (!weapons || weapons.length === 0) && (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3 text-white/70">
               <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -171,7 +171,7 @@ export default function WeaponsPage() {
 
         {/* Grille des weapons */}
         <AnimatePresence mode="wait">
-          {!loading && weapons.length > 0 && (
+          {!loading && weapons && weapons.length > 0 && (
             <motion.div
               key="weapons-grid"
               initial={{ opacity: 0 }}
@@ -179,7 +179,7 @@ export default function WeaponsPage() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {weapons.map((weapon, index) => (
+              {weapons.map((weapon: Weapon, index: number) => (
                 <motion.div
                   key={weapon.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -276,7 +276,7 @@ export default function WeaponsPage() {
         </AnimatePresence>
 
         {/* Message aucun résultat */}
-        {!loading && weapons.length === 0 && !error && (
+        {!loading && weapons && weapons.length === 0 && !error && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

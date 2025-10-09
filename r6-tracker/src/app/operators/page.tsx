@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
 import { useOperators } from '../../hooks/useR6Data';
-import { OperatorFilters } from '../../types/r6-api-types';
+import { OperatorFilters, Operator } from '../../types/r6-api-types';
 
 const roles = ['Tous', 'Attacker', 'Defender'];
 const sides = ['Tous', 'ATK', 'DEF'];
@@ -138,7 +138,7 @@ export default function OperatorsPage() {
           {/* Statistiques de filtrage */}
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>
-              {loading ? 'Chargement...' : `${operators.length} opérateur(s) trouvé(s)`}
+              {loading ? 'Chargement...' : `${operators?.length || 0} opérateur(s) trouvé(s)`}
             </span>
             {Object.keys(filters).length > 0 && (
               <button
@@ -168,7 +168,7 @@ export default function OperatorsPage() {
         )}
 
         {/* Loading state */}
-        {loading && operators.length === 0 && (
+        {loading && (!operators || operators.length === 0) && (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3 text-white/70">
               <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -179,7 +179,7 @@ export default function OperatorsPage() {
 
         {/* Grille des opérateurs */}
         <AnimatePresence mode="wait">
-          {!loading && operators.length > 0 && (
+          {!loading && operators && operators.length > 0 && (
             <motion.div
               key="operators-grid"
               initial={{ opacity: 0 }}
@@ -187,7 +187,7 @@ export default function OperatorsPage() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
             >
-              {operators.map((operator, index) => (
+              {operators.map((operator: Operator, index: number) => (
                 <motion.div
                   key={operator.safename}
                   initial={{ opacity: 0, y: 20 }}
@@ -257,7 +257,7 @@ export default function OperatorsPage() {
         </AnimatePresence>
 
         {/* Message aucun résultat */}
-        {!loading && operators.length === 0 && !error && (
+        {!loading && operators && operators.length === 0 && !error && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

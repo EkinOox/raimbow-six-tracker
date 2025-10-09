@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
 import { useMaps } from '../../hooks/useR6Data';
-import { MapFilters } from '../../types/r6-api-types';
+import { MapFilters, Map } from '../../types/r6-api-types';
 
 const playlists = ['Tous', 'Ranked', 'Casual', 'Unranked'];
 
@@ -107,7 +107,7 @@ export default function MapsPage() {
           {/* Statistiques de filtrage */}
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>
-              {loading ? 'Chargement...' : `${maps.length} carte(s) trouvée(s)`}
+              {loading ? 'Chargement...' : `${maps?.length || 0} carte(s) trouvée(s)`}
             </span>
             {Object.keys(filters).length > 0 && (
               <button
@@ -137,7 +137,7 @@ export default function MapsPage() {
         )}
 
         {/* Loading state */}
-        {loading && maps.length === 0 && (
+        {loading && (!maps || maps.length === 0) && (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3 text-white/70">
               <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -148,7 +148,7 @@ export default function MapsPage() {
 
         {/* Grille des maps */}
         <AnimatePresence mode="wait">
-          {!loading && maps.length > 0 && (
+          {!loading && maps && maps.length > 0 && (
             <motion.div
               key="maps-grid"
               initial={{ opacity: 0 }}
@@ -156,7 +156,7 @@ export default function MapsPage() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {maps.map((map, index) => (
+              {maps.map((map: Map, index: number) => (
                 <motion.div
                   key={map.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -200,7 +200,7 @@ export default function MapsPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {map.playlists.split(', ').map((playlist, idx) => (
+                          {map.playlists.split(', ').map((playlist: string, idx: number) => (
                             <span
                               key={idx}
                               className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full"
@@ -230,7 +230,7 @@ export default function MapsPage() {
         </AnimatePresence>
 
         {/* Message aucun résultat */}
-        {!loading && maps.length === 0 && !error && (
+        {!loading && maps && maps.length === 0 && !error && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
