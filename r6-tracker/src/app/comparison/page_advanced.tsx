@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import SectionHeader from '../../components/ui/SectionHeader';
 import { useCrossAPIData, EnrichedOperator, EnrichedWeapon, EnrichedMap } from '../../hooks/useCrossAPIData';
@@ -10,7 +10,6 @@ import { useCrossAPIData, EnrichedOperator, EnrichedWeapon, EnrichedMap } from '
 const OperatorWeaponSynergy = ({ operator, weapons }: { operator: EnrichedOperator; weapons: EnrichedWeapon[] }) => {
   const compatibleWeapons = weapons.filter(weapon => 
     weapon.operators?.some(op => op.name === operator.name) ||
-    weapon.family === operator.side ||
     weapon.availableFor?.includes(operator.name)
   );
 

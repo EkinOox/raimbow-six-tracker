@@ -90,6 +90,7 @@ export interface OperatorFilters {
 export interface WeaponFilters {
   name?: string;
   type?: string;
+  family?: string;
 }
 
 export interface MapFilters {

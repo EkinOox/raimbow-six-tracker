@@ -63,6 +63,77 @@ export const getWeapons = async () => {
   }
 };
 
+// API pour récupérer les informations du compte via le proxy r6-data
+export const getAccountInfo = async (username: string, platform: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/r6-data-proxy`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'User-Agent': 'R6-Tracker-App/1.0' 
+      },
+      body: JSON.stringify({
+        action: 'getAccountInfo',
+        params: {
+          nameOnPlatform: username,
+          platformType: platform
+        }
+      }),
+      signal: AbortSignal.timeout(API_TIMEOUT)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur API account info: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Erreur lors de la récupération des informations du compte');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des informations du compte:', error);
+    throw error;
+  }
+};
+
+// API pour récupérer les statistiques du joueur via le proxy r6-data
+export const getPlayerStats = async (username: string, platform: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/r6-data-proxy`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'User-Agent': 'R6-Tracker-App/1.0' 
+      },
+      body: JSON.stringify({
+        action: 'getPlayerStats',
+        params: {
+          nameOnPlatform: username,
+          platformType: platform,
+          platform_families: ['pc', 'console']
+        }
+      }),
+      signal: AbortSignal.timeout(API_TIMEOUT)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur API player stats: ${response.status}`);
+    }
+
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Erreur lors de la récupération des statistiques du joueur');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des statistiques du joueur:', error);
+    throw error;
+  }
+};
+
 // Service de validation pour les noms d'utilisateur
 export const validateUsername = (username: string) => {
   const isValid = username && username.trim().length >= 3 && username.trim().length <= 15;
@@ -92,6 +163,8 @@ const r6DataService = {
   getOperators,
   getMaps,
   getWeapons,
+  getAccountInfo,
+  getPlayerStats,
   validateUsername,
   testConnection
 };

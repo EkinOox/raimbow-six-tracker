@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import SectionHeader from '../../components/ui/SectionHeader';
-import { r6DataAPI } from '../../services/r6DataService';
+import r6DataService from '../../services/r6DataService';
 import { Platform, CompletePlayerData } from '../../types/r6-data-types';
 
 interface TestStep {
@@ -87,7 +87,7 @@ export default function ApiTestPage() {
       const startService = Date.now();
       
       try {
-        const serviceStatus = await r6DataAPI.testConnection();
+        const serviceStatus = await r6DataService.testConnection();
         rawData.serviceStatus = serviceStatus;
         updateStepStatus('service', 'success', `Service ${serviceStatus ? 'accessible' : 'inaccessible'}`, serviceStatus, Date.now() - startService);
       } catch (serviceError) {
@@ -100,7 +100,7 @@ export default function ApiTestPage() {
       
       let accountInfo = null;
       try {
-        accountInfo = await r6DataAPI.getAccountInfo(username, platform);
+        accountInfo = await r6DataService.getAccountInfo(username, platform);
         rawData.accountInfo = accountInfo;
         updateStepStatus('account', 'success', `Profil trouvé - Niveau ${accountInfo?.info?.level || 'N/A'}`, accountInfo, Date.now() - startAccount);
       } catch (accountError) {
@@ -113,7 +113,7 @@ export default function ApiTestPage() {
       
       let playerStats = null;
       try {
-        playerStats = await r6DataAPI.getPlayerStats(username, platform);
+        playerStats = await r6DataService.getPlayerStats(username, platform);
         rawData.playerStats = playerStats;
         updateStepStatus('stats', 'success', `Statistiques récupérées - ${playerStats?.stats?.general?.kills || 0} kills`, playerStats, Date.now() - startStats);
       } catch (statsError) {

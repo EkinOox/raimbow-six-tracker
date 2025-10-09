@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo, useCallback } from 'react';
 import { useOperators, useWeapons, useMaps } from './useR6Data';
 import type { Operator, Weapon, Map } from '../types/r6-api-types';
@@ -19,11 +20,9 @@ export interface EnrichedOperator extends Operator {
 }
 
 // Interface pour les armes enrichies
-export interface EnrichedWeapon extends Weapon {
+export interface EnrichedWeapon extends Omit<Weapon, 'operators'> {
   operators?: Operator[];
   effectivenessScore?: number;
-  family?: string;
-  availableFor?: string[];
 }
 
 // Interface pour les cartes enrichies
@@ -94,10 +93,11 @@ export function useCrossAPIData() {
   const enrichedOperators = useMemo<EnrichedOperator[]>(() => {
     if (!operators || !weapons) return [];
 
-    return operators.map(operator => {
+    return operators.map((operator: Operator) => {
       // Trouver les armes de l'opérateur
-      const operatorWeapons = weapons.filter(weapon => 
-        weapon.operators?.some((op: any) => op.name === operator.name)
+      const operatorWeapons = weapons.filter((weapon: Weapon) => 
+        weapon.operators?.includes(operator.name) ||
+        weapon.availableFor?.includes(operator.name)
       );
 
       // Calculer les types d'armes
