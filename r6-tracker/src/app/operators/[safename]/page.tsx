@@ -1,6 +1,6 @@
 'use client';
 
-// Page de dÃ©tail d'un opÃ©rateur avec armes et compÃ©tences
+// Page de détail d'un opérateur simplifiée avec données réelles
 // Encodage: UTF-8
 
 import { useEffect, useState } from 'react';
@@ -9,36 +9,57 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useOperators } from '../../../hooks/useR6Data';
-import { R6Operator } from '../../../types/r6-api-types';
+import { Operator } from '../../../types/r6-api-types';
 
 export default function OperatorDetailPage() {
   const { safename } = useParams();
   const { operators, loading, error, loadOperators } = useOperators();
-  const [operator, setOperator] = useState<R6Operator | null>(null);
+  const [operator, setOperator] = useState<Operator | null>(null);
 
-  // Charger les opÃ©rateurs et trouver celui correspondant au safename
+  // Charger les opérateurs et trouver celui correspondant au safename
   useEffect(() => {
-    if (operators.length === 0) {
+    if (!operators || operators.length === 0) {
       loadOperators();
     }
-  }, [operators.length, loadOperators]);
+  }, [operators, loadOperators]);
 
   useEffect(() => {
-    if (operators.length > 0 && safename) {
-      const foundOperator = operators.find(op => 
-        op.safename === safename || 
-        op.name.toLowerCase().replace(/\s+/g, '-') === safename
+    if (operators && operators.length > 0 && safename) {
+      const foundOperator = operators.find((op: Operator) =>
+        op.safename === safename
       );
       setOperator(foundOperator || null);
     }
   }, [operators, safename]);
 
+  const getOperatorTypeColor = (side: string) => {
+    return side === 'ATK' ? 'text-orange-400' : 'text-blue-400';
+  };
+
+  const getOperatorTypeBg = (side: string) => {
+    return side === 'ATK' ? 'bg-orange-500/20' : 'bg-blue-500/20';
+  };
+
+  const getSpeedIcon = (speed: string) => {
+    const speedNum = parseInt(speed);
+    if (speedNum === 3) return '?????';
+    if (speedNum === 2) return '?????';
+    return '???';
+  };
+
+  const getSpeedLabel = (speed: string) => {
+    const speedNum = parseInt(speed);
+    if (speedNum === 3) return 'Rapide';
+    if (speedNum === 2) return 'Moyen';
+    return 'Lent';
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
         <div className="flex items-center space-x-3 text-white/70">
           <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <span className="text-lg">Chargement de l&apos;opÃ©rateur...</span>
+          <span className="text-lg">Chargement de l&apos;opérateur...</span>
         </div>
       </div>
     );
@@ -46,15 +67,18 @@ export default function OperatorDetailPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <i className="pi pi-exclamation-triangle text-red-400 text-2xl"></i>
           </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">Erreur de chargement</h2>
-          <p className="text-white/60 mb-4">{error}</p>
-          <Link href="/operators" className="text-blue-400 hover:text-blue-300 transition-colors">
-            Retour aux opÃ©rateurs
+          <h2 className="text-xl font-bold text-white mb-2">Erreur de chargement</h2>
+          <p className="text-red-300 mb-4">{error}</p>
+          <Link
+            href="/operators"
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            Retour aux opérateurs
           </Link>
         </div>
       </div>
@@ -63,17 +87,20 @@ export default function OperatorDetailPage() {
 
   if (!operator) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i className="pi pi-search text-white/50 text-2xl"></i>
+            <i className="pi pi-user text-white/50 text-2xl"></i>
           </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">OpÃ©rateur non trouvÃ©</h2>
+          <h2 className="text-xl font-bold text-white mb-2">Opérateur non trouvé</h2>
           <p className="text-white/60 mb-4">
-            L&apos;opÃ©rateur demandÃ© n&apos;existe pas ou n&apos;est plus disponible.
+            L&apos;opérateur avec l&apos;identifiant &quot;{safename}&quot; n&apos;existe pas.
           </p>
-          <Link href="/operators" className="text-blue-400 hover:text-blue-300 transition-colors">
-            Retour aux opÃ©rateurs
+          <Link
+            href="/operators"
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            Retour aux opérateurs
           </Link>
         </div>
       </div>
@@ -81,414 +108,243 @@ export default function OperatorDetailPage() {
   }
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      {/* Navigation */}
+      <div className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-8 py-4">
+          <Link
+            href="/operators"
+            className="inline-flex items-center text-white/70 hover:text-white transition-colors"
+          >
+            <i className="pi pi-arrow-left mr-2"></i>
+            Retour aux opérateurs
+          </Link>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-6xl mx-auto"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
         >
-          {/* Bouton de retour */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="mb-6"
-          >
-            <Link 
-              href="/operators"
-              className="inline-flex items-center space-x-2 text-white/60 hover:text-white transition-colors"
+          {/* Colonne principale - Image et info de base */}
+          <div className="lg:col-span-1">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden mb-6"
             >
-              <i className="pi pi-arrow-left"></i>
-              <span>Retour aux opÃ©rateurs</span>
-            </Link>
-          </motion.div>
-
-          {/* En-tÃªte de l'opÃ©rateur */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden mb-8"
-          >
-            <div className="relative">
-              {/* Image de fond */}
-              <div className="h-64 md:h-80 relative bg-gradient-to-br from-blue-600 to-purple-600">
-                {operator.image_url && (
-                  <Image
-                    src={operator.image_url}
-                    alt={operator.name}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                )}
-                <div className="absolute inset-0 bg-black/40"></div>
-              </div>
-
-              {/* Informations principales */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <div className="flex items-end space-x-4">
-                  {/* Avatar */}
-                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden border-4 border-white/20 bg-white/10 backdrop-blur-xl">
-                    {operator.iconUrl ? (
-                      <Image
-                        src={operator.iconUrl}
-                        alt={`IcÃ´ne ${operator.name}`}
-                        width={96}
-                        height={96}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <i className="pi pi-user text-white/50 text-2xl"></i>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Nom et informations */}
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h1 className="text-3xl md:text-4xl font-bold text-white">
-                        {operator.name}
-                      </h1>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        operator.side === 'ATK' 
-                          ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
-                          : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                      }`}>
-                        {operator.side === 'ATK' ? 'Attaquant' : 'DÃ©fenseur'}
-                      </span>
-                    </div>
-                    
-                    <div className="flex flex-wrap items-center gap-4 text-white/80">
-                      <div className="flex items-center space-x-2">
-                        <i className="pi pi-flag text-sm"></i>
-                        <span>{operator.country}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <i className="pi pi-users text-sm"></i>
-                        <span>{operator.unit}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <i className="pi pi-star text-sm"></i>
-                        <span>Vitesse: {operator.speed}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <i className="pi pi-shield text-sm"></i>
-                        <span>Armure: {operator.armor}</span>
-                      </div>
-                    </div>
+              {/* Image principale */}
+              <div className="relative aspect-square bg-gradient-to-br from-slate-800 to-slate-900">
+                <Image
+                  src={operator.icon_url || '/images/logo/r6-logo.png'}
+                  alt={operator.name}
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/images/logo/r6-logo.png';
+                  }}
+                />
+                <div className="absolute top-4 right-4">
+                  <div className={`px-3 py-1 rounded-lg text-sm font-medium ${getOperatorTypeBg(operator.side)} ${getOperatorTypeColor(operator.side)}`}>
+                    {operator.side === 'ATK' ? 'Attaquant' : 'Défenseur'}
                   </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
 
-          {/* Contenu principal */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Colonne principale */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* CompÃ©tences */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
-                  <i className="pi pi-bolt text-yellow-400"></i>
-                  <span>CompÃ©tences</span>
-                </h2>
+              {/* Nom et titre */}
+              <div className="p-6">
+                <h1 className="text-3xl font-bold text-white mb-2">{operator.name}</h1>
+                <p className="text-white/70 text-lg mb-4">{operator.realname}</p>
+                
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getOperatorTypeBg(operator.side)} ${getOperatorTypeColor(operator.side)}`}>
+                    {operator.roles}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white/70">
+                    {operator.unit}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white/70">
+                    {operator.season_introduced}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
 
-                <div className="space-y-6">
-                  {/* CompÃ©tence unique */}
-                  <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-                    <div className="flex items-start space-x-4">
-                      {operator.uniqueAbility?.iconUrl && (
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/10">
-                          <Image
-                            src={operator.uniqueAbility.iconUrl}
-                            alt={operator.uniqueAbility.name}
-                            width={48}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white mb-2">
-                          {operator.uniqueAbility?.name || 'CompÃ©tence unique'}
-                        </h3>
-                        <p className="text-white/70 leading-relaxed">
-                          {operator.uniqueAbility?.description || 'Description non disponible'}
-                        </p>
-                      </div>
-                    </div>
+            {/* Statistiques */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">
+                <i className="pi pi-chart-bar mr-2"></i>
+                Statistiques
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Santé */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <i className="pi pi-heart mr-2 text-red-400"></i>
+                    <span className="text-white/70">Santé</span>
                   </div>
-
-                  {/* CompÃ©tences additionnelles */}
-                  {operator.abilities && operator.abilities.length > 0 && (
-                    <div className="space-y-3">
-                      <h4 className="text-lg font-semibold text-white">CompÃ©tences additionnelles</h4>
-                      {operator.abilities.map((ability, index) => (
-                        <div key={index} className="p-3 bg-white/5 rounded-lg border border-white/10">
-                          <div className="flex items-start space-x-3">
-                            {ability.iconUrl && (
-                              <div className="w-8 h-8 rounded overflow-hidden bg-white/10">
-                                <Image
-                                  src={ability.iconUrl}
-                                  alt={ability.name}
-                                  width={32}
-                                  height={32}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )}
-                            <div>
-                              <h5 className="font-medium text-white">{ability.name}</h5>
-                              <p className="text-sm text-white/60 mt-1">{ability.description}</p>
-                            </div>
-                          </div>
-                        </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`w-3 h-3 rounded-full ${
+                            i < Math.floor(operator.health / 25) ? 'bg-red-400' : 'bg-white/20'
+                          }`}
+                        />
                       ))}
                     </div>
-                  )}
+                    <span className="text-white font-medium">{operator.health} HP</span>
+                  </div>
                 </div>
-              </motion.div>
 
-              {/* Armes */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
-              >
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
-                  <i className="pi pi-bolt text-orange-400"></i>
-                  <span>Arsenal</span>
-                </h2>
-
-                <div className="space-y-6">
-                  {/* Armes primaires */}
-                  {operator.weapons?.primary && operator.weapons.primary.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Armes primaires</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {operator.weapons.primary.map((weapon, index) => (
-                          <Link
-                            key={index}
-                            href={`/weapons/${weapon.toLowerCase().replace(/\s+/g, '-')}`}
-                            className="block p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <i className="pi pi-bolt text-orange-400 text-xl"></i>
-                              <div>
-                                <h4 className="font-medium text-white group-hover:text-orange-400 transition-colors">
-                                  {weapon}
-                                </h4>
-                                <p className="text-xs text-white/50">Arme primaire</p>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Armes secondaires */}
-                  {operator.weapons?.secondary && operator.weapons.secondary.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Armes secondaires</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {operator.weapons.secondary.map((weapon, index) => (
-                          <Link
-                            key={index}
-                            href={`/weapons/${weapon.toLowerCase().replace(/\s+/g, '-')}`}
-                            className="block p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors group"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <i className="pi pi-circle text-blue-400 text-lg"></i>
-                              <div>
-                                <h4 className="font-medium text-white group-hover:text-blue-400 transition-colors">
-                                  {weapon}
-                                </h4>
-                                <p className="text-xs text-white/50">Arme secondaire</p>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Gadgets */}
-                  {operator.gadgets && operator.gadgets.length > 0 && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Gadgets</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {operator.gadgets.map((gadget, index) => (
-                          <div key={index} className="p-4 bg-white/5 rounded-xl border border-white/10">
-                            <div className="flex items-center space-x-3">
-                              <i className="pi pi-cog text-purple-400 text-lg"></i>
-                              <div>
-                                <h4 className="font-medium text-white">{gadget}</h4>
-                                <p className="text-xs text-white/50">Gadget</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-8">
-              {/* Statistiques */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
-              >
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center space-x-2">
-                  <i className="pi pi-chart-bar text-green-400"></i>
-                  <span>Statistiques</span>
-                </h2>
-
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-3 border-b border-white/10">
+                {/* Vitesse */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <span className="mr-2">{getSpeedIcon(operator.speed)}</span>
                     <span className="text-white/70">Vitesse</span>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        {[...Array(3)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full ${
-                              i < operator.speed ? 'bg-green-400' : 'bg-white/20'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-white font-medium">{operator.speed}/3</span>
-                    </div>
                   </div>
-
-                  <div className="flex justify-between items-center py-3 border-b border-white/10">
-                    <span className="text-white/70">Armure</span>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        {[...Array(3)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full ${
-                              i < operator.armor ? 'bg-blue-400' : 'bg-white/20'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-white font-medium">{operator.armor}/3</span>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-1">
+                      {[...Array(3)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`w-3 h-3 rounded-full ${
+                            i < parseInt(operator.speed) ? 'bg-yellow-400' : 'bg-white/20'
+                          }`}
+                        />
+                      ))}
                     </div>
-                  </div>
-
-                  <div className="flex justify-between items-center py-3">
-                    <span className="text-white/70">DifficultÃ©</span>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        {[...Array(3)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full ${
-                              i < (operator.difficulty || 1) ? 'bg-yellow-400' : 'bg-white/20'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-white font-medium">{operator.difficulty || 1}/3</span>
-                    </div>
+                    <span className="text-white font-medium">{getSpeedLabel(operator.speed)}</span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
+            </motion.div>
+          </div>
 
-              {/* Informations dÃ©taillÃ©es */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
-              >
-                <h2 className="text-xl font-bold text-white mb-6 flex items-center space-x-2">
-                  <i className="pi pi-info-circle text-blue-400"></i>
-                  <span>Informations</span>
-                </h2>
-
-                <div className="space-y-4">
-                  {operator.realName && (
-                    <div>
-                      <span className="text-white/70 text-sm block">Nom rÃ©el</span>
-                      <span className="text-white font-medium">{operator.realName}</span>
-                    </div>
-                  )}
-
-                  {operator.dateOfBirth && (
-                    <div>
-                      <span className="text-white/70 text-sm block">Date de naissance</span>
-                      <span className="text-white font-medium">{operator.dateOfBirth}</span>
-                    </div>
-                  )}
-
-                  {operator.placeOfBirth && (
-                    <div>
-                      <span className="text-white/70 text-sm block">Lieu de naissance</span>
-                      <span className="text-white font-medium">{operator.placeOfBirth}</span>
-                    </div>
-                  )}
-
-                  {operator.height && (
-                    <div>
-                      <span className="text-white/70 text-sm block">Taille</span>
-                      <span className="text-white font-medium">{operator.height}</span>
-                    </div>
-                  )}
-
-                  {operator.weight && (
-                    <div>
-                      <span className="text-white/70 text-sm block">Poids</span>
-                      <span className="text-white font-medium">{operator.weight}</span>
-                    </div>
-                  )}
+          {/* Colonne des détails */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Informations personnelles */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">
+                <i className="pi pi-user mr-2"></i>
+                Informations personnelles
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-white/70">Nom réel</span>
+                  <span className="text-white font-medium">{operator.realname}</span>
                 </div>
-              </motion.div>
+                
+                <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-white/70">Âge</span>
+                  <span className="text-white font-medium">{operator.age} ans</span>
+                </div>
+                
+                <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-white/70">Date de naissance</span>
+                  <span className="text-white font-medium">{operator.date_of_birth}</span>
+                </div>
+                
+                <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-white/70">Lieu de naissance</span>
+                  <span className="text-white font-medium">{operator.birthplace}</span>
+                </div>
+                
+                <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-white/70">Unité</span>
+                  <span className="text-white font-medium">{operator.unit}</span>
+                </div>
+                
+                <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-white/70">Code pays</span>
+                  <span className="text-white font-medium">{operator.country_code}</span>
+                </div>
+              </div>
+            </motion.div>
 
-              {/* RÃ´le et description */}
-              {operator.role && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
+            {/* Carte interactive */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">
+                <i className="pi pi-gamepad mr-2"></i>
+                Actions rapides
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Link
+                  href="/comparison"
+                  className="flex items-center justify-center p-4 bg-blue-600/20 border border-blue-500/30 rounded-xl text-blue-300 hover:bg-blue-600/30 transition-colors"
                 >
-                  <h2 className="text-xl font-bold text-white mb-4 flex items-center space-x-2">
-                    <i className="pi pi-briefcase text-purple-400"></i>
-                    <span>RÃ´le</span>
-                  </h2>
+                  <i className="pi pi-chart-line mr-2"></i>
+                  Comparer cet opérateur
+                </Link>
+                
+                <Link
+                  href="/operators"
+                  className="flex items-center justify-center p-4 bg-green-600/20 border border-green-500/30 rounded-xl text-green-300 hover:bg-green-600/30 transition-colors"
+                >
+                  <i className="pi pi-users mr-2"></i>
+                  Voir tous les opérateurs
+                </Link>
+                
+                <Link
+                  href="/weapons"
+                  className="flex items-center justify-center p-4 bg-orange-600/20 border border-orange-500/30 rounded-xl text-orange-300 hover:bg-orange-600/30 transition-colors"
+                >
+                  <i className="pi pi-shield mr-2"></i>
+                  Voir les armes
+                </Link>
+                
+                <Link
+                  href="/maps"
+                  className="flex items-center justify-center p-4 bg-purple-600/20 border border-purple-500/30 rounded-xl text-purple-300 hover:bg-purple-600/30 transition-colors"
+                >
+                  <i className="pi pi-map mr-2"></i>
+                  Explorer les cartes
+                </Link>
+              </div>
+            </motion.div>
 
-                  <div className="space-y-3">
-                    <div className="inline-flex items-center px-3 py-2 bg-purple-500/20 text-purple-400 rounded-lg border border-purple-500/30">
-                      <span className="font-medium">{operator.role}</span>
-                    </div>
-                    
-                    {operator.bio && (
-                      <p className="text-white/70 text-sm leading-relaxed">
-                        {operator.bio}
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </div>
+            {/* Note sur les données */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4"
+            >
+              <div className="flex items-start">
+                <i className="pi pi-info-circle text-yellow-400 mr-3 mt-1"></i>
+                <div>
+                  <h4 className="text-yellow-300 font-semibold mb-1">Données en cours d&apos;enrichissement</h4>
+                  <p className="text-yellow-200/80 text-sm">
+                    Les informations détaillées sur les capacités spéciales, armes et gadgets seront bientôt disponibles. 
+                    Cette page affiche actuellement les données de base de l&apos;API R6.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>

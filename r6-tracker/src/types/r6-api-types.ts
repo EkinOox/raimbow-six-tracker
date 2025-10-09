@@ -16,6 +16,42 @@ export interface Operator {
   icon_url: string;
 }
 
+// Type étendu pour les détails d'opérateur (avec données potentiellement enrichies)
+export interface OperatorDetail extends Operator {
+  image_url?: string;
+  iconUrl?: string;
+  country?: string;
+  armor?: number;
+  uniqueAbility?: {
+    name: string;
+    description: string;
+    iconUrl?: string;
+  };
+  abilities?: Array<{
+    name: string;
+    description: string;
+    iconUrl?: string;
+  }>;
+  weapons?: {
+    primary?: Array<{
+      name: string;
+      type: string;
+      damage: number;
+      fireRate: number;
+      capacity: number;
+      imageUrl?: string;
+    }>;
+    secondary?: Array<{
+      name: string;
+      type: string;
+      damage: number;
+      fireRate: number;
+      capacity: number;
+      imageUrl?: string;
+    }>;
+  };
+}
+
 // Types pour les armes R6
 export interface Weapon {
   name: string;
