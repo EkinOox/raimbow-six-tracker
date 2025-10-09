@@ -8,7 +8,7 @@ import { OperatorFilters, WeaponFilters, MapFilters } from '../types/r6-api-type
 // Hook pour les opérateurs
 export const useOperators = () => {
   const dispatch = useAppDispatch();
-  const { data, loading, error, lastFetch, filters } = useAppSelector(state => state.operators);
+  const { operators, loading, error, lastFetch, filters } = useAppSelector(state => state.operators);
 
   const loadOperators = useCallback(
     (filters: OperatorFilters = {}) => {
@@ -34,22 +34,22 @@ export const useOperators = () => {
   }, [dispatch]);
 
   return {
-    operators: data,
+    operators,
     loading,
     error,
     lastFetch,
-    filters: filters as OperatorFilters,
-    loadOperators,
+    filters,
     updateFilters,
-    clearData,
-    clearErrors,
+    loadOperators,
+    refreshOperators: loadOperators,
+    clearError: clearErrors
   };
 };
 
 // Hook pour les armes
 export const useWeapons = () => {
   const dispatch = useAppDispatch();
-  const { data, loading, error, lastFetch, filters } = useAppSelector(state => state.weapons);
+  const { weapons, loading, error, lastFetch, filters } = useAppSelector(state => state.weapons);
 
   const loadWeapons = useCallback(
     (filters: WeaponFilters = {}) => {
@@ -75,7 +75,7 @@ export const useWeapons = () => {
   }, [dispatch]);
 
   return {
-    weapons: data,
+    weapons,
     loading,
     error,
     lastFetch,
@@ -90,7 +90,7 @@ export const useWeapons = () => {
 // Hook pour les maps
 export const useMaps = () => {
   const dispatch = useAppDispatch();
-  const { data, loading, error, lastFetch, filters } = useAppSelector(state => state.maps);
+  const { maps, loading, error, lastFetch, filters } = useAppSelector(state => state.maps);
 
   const loadMaps = useCallback(
     (filters: MapFilters = {}) => {
@@ -116,7 +116,7 @@ export const useMaps = () => {
   }, [dispatch]);
 
   return {
-    maps: data,
+    maps,
     loading,
     error,
     lastFetch,
