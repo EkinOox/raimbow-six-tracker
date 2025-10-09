@@ -1,6 +1,6 @@
 'use client';
 
-// Page de détail d'un opérateur avec armes et compétences
+// Page de dÃ©tail d'un opÃ©rateur avec armes et compÃ©tences
 // Encodage: UTF-8
 
 import { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ export default function OperatorDetailPage() {
   const { operators, loading, error, loadOperators } = useOperators();
   const [operator, setOperator] = useState<R6Operator | null>(null);
 
-  // Charger les opérateurs et trouver celui correspondant au safename
+  // Charger les opÃ©rateurs et trouver celui correspondant au safename
   useEffect(() => {
     if (operators.length === 0) {
       loadOperators();
@@ -38,7 +38,7 @@ export default function OperatorDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center space-x-3 text-white/70">
           <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <span className="text-lg">Chargement de l&apos;opérateur...</span>
+          <span className="text-lg">Chargement de l&apos;opÃ©rateur...</span>
         </div>
       </div>
     );
@@ -54,7 +54,7 @@ export default function OperatorDetailPage() {
           <h2 className="text-2xl font-semibold text-white mb-2">Erreur de chargement</h2>
           <p className="text-white/60 mb-4">{error}</p>
           <Link href="/operators" className="text-blue-400 hover:text-blue-300 transition-colors">
-            Retour aux opérateurs
+            Retour aux opÃ©rateurs
           </Link>
         </div>
       </div>
@@ -68,12 +68,12 @@ export default function OperatorDetailPage() {
           <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <i className="pi pi-search text-white/50 text-2xl"></i>
           </div>
-          <h2 className="text-2xl font-semibold text-white mb-2">Opérateur non trouvé</h2>
+          <h2 className="text-2xl font-semibold text-white mb-2">OpÃ©rateur non trouvÃ©</h2>
           <p className="text-white/60 mb-4">
-            L&apos;opérateur demandé n&apos;existe pas ou n&apos;est plus disponible.
+            L&apos;opÃ©rateur demandÃ© n&apos;existe pas ou n&apos;est plus disponible.
           </p>
           <Link href="/operators" className="text-blue-400 hover:text-blue-300 transition-colors">
-            Retour aux opérateurs
+            Retour aux opÃ©rateurs
           </Link>
         </div>
       </div>
@@ -99,11 +99,11 @@ export default function OperatorDetailPage() {
               className="inline-flex items-center space-x-2 text-white/60 hover:text-white transition-colors"
             >
               <i className="pi pi-arrow-left"></i>
-              <span>Retour aux opérateurs</span>
+              <span>Retour aux opÃ©rateurs</span>
             </Link>
           </motion.div>
 
-          {/* En-tête de l'opérateur */}
+          {/* En-tÃªte de l'opÃ©rateur */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -133,7 +133,7 @@ export default function OperatorDetailPage() {
                     {operator.iconUrl ? (
                       <Image
                         src={operator.iconUrl}
-                        alt={`Icône ${operator.name}`}
+                        alt={`IcÃ´ne ${operator.name}`}
                         width={96}
                         height={96}
                         className="w-full h-full object-cover"
@@ -156,7 +156,7 @@ export default function OperatorDetailPage() {
                           ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
                           : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                       }`}>
-                        {operator.side === 'ATK' ? 'Attaquant' : 'Défenseur'}
+                        {operator.side === 'ATK' ? 'Attaquant' : 'DÃ©fenseur'}
                       </span>
                     </div>
                     
@@ -188,7 +188,7 @@ export default function OperatorDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Colonne principale */}
             <div className="lg:col-span-2 space-y-8">
-              {/* Compétences */}
+              {/* CompÃ©tences */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -197,11 +197,11 @@ export default function OperatorDetailPage() {
               >
                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
                   <i className="pi pi-bolt text-yellow-400"></i>
-                  <span>Compétences</span>
+                  <span>CompÃ©tences</span>
                 </h2>
 
                 <div className="space-y-6">
-                  {/* Compétence unique */}
+                  {/* CompÃ©tence unique */}
                   <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                     <div className="flex items-start space-x-4">
                       {operator.uniqueAbility?.iconUrl && (
@@ -217,7 +217,7 @@ export default function OperatorDetailPage() {
                       )}
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-white mb-2">
-                          {operator.uniqueAbility?.name || 'Compétence unique'}
+                          {operator.uniqueAbility?.name || 'CompÃ©tence unique'}
                         </h3>
                         <p className="text-white/70 leading-relaxed">
                           {operator.uniqueAbility?.description || 'Description non disponible'}
@@ -226,10 +226,10 @@ export default function OperatorDetailPage() {
                     </div>
                   </div>
 
-                  {/* Compétences additionnelles */}
+                  {/* CompÃ©tences additionnelles */}
                   {operator.abilities && operator.abilities.length > 0 && (
                     <div className="space-y-3">
-                      <h4 className="text-lg font-semibold text-white">Compétences additionnelles</h4>
+                      <h4 className="text-lg font-semibold text-white">CompÃ©tences additionnelles</h4>
                       {operator.abilities.map((ability, index) => (
                         <div key={index} className="p-3 bg-white/5 rounded-lg border border-white/10">
                           <div className="flex items-start space-x-3">
@@ -394,7 +394,7 @@ export default function OperatorDetailPage() {
                   </div>
 
                   <div className="flex justify-between items-center py-3">
-                    <span className="text-white/70">Difficulté</span>
+                    <span className="text-white/70">DifficultÃ©</span>
                     <div className="flex items-center space-x-2">
                       <div className="flex space-x-1">
                         {[...Array(3)].map((_, i) => (
@@ -412,7 +412,7 @@ export default function OperatorDetailPage() {
                 </div>
               </motion.div>
 
-              {/* Informations détaillées */}
+              {/* Informations dÃ©taillÃ©es */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -427,7 +427,7 @@ export default function OperatorDetailPage() {
                 <div className="space-y-4">
                   {operator.realName && (
                     <div>
-                      <span className="text-white/70 text-sm block">Nom réel</span>
+                      <span className="text-white/70 text-sm block">Nom rÃ©el</span>
                       <span className="text-white font-medium">{operator.realName}</span>
                     </div>
                   )}
@@ -462,7 +462,7 @@ export default function OperatorDetailPage() {
                 </div>
               </motion.div>
 
-              {/* Rôle et description */}
+              {/* RÃ´le et description */}
               {operator.role && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -472,7 +472,7 @@ export default function OperatorDetailPage() {
                 >
                   <h2 className="text-xl font-bold text-white mb-4 flex items-center space-x-2">
                     <i className="pi pi-briefcase text-purple-400"></i>
-                    <span>Rôle</span>
+                    <span>RÃ´le</span>
                   </h2>
 
                   <div className="space-y-3">

@@ -57,10 +57,10 @@ export default function WeaponsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-7xl mx-auto"
       >
-        {/* En-tête */}
+        {/* En-tÃªte */}
         <SectionHeader
           title="Weapons"
-          description="Explorez l'arsenal complet de Rainbow Six Siege avec les statistiques détaillées de chaque arme."
+          description="Explorez l'arsenal complet de Rainbow Six Siege avec les statistiques dÃ©taillÃ©es de chaque arme."
           icon="pi-shield"
           useLogo={true}
         />
@@ -111,7 +111,7 @@ export default function WeaponsPage() {
             {/* Filtre par famille */}
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
-                Côté
+                CÃ´tÃ©
               </label>
               <select
                 value={selectedFamily}
@@ -120,7 +120,7 @@ export default function WeaponsPage() {
               >
                 {weaponFamilies.map(family => (
                   <option key={family} value={family} className="bg-gray-800">
-                    {family === 'ATK' ? 'Attaque' : family === 'DEF' ? 'Défense' : family}
+                    {family === 'ATK' ? 'Attaque' : family === 'DEF' ? 'DÃ©fense' : family}
                   </option>
                 ))}
               </select>
@@ -130,7 +130,7 @@ export default function WeaponsPage() {
           {/* Statistiques de filtrage */}
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>
-              {loading ? 'Chargement...' : `${weapons.length} arme(s) trouvée(s)`}
+              {loading ? 'Chargement...' : `${weapons.length} arme(s) trouvÃ©e(s)`}
             </span>
             {Object.keys(filters).length > 0 && (
               <button
@@ -230,7 +230,7 @@ export default function WeaponsPage() {
                         {/* Statistiques de l'arme */}
                         <div className="space-y-2 mb-3 flex-1">
                           <div className="flex justify-between text-sm">
-                            <span className="text-white/60">Dégâts</span>
+                            <span className="text-white/60">DÃ©gÃ¢ts</span>
                             <span className="text-white font-medium">{weapon.damage}</span>
                           </div>
                           <div className="flex justify-between text-sm">
@@ -238,16 +238,16 @@ export default function WeaponsPage() {
                             <span className="text-white font-medium">{weapon.fireRate} RPM</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-white/60">Mobilité</span>
+                            <span className="text-white/60">MobilitÃ©</span>
                             <span className="text-white font-medium">{weapon.mobility}</span>
                           </div>
                         </div>
 
-                        {/* Opérateurs utilisant cette arme */}
+                        {/* OpÃ©rateurs utilisant cette arme */}
                         {weapon.operators && weapon.operators.length > 0 && (
                           <div className="mt-2">
                             <p className="text-xs text-white/50 mb-1">
-                              Utilisée par {weapon.operators.length} opérateur(s)
+                              UtilisÃ©e par {weapon.operators.length} opÃ©rateur(s)
                             </p>
                             <div className="flex flex-wrap gap-1">
                               {weapon.operators.slice(0, 3).map((op, idx) => (
@@ -275,7 +275,7 @@ export default function WeaponsPage() {
           )}
         </AnimatePresence>
 
-        {/* Message aucun résultat */}
+        {/* Message aucun rÃ©sultat */}
         {!loading && weapons.length === 0 && !error && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -286,10 +286,10 @@ export default function WeaponsPage() {
               <i className="pi pi-search text-white/50 text-2xl"></i>
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
-              Aucune arme trouvée
+              Aucune arme trouvÃ©e
             </h3>
             <p className="text-white/60">
-              Essayez de modifier vos critères de recherche ou de supprimer les filtres.
+              Essayez de modifier vos critÃ¨res de recherche ou de supprimer les filtres.
             </p>
           </motion.div>
         )}
