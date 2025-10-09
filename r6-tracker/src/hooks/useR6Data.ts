@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { fetchOperators, setFilters as setOperatorFilters, clearOperators, clearError as clearOperatorError } from '../store/slices/operatorsSlice';
 import { fetchWeapons, setFilters as setWeaponFilters, clearWeapons, clearError as clearWeaponError } from '../store/slices/weaponsSlice';
-import { fetchMaps, setFilters as setMapFilters, clearMaps, clearError as clearMapError } from '../store/slices/mapsSlice';
+import { fetchMaps, setFilters as setMapFilters, clearMaps, clearError as clearMapError, cacheMapImage } from '../store/slices/mapsSlice';
 import { OperatorFilters, WeaponFilters, MapFilters } from '../types/r6-api-types';
 
 // Hook pour les opérateurs
@@ -90,7 +90,7 @@ export const useWeapons = () => {
 // Hook pour les maps
 export const useMaps = () => {
   const dispatch = useAppDispatch();
-  const { maps, loading, error, lastFetch, filters } = useAppSelector(state => state.maps);
+  const { maps, loading, error, lastFetch, filters, imageCache } = useAppSelector(state => state.maps);
 
   const loadMaps = useCallback(
     (filters: MapFilters = {}) => {
@@ -107,6 +107,15 @@ export const useMaps = () => {
     [dispatch]
   );
 
+  const loadMapImage = useCallback(
+    (mapName: string) => {
+      if (!imageCache[mapName]) {
+        dispatch(cacheMapImage(mapName));
+      }
+    },
+    [dispatch, imageCache]
+  );
+
   const clearData = useCallback(() => {
     dispatch(clearMaps());
   }, [dispatch]);
@@ -121,8 +130,10 @@ export const useMaps = () => {
     error,
     lastFetch,
     filters: filters as MapFilters,
+    imageCache,
     loadMaps,
     updateFilters,
+    loadMapImage,
     clearData,
     clearErrors,
   };

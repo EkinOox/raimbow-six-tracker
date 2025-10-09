@@ -14,7 +14,7 @@ import { MapFilters, Map } from '../../types/r6-api-types';
 const playlists = ['Tous', 'Ranked', 'Casual', 'Unranked'];
 
 export default function MapsPage() {
-  const { maps, loading, error, loadMaps, updateFilters, filters } = useMaps();
+  const { maps, loading, error, loadMaps, updateFilters, filters, loadMapImage } = useMaps();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState('Tous');
 
@@ -22,6 +22,17 @@ export default function MapsPage() {
   useEffect(() => {
     loadMaps();
   }, [loadMaps]);
+
+  // Charger les images pour toutes les cartes
+  useEffect(() => {
+    if (maps && maps.length > 0) {
+      maps.forEach(map => {
+        if (!map.imageLoaded) {
+          loadMapImage(map.name);
+        }
+      });
+    }
+  }, [maps, loadMapImage]);
 
   // Appliquer les filtres quand ils changent
   useEffect(() => {
@@ -169,20 +180,20 @@ export default function MapsPage() {
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer">
                       {/* Image de la carte */}
                       <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600">
-                        {map.image_url ? (
-                          <Image
-                            src={map.image_url}
-                            alt={`Carte ${map.name}`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center">
-                              <i className="pi pi-map text-white/30 text-4xl mb-2"></i>
-                              <p className="text-white/50 text-sm">{map.name}</p>
-                            </div>
+                        <Image
+                          src={map.imageUrl || '/images/logo/r6-logo.png'}
+                          alt={`Carte ${map.name}`}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/images/logo/r6-logo.png';
+                          }}
+                        />
+                        {!map.imageLoaded && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                            <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/20"></div>

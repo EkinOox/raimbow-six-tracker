@@ -75,6 +75,8 @@ export interface Map {
   playlists: string;
   mapReworked?: string;
   image_url?: string;
+  imageUrl?: string; // URL de l'image mise en cache
+  imageLoaded?: boolean; // Statut de chargement de l'image
 }
 
 // Types pour les filtres

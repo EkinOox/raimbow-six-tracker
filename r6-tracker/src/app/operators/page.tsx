@@ -34,6 +34,22 @@ const sortOptions = [
   { value: 'season-desc', label: 'Saison (récent → ancien)' }
 ];
 
+// Fonction helper pour valider les URLs d'opérateurs
+function getValidImageUrl(url: string | undefined): string {
+  if (!url) return '/images/logo/r6-logo.png';
+  
+  try {
+    // Vérifie si c'est une URL relative valide
+    if (url.startsWith('/')) return url;
+    
+    // Vérifie si c'est une URL absolue valide
+    new URL(url);
+    return url;
+  } catch {
+    return '/images/logo/r6-logo.png';
+  }
+}
+
 export default function OperatorsPage() {
   const { operators, loading, error, loadOperators } = useOperators();
   
@@ -433,7 +449,7 @@ export default function OperatorsPage() {
             >
               {filteredAndSortedOperators.map((operator: Operator, index: number) => (
                 <motion.div
-                  key={operator.safename}
+                  key={`${operator.safename}-${index}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
@@ -450,7 +466,7 @@ export default function OperatorsPage() {
                         <div className="relative mb-4">
                           <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
                             <Image
-                              src={operator.icon_url || '/images/logo/r6-logo.png'}
+                              src={getValidImageUrl(operator.icon_url)}
                               alt={operator.name}
                               width={200}
                               height={200}
@@ -494,7 +510,7 @@ export default function OperatorsPage() {
                         <div className="relative flex-shrink-0">
                           <div className="w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
                             <Image
-                              src={operator.icon_url || '/images/logo/r6-logo.png'}
+                              src={getValidImageUrl(operator.icon_url)}
                               alt={operator.name}
                               width={64}
                               height={64}

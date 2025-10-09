@@ -19,6 +19,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-redux": "^9.2.0",
+    "redux-persist": "^6.0.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
