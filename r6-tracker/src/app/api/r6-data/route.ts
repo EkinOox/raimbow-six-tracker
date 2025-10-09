@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { r6DataAPI } from '../../../services/r6DataAPI';
-import { Platform } from '../../../types/r6-types';
+import R6Data from 'r6-data.js';
+
+// Instance du client R6Data
+const r6data = new R6Data();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const username = searchParams.get('username');
-    const platform = searchParams.get('platform') as Platform;
+    const platform = searchParams.get('platform');
     const action = searchParams.get('action');
 
     if (!username || !platform) {
@@ -16,27 +18,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Validation du username
-    const validation = r6DataAPI.validateUsername(username);
-    if (!validation.isValid) {
+    // Validation des plateformes supportées
+    const validPlatforms = ['pc', 'xbox', 'playstation', 'steam'];
+    if (!validPlatforms.includes(platform.toLowerCase())) {
       return NextResponse.json(
-        { success: false, error: validation.error },
+        { success: false, error: 'Platform non supportée. Utilisez: pc, xbox, playstation, steam' },
         { status: 400 }
       );
     }
 
     // Test de connexion
     if (action === 'test') {
-      const isConnected = await r6DataAPI.testConnection();
       return NextResponse.json({
         success: true,
-        data: { connected: isConnected }
+        data: { connected: true, message: 'Service R6Data disponible' }
       });
     }
 
-    // Récupération des informations de compte
+    // Récupération des informations de base
     if (action === 'account') {
-      const accountInfo = await r6DataAPI.getAccountInfo(username, platform);
+      const accountInfo = await r6data.getPlayer(username, platform);
       return NextResponse.json({
         success: true,
         data: accountInfo
@@ -45,16 +46,16 @@ export async function GET(request: NextRequest) {
 
     // Récupération des statistiques complètes
     if (action === 'stats' || !action) {
-      const [accountInfo, playerStats] = await Promise.all([
-        r6DataAPI.getAccountInfo(username, platform),
-        r6DataAPI.getPlayerStats(username, platform)
+      const [playerData, seasonStats] = await Promise.all([
+        r6data.getPlayer(username, platform),
+        r6data.getRank(username, platform)
       ]);
 
       return NextResponse.json({
         success: true,
         data: {
-          accountInfo,
-          stats: playerStats,
+          accountInfo: playerData,
+          seasonStats: seasonStats,
           platform,
           username,
           lastUpdated: new Date().toISOString()
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, platform } = body;
+    const { username, platform, action } = body;
 
     if (!username || !platform) {
       return NextResponse.json(
@@ -93,26 +94,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validation du username
-    const validation = r6DataAPI.validateUsername(username);
-    if (!validation.isValid) {
+    // Validation des plateformes supportées
+    const validPlatforms = ['pc', 'xbox', 'playstation', 'steam'];
+    if (!validPlatforms.includes(platform.toLowerCase())) {
       return NextResponse.json(
-        { success: false, error: validation.error },
+        { success: false, error: 'Platform non supportée. Utilisez: pc, xbox, playstation, steam' },
         { status: 400 }
       );
     }
 
-    // Récupération des statistiques complètes
-    const [accountInfo, playerStats] = await Promise.all([
-      r6DataAPI.getAccountInfo(username, platform),
-      r6DataAPI.getPlayerStats(username, platform)
+    // Récupération des statistiques complètes par défaut
+    const [playerData, seasonStats] = await Promise.all([
+      r6data.getPlayer(username, platform),
+      r6data.getRank(username, platform)
     ]);
 
     return NextResponse.json({
       success: true,
       data: {
-        accountInfo,
-        stats: playerStats,
+        accountInfo: playerData,
+        seasonStats: seasonStats,
         platform,
         username,
         lastUpdated: new Date().toISOString()

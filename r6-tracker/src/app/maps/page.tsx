@@ -1,103 +1,252 @@
 'use client';
 
-// Page Cartes
+// Page Maps avec Redux
 // Encodage: UTF-8
 
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
+import { useMaps } from '../../hooks/useR6Data';
+import { MapFilters } from '../../types/r6-api-types';
 
-const maps = [
-  { name: 'Clubhouse', type: 'Classique', icon: 'pi-home' },
-  { name: 'Oregon', type: 'Classique', icon: 'pi-building' },
-  { name: 'Consulate', type: 'Classique', icon: 'pi-flag' },
-  { name: 'Bank', type: 'Classique', icon: 'pi-money-bill' },
-  { name: 'Border', type: 'Classique', icon: 'pi-map-marker' },
-  { name: 'Villa', type: 'Moderne', icon: 'pi-home' },
-  { name: 'Kafe', type: 'Classique', icon: 'pi-coffee' },
-  { name: 'Coastline', type: 'Moderne', icon: 'pi-globe' },
-];
+const playlists = ['Tous', 'Ranked', 'Casual', 'Unranked'];
 
 export default function MapsPage() {
+  const { maps, loading, error, loadMaps, updateFilters, filters } = useMaps();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPlaylist, setSelectedPlaylist] = useState('Tous');
+
+  // Charger les maps au montage du composant
+  useEffect(() => {
+    loadMaps();
+  }, [loadMaps]);
+
+  // Appliquer les filtres quand ils changent
+  useEffect(() => {
+    const applyFilters = () => {
+      const newFilters: MapFilters = {};
+      
+      if (searchTerm.trim()) {
+        newFilters.name = searchTerm.trim();
+      }
+      if (selectedPlaylist !== 'Tous') {
+        newFilters.playlists = selectedPlaylist;
+      }
+      
+      updateFilters(newFilters);
+    };
+
+    const debounce = setTimeout(() => {
+      applyFilters();
+    }, 300);
+
+    return () => clearTimeout(debounce);
+  }, [searchTerm, selectedPlaylist, updateFilters]);
+
   return (
     <div className="container mx-auto py-8 px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto"
+        className="max-w-7xl mx-auto"
       >
         {/* En-tête */}
         <SectionHeader
-          title="Cartes"
-          description="Analysez vos performances sur chaque carte de Rainbow Six Siege. Identifiez vos points forts et améliorez votre maîtrise des maps."
+          title="Maps"
+          description="Explorez toutes les cartes Rainbow Six Siege avec leurs détails, localisations et modes de jeu disponibles."
           icon="pi-map"
           useLogo={true}
         />
 
-        {/* Grille des cartes en preview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          {maps.map((map, index) => (
-            <motion.div
-              key={map.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              className="card-glass text-center group cursor-pointer"
-            >
-              <div className="w-12 h-12 bg-r6-primary/20 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-r6-primary/30 transition-colors">
-                <i className={`pi ${map.icon} text-r6-primary text-xl`}></i>
+        {/* Barre de recherche et filtres */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 mb-8"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Barre de recherche */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Rechercher une carte
+              </label>
+              <div className="relative">
+                <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Ex: Oregon, Villa..."
+                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                />
               </div>
-              <h3 className="text-lg font-semibold text-r6-light mb-1">
-                {map.name}
-              </h3>
-              <p className="text-sm text-r6-light/60">
-                {map.type}
-              </p>
+            </div>
+
+            {/* Filtre par playlist */}
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                Mode de jeu
+              </label>
+              <select
+                value={selectedPlaylist}
+                onChange={(e) => setSelectedPlaylist(e.target.value)}
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              >
+                {playlists.map(playlist => (
+                  <option key={playlist} value={playlist} className="bg-gray-800">
+                    {playlist}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Statistiques de filtrage */}
+          <div className="mt-4 flex items-center justify-between text-sm text-white/60">
+            <span>
+              {loading ? 'Chargement...' : `${maps.length} carte(s) trouvée(s)`}
+            </span>
+            {Object.keys(filters).length > 0 && (
+              <button
+                onClick={() => updateFilters({})}
+                className="text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                <i className="pi pi-times mr-1"></i>
+                Effacer les filtres
+              </button>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Affichage d'erreur */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 mb-8"
+          >
+            <div className="flex items-center space-x-2 text-red-400">
+              <i className="pi pi-exclamation-triangle"></i>
+              <span className="font-medium">Erreur de chargement</span>
+            </div>
+            <p className="text-red-300 mt-1">{error}</p>
+          </motion.div>
+        )}
+
+        {/* Loading state */}
+        {loading && maps.length === 0 && (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-3 text-white/70">
+              <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+              <span>Chargement des cartes...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Grille des maps */}
+        <AnimatePresence mode="wait">
+          {!loading && maps.length > 0 && (
+            <motion.div
+              key="maps-grid"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {maps.map((map, index) => (
+                <motion.div
+                  key={map.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="group"
+                >
+                  <Link href={`/maps/${map.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer">
+                      {/* Image de la carte */}
+                      <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600">
+                        {map.image_url ? (
+                          <Image
+                            src={map.image_url}
+                            alt={`Carte ${map.name}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center">
+                              <i className="pi pi-map text-white/30 text-4xl mb-2"></i>
+                              <p className="text-white/50 text-sm">{map.name}</p>
+                            </div>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/20"></div>
+                      </div>
+
+                      {/* Informations de la carte */}
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold text-white mb-2">
+                          {map.name}
+                        </h3>
+                        
+                        <div className="flex items-center space-x-2 text-white/60 mb-3">
+                          <i className="pi pi-map-marker text-sm"></i>
+                          <span className="text-sm">{map.location}</span>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {map.playlists.split(', ').map((playlist, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full"
+                            >
+                              {playlist.trim()}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm text-white/50">
+                          <span>
+                            Sortie: {new Date(map.releaseDate).toLocaleDateString('fr-FR')}
+                          </span>
+                          {map.mapReworked && (
+                            <span className="text-orange-400">
+                              Rework: {map.mapReworked}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </div>
+          )}
+        </AnimatePresence>
 
-        {/* Statistiques en preview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="card-glass text-center">
-            <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <i className="pi pi-check-circle text-green-400 text-lg"></i>
+        {/* Message aucun résultat */}
+        {!loading && maps.length === 0 && !error && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i className="pi pi-search text-white/50 text-2xl"></i>
             </div>
-            <div className="text-2xl font-bold text-green-400 mb-1">67%</div>
-            <div className="text-sm text-r6-light/70">Taux de Victoire Moyen</div>
-          </div>
-          
-          <div className="card-glass text-center">
-            <div className="w-10 h-10 bg-r6-primary/20 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <i className="pi pi-star text-r6-primary text-lg"></i>
-            </div>
-            <div className="text-2xl font-bold text-r6-primary mb-1">Clubhouse</div>
-            <div className="text-sm text-r6-light/70">Meilleure Carte</div>
-          </div>
-          
-          <div className="card-glass text-center">
-            <div className="w-10 h-10 bg-r6-accent/20 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <i className="pi pi-target text-r6-accent text-lg"></i>
-            </div>
-            <div className="text-2xl font-bold text-r6-accent mb-1">1.34</div>
-            <div className="text-sm text-r6-light/70">K/D Moyen</div>
-          </div>
-        </div>
-
-        {/* Message de développement */}
-        <div className="card-glass text-center py-12">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-r6-accent/20 text-r6-accent rounded-lg mb-6">
-            <i className="pi pi-clock"></i>
-            <span className="font-medium">En développement</span>
-          </div>
-          <h2 className="text-2xl font-semibold text-r6-light mb-4">
-            Statistiques Détaillées par Carte
-          </h2>
-          <p className="text-r6-light/70 max-w-2xl mx-auto">
-            Les analyses complètes par carte, incluant les positions favorites,
-            les routes d&apos;attaque optimales et les statistiques de défense seront bientôt disponibles.
-          </p>
-        </div>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              Aucune carte trouvée
+            </h3>
+            <p className="text-white/60">
+              Essayez de modifier vos critères de recherche ou de supprimer les filtres.
+            </p>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
