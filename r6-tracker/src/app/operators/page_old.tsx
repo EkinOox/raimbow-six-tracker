@@ -1,6 +1,6 @@
 'use client';
 
-// Page Opérateurs avec système de filtrage avancé
+// Page OpÃ©rateurs avec systÃ¨me de filtrage avancÃ©
 // Encodage: UTF-8
 
 import { useEffect, useState, useMemo } from 'react';
@@ -26,18 +26,18 @@ const healthRanges = [
 const sortOptions = [
   { value: 'name', label: 'Nom (A-Z)' },
   { value: 'name-desc', label: 'Nom (Z-A)' },
-  { value: 'health', label: 'Santé (croissant)' },
-  { value: 'health-desc', label: 'Santé (décroissant)' },
+  { value: 'health', label: 'SantÃ© (croissant)' },
+  { value: 'health-desc', label: 'SantÃ© (dÃ©croissant)' },
   { value: 'speed', label: 'Vitesse (croissant)' },
-  { value: 'speed-desc', label: 'Vitesse (décroissant)' },
-  { value: 'season', label: 'Saison (ancien → récent)' },
-  { value: 'season-desc', label: 'Saison (récent → ancien)' }
+  { value: 'speed-desc', label: 'Vitesse (dÃ©croissant)' },
+  { value: 'season', label: 'Saison (ancien â†’ rÃ©cent)' },
+  { value: 'season-desc', label: 'Saison (rÃ©cent â†’ ancien)' }
 ];
 
 export default function OperatorsPage() {
   const { operators, loading, error, loadOperators, updateFilters, filters } = useOperators();
   
-  // États pour les filtres
+  // Ã‰tats pour les filtres
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('Tous');
   const [selectedSide, setSelectedSide] = useState('Tous');
@@ -48,12 +48,12 @@ export default function OperatorsPage() {
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Charger les opérateurs au montage du composant
+  // Charger les opÃ©rateurs au montage du composant
   useEffect(() => {
     loadOperators();
   }, [loadOperators]);
 
-  // Extraire les unités et pays uniques pour les filtres
+  // Extraire les unitÃ©s et pays uniques pour les filtres
   const { uniqueUnits, uniqueCountries } = useMemo(() => {
     if (!operators) return { uniqueUnits: [], uniqueCountries: [] };
     
@@ -63,7 +63,7 @@ export default function OperatorsPage() {
     return { uniqueUnits: units, uniqueCountries: countries };
   }, [operators]);
 
-  // Filtrage et tri des opérateurs
+  // Filtrage et tri des opÃ©rateurs
   const filteredAndSortedOperators = useMemo(() => {
     if (!operators) return [];
 
@@ -81,12 +81,12 @@ export default function OperatorsPage() {
         }
       }
 
-      // Filtrage par rôle
+      // Filtrage par rÃ´le
       if (selectedRole !== 'Tous' && operator.roles !== selectedRole) {
         return false;
       }
 
-      // Filtrage par côté
+      // Filtrage par cÃ´tÃ©
       if (selectedSide !== 'Tous' && operator.side !== selectedSide) {
         return false;
       }
@@ -96,7 +96,7 @@ export default function OperatorsPage() {
         return false;
       }
 
-      // Filtrage par santé
+      // Filtrage par santÃ©
       const healthRange = healthRanges[selectedHealthRange];
       if (healthRange && healthRange.label !== 'Tous') {
         if (operator.health < healthRange.min || operator.health > healthRange.max) {
@@ -104,7 +104,7 @@ export default function OperatorsPage() {
         }
       }
 
-      // Filtrage par unité
+      // Filtrage par unitÃ©
       if (selectedUnit && operator.unit !== selectedUnit) {
         return false;
       }
@@ -144,7 +144,7 @@ export default function OperatorsPage() {
     return filtered;
   }, [operators, searchTerm, selectedRole, selectedSide, selectedSpeed, selectedHealthRange, selectedUnit, selectedCountry, sortBy]);
 
-  // Fonction pour réinitialiser tous les filtres
+  // Fonction pour rÃ©initialiser tous les filtres
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedRole('Tous');
@@ -156,7 +156,7 @@ export default function OperatorsPage() {
     setSortBy('name');
   };
 
-  // Vérifier si des filtres sont actifs
+  // VÃ©rifier si des filtres sont actifs
   const hasActiveFilters = searchTerm || selectedRole !== 'Tous' || selectedSide !== 'Tous' || 
     selectedSpeed !== 'Tous' || selectedHealthRange !== 0 || selectedUnit || selectedCountry;
       
@@ -195,10 +195,10 @@ export default function OperatorsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-7xl mx-auto"
       >
-        {/* En-tête */}
+        {/* En-tÃªte */}
         <SectionHeader
-          title="Opérateurs"
-          description="Découvrez tous les opérateurs Rainbow Six Siege avec leurs statistiques, biographies et capacités spéciales."
+          title="OpÃ©rateurs"
+          description="DÃ©couvrez tous les opÃ©rateurs Rainbow Six Siege avec leurs statistiques, biographies et capacitÃ©s spÃ©ciales."
           icon="pi-users"
           useLogo={true}
         />
@@ -214,7 +214,7 @@ export default function OperatorsPage() {
             {/* Barre de recherche */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-white/80 mb-2">
-                Rechercher un opérateur
+                Rechercher un opÃ©rateur
               </label>
               <div className="relative">
                 <i className="pi pi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
@@ -228,10 +228,10 @@ export default function OperatorsPage() {
               </div>
             </div>
 
-            {/* Filtre par rôle */}
+            {/* Filtre par rÃ´le */}
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
-                Rôle
+                RÃ´le
               </label>
               <select
                 value={selectedRole}
@@ -246,10 +246,10 @@ export default function OperatorsPage() {
               </select>
             </div>
 
-            {/* Filtre par côté */}
+            {/* Filtre par cÃ´tÃ© */}
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
-                Côté
+                CÃ´tÃ©
               </label>
               <select
                 value={selectedSide}
@@ -268,7 +268,7 @@ export default function OperatorsPage() {
           {/* Statistiques de filtrage */}
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>
-              {loading ? 'Chargement...' : `${operators?.length || 0} opérateur(s) trouvé(s)`}
+              {loading ? 'Chargement...' : `${operators?.length || 0} opÃ©rateur(s) trouvÃ©(s)`}
             </span>
             {Object.keys(filters).length > 0 && (
               <button
@@ -302,12 +302,12 @@ export default function OperatorsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3 text-white/70">
               <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-              <span>Chargement des opérateurs...</span>
+              <span>Chargement des opÃ©rateurs...</span>
             </div>
           </div>
         )}
 
-        {/* Grille des opérateurs */}
+        {/* Grille des opÃ©rateurs */}
         <AnimatePresence mode="wait">
           {!loading && operators && operators.length > 0 && (
             <motion.div
@@ -328,12 +328,12 @@ export default function OperatorsPage() {
                 >
                   <Link href={`/operators/${operator.safename}`}>
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 cursor-pointer">
-                      {/* Icône de l'opérateur */}
+                      {/* IcÃ´ne de l'opÃ©rateur */}
                       <div className="relative w-20 h-20 mx-auto mb-4">
                         {operator.icon_url ? (
                           <Image
                             src={operator.icon_url}
-                            alt={`Icône de ${operator.name}`}
+                            alt={`IcÃ´ne de ${operator.name}`}
                             fill
                             className="object-contain rounded-lg"
                             sizes="80px"
@@ -347,7 +347,7 @@ export default function OperatorsPage() {
                         )}
                       </div>
 
-                      {/* Informations de l'opérateur */}
+                      {/* Informations de l'opÃ©rateur */}
                       <div className="text-center">
                         <h3 className="text-lg font-bold text-white mb-1">
                           {operator.name}
@@ -386,7 +386,7 @@ export default function OperatorsPage() {
           )}
         </AnimatePresence>
 
-        {/* Message aucun résultat */}
+        {/* Message aucun rÃ©sultat */}
         {!loading && operators && operators.length === 0 && !error && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -397,10 +397,10 @@ export default function OperatorsPage() {
               <i className="pi pi-search text-white/50 text-2xl"></i>
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">
-              Aucun opérateur trouvé
+              Aucun opÃ©rateur trouvÃ©
             </h3>
             <p className="text-white/60">
-              Essayez de modifier vos critères de recherche ou de supprimer les filtres.
+              Essayez de modifier vos critÃ¨res de recherche ou de supprimer les filtres.
             </p>
           </motion.div>
         )}

@@ -1,6 +1,6 @@
 'use client';
 
-// Page de détail d'un opérateur simplifiée avec données réelles
+// Page de dÃ©tail d'un opÃ©rateur simplifiÃ©e avec donnÃ©es rÃ©elles
 // Encodage: UTF-8
 
 import { useEffect, useState } from 'react';
@@ -16,7 +16,7 @@ export default function OperatorDetailPage() {
   const { operators, loading, error, loadOperators } = useOperators();
   const [operator, setOperator] = useState<Operator | null>(null);
 
-  // Charger les opérateurs et trouver celui correspondant au safename
+  // Charger les opÃ©rateurs et trouver celui correspondant au safename
   useEffect(() => {
     if (!operators || operators.length === 0) {
       loadOperators();
@@ -59,7 +59,7 @@ export default function OperatorDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
         <div className="flex items-center space-x-3 text-white/70">
           <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-          <span className="text-lg">Chargement de l&apos;opérateur...</span>
+          <span className="text-lg">Chargement de l&apos;opÃ©rateur...</span>
         </div>
       </div>
     );
@@ -78,7 +78,7 @@ export default function OperatorDetailPage() {
             href="/operators"
             className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
           >
-            Retour aux opérateurs
+            Retour aux opÃ©rateurs
           </Link>
         </div>
       </div>
@@ -92,15 +92,15 @@ export default function OperatorDetailPage() {
           <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <i className="pi pi-user text-white/50 text-2xl"></i>
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Opérateur non trouvé</h2>
+          <h2 className="text-xl font-bold text-white mb-2">OpÃ©rateur non trouvÃ©</h2>
           <p className="text-white/60 mb-4">
-            L&apos;opérateur avec l&apos;identifiant &quot;{safename}&quot; n&apos;existe pas.
+            L&apos;opÃ©rateur avec l&apos;identifiant &quot;{safename}&quot; n&apos;existe pas.
           </p>
           <Link
             href="/operators"
             className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
           >
-            Retour aux opérateurs
+            Retour aux opÃ©rateurs
           </Link>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default function OperatorDetailPage() {
             className="inline-flex items-center text-white/70 hover:text-white transition-colors"
           >
             <i className="pi pi-arrow-left mr-2"></i>
-            Retour aux opérateurs
+            Retour aux opÃ©rateurs
           </Link>
         </div>
       </div>
@@ -150,7 +150,7 @@ export default function OperatorDetailPage() {
                 />
                 <div className="absolute top-4 right-4">
                   <div className={`px-3 py-1 rounded-lg text-sm font-medium ${getOperatorTypeBg(operator.side)} ${getOperatorTypeColor(operator.side)}`}>
-                    {operator.side === 'ATK' ? 'Attaquant' : 'Défenseur'}
+                    {operator.side === 'ATK' ? 'Attaquant' : 'DÃ©fenseur'}
                   </div>
                 </div>
               </div>
@@ -188,11 +188,11 @@ export default function OperatorDetailPage() {
               </h3>
               
               <div className="space-y-4">
-                {/* Santé */}
+                {/* SantÃ© */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <i className="pi pi-heart mr-2 text-red-400"></i>
-                    <span className="text-white/70">Santé</span>
+                    <span className="text-white/70">SantÃ©</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="flex space-x-1">
@@ -233,7 +233,7 @@ export default function OperatorDetailPage() {
             </motion.div>
           </div>
 
-          {/* Colonne des détails */}
+          {/* Colonne des dÃ©tails */}
           <div className="lg:col-span-2 space-y-6">
             {/* Informations personnelles */}
             <motion.div
@@ -249,12 +249,12 @@ export default function OperatorDetailPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center justify-between py-2 border-b border-white/10">
-                  <span className="text-white/70">Nom réel</span>
+                  <span className="text-white/70">Nom rÃ©el</span>
                   <span className="text-white font-medium">{operator.realname}</span>
                 </div>
                 
                 <div className="flex items-center justify-between py-2 border-b border-white/10">
-                  <span className="text-white/70">Âge</span>
+                  <span className="text-white/70">Ã‚ge</span>
                   <span className="text-white font-medium">{operator.age} ans</span>
                 </div>
                 
@@ -269,7 +269,7 @@ export default function OperatorDetailPage() {
                 </div>
                 
                 <div className="flex items-center justify-between py-2 border-b border-white/10">
-                  <span className="text-white/70">Unité</span>
+                  <span className="text-white/70">UnitÃ©</span>
                   <span className="text-white font-medium">{operator.unit}</span>
                 </div>
                 
@@ -298,7 +298,7 @@ export default function OperatorDetailPage() {
                   className="flex items-center justify-center p-4 bg-blue-600/20 border border-blue-500/30 rounded-xl text-blue-300 hover:bg-blue-600/30 transition-colors"
                 >
                   <i className="pi pi-chart-line mr-2"></i>
-                  Comparer cet opérateur
+                  Comparer cet opÃ©rateur
                 </Link>
                 
                 <Link
@@ -306,7 +306,7 @@ export default function OperatorDetailPage() {
                   className="flex items-center justify-center p-4 bg-green-600/20 border border-green-500/30 rounded-xl text-green-300 hover:bg-green-600/30 transition-colors"
                 >
                   <i className="pi pi-users mr-2"></i>
-                  Voir tous les opérateurs
+                  Voir tous les opÃ©rateurs
                 </Link>
                 
                 <Link
@@ -327,7 +327,7 @@ export default function OperatorDetailPage() {
               </div>
             </motion.div>
 
-            {/* Note sur les données */}
+            {/* Note sur les donnÃ©es */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -337,10 +337,10 @@ export default function OperatorDetailPage() {
               <div className="flex items-start">
                 <i className="pi pi-info-circle text-yellow-400 mr-3 mt-1"></i>
                 <div>
-                  <h4 className="text-yellow-300 font-semibold mb-1">Données en cours d&apos;enrichissement</h4>
+                  <h4 className="text-yellow-300 font-semibold mb-1">DonnÃ©es en cours d&apos;enrichissement</h4>
                   <p className="text-yellow-200/80 text-sm">
-                    Les informations détaillées sur les capacités spéciales, armes et gadgets seront bientôt disponibles. 
-                    Cette page affiche actuellement les données de base de l&apos;API R6.
+                    Les informations dÃ©taillÃ©es sur les capacitÃ©s spÃ©ciales, armes et gadgets seront bientÃ´t disponibles. 
+                    Cette page affiche actuellement les donnÃ©es de base de l&apos;API R6.
                   </p>
                 </div>
               </div>
