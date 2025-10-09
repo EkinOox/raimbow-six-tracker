@@ -60,7 +60,7 @@ export default function WeaponsPage() {
         {/* En-tête */}
         <SectionHeader
           title="Weapons"
-          description="Explorez l'arsenal complet de Rainbow Six Siege avec les statistiques détaillées de chaque arme."
+          description="Explorez l&apos;arsenal complet de Rainbow Six Siege avec les statistiques détaillées de chaque arme."
           icon="pi-shield"
           useLogo={true}
         />
@@ -93,7 +93,7 @@ export default function WeaponsPage() {
             {/* Filtre par type d'arme */}
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
-                Type d'arme
+                Type d&apos;arme
               </label>
               <select
                 value={selectedType}
