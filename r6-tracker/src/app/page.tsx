@@ -27,10 +27,22 @@ const features = [
     href: '/comparison'
   },
   {
+    icon: 'pi-chart-pie',
+    title: 'Comparaison Avancée',
+    description: 'Analysez les synergies entre opérateurs, armes et cartes avec des données croisées.',
+    href: '/comparison/page_advanced'
+  },
+  {
     icon: 'pi-users',
     title: 'Opérateurs',
     description: 'Découvrez les statistiques par opérateur et optimisez votre gameplay.',
     href: '/operators'
+  },
+  {
+    icon: 'pi-shield',
+    title: 'Armes',
+    description: 'Explorez l&apos;arsenal complet et trouvez les armes qui correspondent à votre style.',
+    href: '/weapons'
   },
   {
     icon: 'pi-map',
