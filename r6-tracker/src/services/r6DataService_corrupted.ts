@@ -16,7 +16,7 @@ function calculateWinRate(wins: number, losses: number): number {
   return Math.round((wins / totalMatches) * 100);
 }
 
-// Fonction pour faire un appel Ã  notre proxy API
+// Fonction pour faire un appel ÃƒÂ  notre proxy API
 async function callR6DataProxy(action: string, params: any = {}): Promise<any> {
   try {
     console.log(`?? Proxy API: ${action}`, params);
@@ -40,22 +40,22 @@ async function callR6DataProxy(action: string, params: any = {}): Promise<any> {
       throw new Error(result.error || 'Erreur inconnue du proxy');
     }
 
-    console.log(`? Proxy API: ${action} rÃ©ussi`);
+    console.log(`? Proxy API: ${action} rÃƒÂ©ussi`);
     return result.data;
 
   } catch (error) {
-    console.error(`? Proxy API: ${action} Ã©chouÃ©:`, error);
+    console.error(`? Proxy API: ${action} ÃƒÂ©chouÃƒÂ©:`, error);
     throw error;
   }
 }
 
-// Fonction pour transformer les donnÃ©es de r6-data.js vers notre format
+// Fonction pour transformer les donnÃƒÂ©es de r6-data.js vers notre format
 function transformR6DataToPlayerData(accountInfo: any, playerStats: any, username: string, platform: Platform): CompletePlayerData {
-  console.log('?? Transformation des donnÃ©es r6-data.js');
-  console.log('?? Account info reÃ§u:', JSON.stringify(accountInfo, null, 2));
-  console.log('?? Player stats reÃ§u:', JSON.stringify(playerStats, null, 2));
+  console.log('?? Transformation des donnÃƒÂ©es r6-data.js');
+  console.log('?? Account info reÃƒÂ§u:', JSON.stringify(accountInfo, null, 2));
+  console.log('?? Player stats reÃƒÂ§u:', JSON.stringify(playerStats, null, 2));
 
-  // Extraction des donnÃ©es du profil (accountInfo)
+  // Extraction des donnÃƒÂ©es du profil (accountInfo)
   const profile = accountInfo?.profile || accountInfo || {};
   const level = profile.level || profile.clearanceLevel || profile.ubisoft_level || 0;
   const xp = profile.xp || profile.totalXp || profile.ubisoft_xp || level * 1500;
@@ -81,7 +81,7 @@ function transformR6DataToPlayerData(accountInfo: any, playerStats: any, usernam
   console.log('?? Casual data:', casual);
   console.log('?? General data:', general);
 
-  // Calcul des stats gÃ©nÃ©rales si pas directement disponibles
+  // Calcul des stats gÃƒÂ©nÃƒÂ©rales si pas directement disponibles
   const totalKills = general.kills || (ranked.kills || 0) + (casual.kills || 0) || 0;
   const totalDeaths = general.deaths || (ranked.deaths || 0) + (casual.deaths || 0) || 0;
   const totalWins = general.wins || (ranked.wins || 0) + (casual.wins || 0) || 0;
@@ -91,7 +91,7 @@ function transformR6DataToPlayerData(accountInfo: any, playerStats: any, usernam
 
   // Gestion du rang et MMR
   const mmr = ranked.mmr || ranked.rating || ranked.skill || 0;
-  const rankName = ranked.rank || ranked.rankName || ranked.tier || 'Non classÃ©';
+  const rankName = ranked.rank || ranked.rankName || ranked.tier || 'Non classÃƒÂ©';
   const maxMmr = ranked.maxMmr || ranked.max_mmr || ranked.seasonBest || mmr;
   const maxRankName = ranked.maxRank || ranked.max_rank || ranked.seasonBestRank || rankName;
   
@@ -154,7 +154,7 @@ export const r6DataAPI = {
     const isValid = username && username.trim().length >= 3 && username.trim().length <= 15;
     return { 
       isValid,
-      error: !isValid ? 'Le nom d\'utilisateur doit contenir entre 3 et 15 caractÃ¨res' : undefined
+      error: !isValid ? 'Le nom d\'utilisateur doit contenir entre 3 et 15 caractÃƒÂ¨res' : undefined
     };
   },
 
@@ -163,13 +163,13 @@ export const r6DataAPI = {
       const serviceStatus = await callR6DataProxy('getServiceStatus');
       return !!serviceStatus;
     } catch (error) {
-      console.warn('?? Test de connexion r6-data.js Ã©chouÃ©:', error);
+      console.warn('?? Test de connexion r6-data.js ÃƒÂ©chouÃƒÂ©:', error);
       return false;
     }
   },
 
   getAccountInfo: async (username: string, platform: Platform): Promise<CompletePlayerData> => {
-    console.log(`?? RÃ©cupÃ©ration des donnÃ©es compte pour ${username} sur ${platform}`);
+    console.log(`?? RÃƒÂ©cupÃƒÂ©ration des donnÃƒÂ©es compte pour ${username} sur ${platform}`);
     
     try {
       const { platformType, platform_families } = convertPlatformForR6Data(platform);
@@ -181,13 +181,13 @@ export const r6DataAPI = {
         platformType: platformType
       });
 
-      console.log('?? DonnÃ©es compte reÃ§ues:', accountInfo);
+      console.log('?? DonnÃƒÂ©es compte reÃƒÂ§ues:', accountInfo);
 
       if (!accountInfo || (typeof accountInfo === 'object' && Object.keys(accountInfo).length === 0)) {
-        throw new Error('Aucune donnÃ©e de compte retournÃ©e par l\'API');
+        throw new Error('Aucune donnÃƒÂ©e de compte retournÃƒÂ©e par l\'API');
       }
 
-      // Essayons aussi de rÃ©cupÃ©rer les stats
+      // Essayons aussi de rÃƒÂ©cupÃƒÂ©rer les stats
       let playerStats = null;
       try {
         console.log(`?? Appel proxy: getPlayerStats({nameOnPlatform: ${username}, platformType: ${platformType}, platform_families: ${platform_families}})`);
@@ -198,9 +198,9 @@ export const r6DataAPI = {
           platform_families: platform_families
         });
         
-        console.log('?? DonnÃ©es stats reÃ§ues:', playerStats);
+        console.log('?? DonnÃƒÂ©es stats reÃƒÂ§ues:', playerStats);
       } catch (statsError) {
-        console.warn('?? Impossible de rÃ©cupÃ©rer les statistiques:', statsError);
+        console.warn('?? Impossible de rÃƒÂ©cupÃƒÂ©rer les statistiques:', statsError);
       }
 
       return transformR6DataToPlayerData(accountInfo, playerStats, username, platform);
@@ -210,23 +210,23 @@ export const r6DataAPI = {
       
       if (error instanceof Error) {
         if (error.message.includes('not found') || error.message.includes('404') || error.message.includes('Player not found')) {
-          throw new Error(`Joueur "${username}" non trouvÃ© sur ${platform}`);
+          throw new Error(`Joueur "${username}" non trouvÃƒÂ© sur ${platform}`);
         }
         if (error.message.includes('timeout') || error.message.includes('AbortError')) {
-          throw new Error('DÃ©lai d\'attente dÃ©passÃ© lors de la rÃ©cupÃ©ration des donnÃ©es');
+          throw new Error('DÃƒÂ©lai d\'attente dÃƒÂ©passÃƒÂ© lors de la rÃƒÂ©cupÃƒÂ©ration des donnÃƒÂ©es');
         }
         if (error.message.includes('rate limit') || error.message.includes('429')) {
-          throw new Error('Trop de requÃªtes, veuillez rÃ©essayer dans quelques instants');
+          throw new Error('Trop de requÃƒÂªtes, veuillez rÃƒÂ©essayer dans quelques instants');
         }
-        throw new Error(`Erreur lors de la rÃ©cupÃ©ration des donnÃ©es: ${error.message}`);
+        throw new Error(`Erreur lors de la rÃƒÂ©cupÃƒÂ©ration des donnÃƒÂ©es: ${error.message}`);
       }
 
-      throw new Error('Erreur inconnue lors de la rÃ©cupÃ©ration des donnÃ©es');
+      throw new Error('Erreur inconnue lors de la rÃƒÂ©cupÃƒÂ©ration des donnÃƒÂ©es');
     }
   },
 
   getPlayerStats: async (username: string, platform: Platform): Promise<CompletePlayerData> => {
-    console.log(`?? RÃ©cupÃ©ration des stats pour ${username} sur ${platform}`);
+    console.log(`?? RÃƒÂ©cupÃƒÂ©ration des stats pour ${username} sur ${platform}`);
     
     try {
       const { platformType, platform_families } = convertPlatformForR6Data(platform);
@@ -239,13 +239,13 @@ export const r6DataAPI = {
         platform_families: platform_families
       });
 
-      console.log('?? DonnÃ©es stats reÃ§ues:', playerStats);
+      console.log('?? DonnÃƒÂ©es stats reÃƒÂ§ues:', playerStats);
 
       if (!playerStats || (typeof playerStats === 'object' && Object.keys(playerStats).length === 0)) {
-        throw new Error('Aucune statistique retournÃ©e par l\'API');
+        throw new Error('Aucune statistique retournÃƒÂ©e par l\'API');
       }
 
-      // Essayons aussi de rÃ©cupÃ©rer les infos du compte
+      // Essayons aussi de rÃƒÂ©cupÃƒÂ©rer les infos du compte
       let accountInfo = null;
       try {
         console.log(`?? Appel proxy: getAccountInfo({nameOnPlatform: ${username}, platformType: ${platformType}})`);
@@ -255,9 +255,9 @@ export const r6DataAPI = {
           platformType: platformType
         });
         
-        console.log('?? DonnÃ©es compte reÃ§ues:', accountInfo);
+        console.log('?? DonnÃƒÂ©es compte reÃƒÂ§ues:', accountInfo);
       } catch (accountError) {
-        console.warn('?? Impossible de rÃ©cupÃ©rer les informations du compte:', accountError);
+        console.warn('?? Impossible de rÃƒÂ©cupÃƒÂ©rer les informations du compte:', accountError);
       }
 
       return transformR6DataToPlayerData(accountInfo, playerStats, username, platform);
@@ -267,23 +267,23 @@ export const r6DataAPI = {
       
       if (error instanceof Error) {
         if (error.message.includes('not found') || error.message.includes('404') || error.message.includes('Player not found')) {
-          throw new Error(`Statistiques pour "${username}" non trouvÃ©es sur ${platform}`);
+          throw new Error(`Statistiques pour "${username}" non trouvÃƒÂ©es sur ${platform}`);
         }
         if (error.message.includes('timeout') || error.message.includes('AbortError')) {
-          throw new Error('DÃ©lai d\'attente dÃ©passÃ© lors de la rÃ©cupÃ©ration des statistiques');
+          throw new Error('DÃƒÂ©lai d\'attente dÃƒÂ©passÃƒÂ© lors de la rÃƒÂ©cupÃƒÂ©ration des statistiques');
         }
         if (error.message.includes('rate limit') || error.message.includes('429')) {
-          throw new Error('Trop de requÃªtes, veuillez rÃ©essayer dans quelques instants');
+          throw new Error('Trop de requÃƒÂªtes, veuillez rÃƒÂ©essayer dans quelques instants');
         }
-        throw new Error(`Erreur lors de la rÃ©cupÃ©ration des statistiques: ${error.message}`);
+        throw new Error(`Erreur lors de la rÃƒÂ©cupÃƒÂ©ration des statistiques: ${error.message}`);
       }
 
-      throw new Error('Erreur inconnue lors de la rÃ©cupÃ©ration des statistiques');
+      throw new Error('Erreur inconnue lors de la rÃƒÂ©cupÃƒÂ©ration des statistiques');
     }
   }
 };
 
-// API pour rÃ©cupÃ©rer les opÃ©rateurs directement (conservÃ©e pour compatibilitÃ©)
+// API pour rÃƒÂ©cupÃƒÂ©rer les opÃƒÂ©rateurs directement (conservÃƒÂ©e pour compatibilitÃƒÂ©)
 export const getOperators = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/operators`, {
@@ -298,12 +298,12 @@ export const getOperators = async () => {
     const data = await response.json();
     return data.operators || data;
   } catch (error) {
-    console.error('? Erreur lors de la rÃ©cupÃ©ration des opÃ©rateurs:', error);
+    console.error('? Erreur lors de la rÃƒÂ©cupÃƒÂ©ration des opÃƒÂ©rateurs:', error);
     throw error;
   }
 };
 
-// API pour rÃ©cupÃ©rer les cartes directement (conservÃ©e pour compatibilitÃ©)
+// API pour rÃƒÂ©cupÃƒÂ©rer les cartes directement (conservÃƒÂ©e pour compatibilitÃƒÂ©)
 export const getMaps = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/maps`, {
@@ -318,12 +318,12 @@ export const getMaps = async () => {
     const data = await response.json();
     return data.maps || data;
   } catch (error) {
-    console.error('? Erreur lors de la rÃ©cupÃ©ration des cartes:', error);
+    console.error('? Erreur lors de la rÃƒÂ©cupÃƒÂ©ration des cartes:', error);
     throw error;
   }
 };
 
-// API pour rÃ©cupÃ©rer les armes directement (conservÃ©e pour compatibilitÃ©)
+// API pour rÃƒÂ©cupÃƒÂ©rer les armes directement (conservÃƒÂ©e pour compatibilitÃƒÂ©)
 export const getWeapons = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/weapons`, {
@@ -337,7 +337,7 @@ export const getWeapons = async () => {
 
     return await response.json();
   } catch (error) {
-    console.error('? Erreur lors de la rÃ©cupÃ©ration des armes:', error);
+    console.error('? Erreur lors de la rÃƒÂ©cupÃƒÂ©ration des armes:', error);
     throw error;
   }
 };
