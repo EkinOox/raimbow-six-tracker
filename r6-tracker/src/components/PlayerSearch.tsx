@@ -432,7 +432,7 @@ export default function PlayerSearch() {
                       <strong>💡 Conseil:</strong> Cliquez sur un profil pour voir ses statistiques sur cette plateforme.
                     </div>
                     <div className="text-xs text-blue-400 mt-1">
-                      • <strong>PC/Steam/Uplay</strong> : Statistiques PC
+                      • <strong>PC/Uplay</strong> : Statistiques PC
                       • <strong>PlayStation/Xbox</strong> : Statistiques Console (toutes consoles confondues)
                     </div>
                   </div>

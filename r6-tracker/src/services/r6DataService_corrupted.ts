@@ -141,7 +141,6 @@ function transformR6DataToPlayerData(accountInfo: any, playerStats: any, usernam
 function convertPlatformForR6Data(platform: Platform): { platformType: string; platform_families: string } {
   const platformMap: Record<Platform, { platformType: string; platform_families: string }> = {
     'uplay': { platformType: 'uplay', platform_families: 'pc' },
-    'steam': { platformType: 'uplay', platform_families: 'pc' }, // Steam utilise aussi uplay
     'playstation': { platformType: 'psn', platform_families: 'console' },
     'xbox': { platformType: 'xbl', platform_families: 'console' },
     'pc': { platformType: 'uplay', platform_families: 'pc' }

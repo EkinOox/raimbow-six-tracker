@@ -16,10 +16,10 @@ export async function GET(request: NextRequest) {
   }
 
   // Validation de la plateforme
-  const validPlatforms: Platform[] = ['pc', 'uplay', 'steam', 'playstation', 'xbox'];
+  const validPlatforms: Platform[] = ['pc', 'uplay', 'playstation', 'xbox'];
   if (!validPlatforms.includes(platform)) {
     return NextResponse.json(
-      { error: 'Invalid platform. Use: pc, uplay, steam, playstation, xbox' },
+      { error: 'Invalid platform. Use: pc, uplay, playstation, xbox' },
       { status: 400 }
     );
   }

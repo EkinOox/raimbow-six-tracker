@@ -1,5 +1,5 @@
 // Types pour Rainbow Six Siege avec r6-data.js
-export type Platform = 'pc' | 'uplay' | 'steam' | 'playstation' | 'xbox';
+export type Platform = 'pc' | 'uplay' | 'playstation' | 'xbox';
 
 // Types pour les données brutes de r6-data.js
 export interface R6DataAccountInfo {

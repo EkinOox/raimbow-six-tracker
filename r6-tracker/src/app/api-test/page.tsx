@@ -192,7 +192,6 @@ export default function ApiTestPage() {
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="uplay">PC (Ubisoft Connect)</option>
-                <option value="steam">PC (Steam)</option>
                 <option value="playstation">PlayStation</option>
                 <option value="xbox">Xbox</option>
               </select>
