@@ -11,14 +11,14 @@ import SectionHeader from '../../components/ui/SectionHeader';
 import { useMaps } from '../../hooks/useR6Data';
 import { MapFilters, Map } from '../../types/r6-api-types';
 
-const playlists = ['Tous', 'Ranked', 'Casual', 'Unranked'];
+const playlists = ['Tous', 'Ranked', 'Standard', 'Team Deathmatch', 'Quick Match'];
 
 export default function MapsPage() {
   const { maps, loading, error, loadMaps, updateFilters, filters, loadMapImage } = useMaps();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState('Tous');
 
-  // Charger les maps au montage du composant
+    // Charger les maps au montage du composant
   useEffect(() => {
     loadMaps();
   }, [loadMaps]);
@@ -169,17 +169,17 @@ export default function MapsPage() {
             >
               {maps.map((map: Map, index: number) => (
                 <motion.div
-                  key={map.name}
+                  key={`${map.name}-${index}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ scale: 1.02 }}
                   className="group"
                 >
-                  <Link href={`/maps/${map.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer">
+                 
+                    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer h-full flex flex-col">
                       {/* Image de la carte */}
-                      <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600">
+                      <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex-shrink-0">
                         <Image
                           src={map.imageUrl || '/images/logo/r6-logo.png'}
                           alt={`Carte ${map.name}`}
@@ -200,28 +200,30 @@ export default function MapsPage() {
                       </div>
 
                       {/* Informations de la carte */}
-                      <div className="p-6">
-                        <h3 className="text-xl font-bold text-white mb-2">
-                          {map.name}
-                        </h3>
-                        
-                        <div className="flex items-center space-x-2 text-white/60 mb-3">
-                          <i className="pi pi-map-marker text-sm"></i>
-                          <span className="text-sm">{map.location}</span>
+                      <div className="p-6 flex-1 flex flex-col justify-between min-h-[220px]">
+                        <div>
+                          <h3 className="text-xl font-bold text-white mb-2">
+                            {map.name}
+                          </h3>
+                          
+                          <div className="flex items-center space-x-2 text-white/60 mb-3">
+                            <i className="pi pi-map-marker text-sm"></i>
+                            <span className="text-sm">{map.location}</span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {map.playlists.split(', ').map((playlist: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full"
+                              >
+                                {playlist.trim()}
+                              </span>
+                            ))}
+                          </div>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {map.playlists.split(', ').map((playlist: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full"
-                            >
-                              {playlist.trim()}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="flex items-center justify-between text-sm text-white/50">
+                        <div className="flex items-center justify-between text-sm text-white/50 mt-auto">
                           <span>
                             Sortie: {new Date(map.releaseDate).toLocaleDateString('fr-FR')}
                           </span>
@@ -233,7 +235,6 @@ export default function MapsPage() {
                         </div>
                       </div>
                     </div>
-                  </Link>
                 </motion.div>
               ))}
             </motion.div>

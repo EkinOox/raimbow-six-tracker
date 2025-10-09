@@ -11,8 +11,8 @@ export interface Operator {
   speed: string;
   unit: string;
   country_code: string;
-  roles: 'Attacker' | 'Defender';
-  side: 'ATK' | 'DEF';
+  roles: string[];
+  side: 'attacker' | 'defender';
   icon_url: string;
 }
 

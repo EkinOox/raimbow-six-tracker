@@ -12,14 +12,13 @@ import { useOperators } from '../../hooks/useR6Data';
 import { Operator } from '../../types/r6-api-types';
 
 // Options de filtrage
-const roles = ['Tous', 'Attacker', 'Defender'];
 const sides = ['Tous', 'ATK', 'DEF'];
 const speeds = ['Tous', '1', '2', '3'];
 const healthRanges = [
-  { label: 'Tous', min: 0, max: 200 },
-  { label: '1-2 Armor (100-110 HP)', min: 100, max: 110 },
-  { label: '2-2 Balanced (110-125 HP)', min: 110, max: 125 },
-  { label: '3-1 Heavy (125+ HP)', min: 125, max: 200 }
+  { label: 'Tous', min: 0, max: 3 },
+  { label: '1 (Léger)', min: 1, max: 1 },
+  { label: '2 (Moyen)', min: 2, max: 2 },
+  { label: '3 (Lourd)', min: 3, max: 3 }
 ];
 
 // Options de tri
@@ -55,8 +54,8 @@ export default function OperatorsPage() {
   
   // États pour les filtres
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState('Tous');
   const [selectedSide, setSelectedSide] = useState('Tous');
+  const [selectedRole, setSelectedRole] = useState('Tous');
   const [selectedSpeed, setSelectedSpeed] = useState('Tous');
   const [selectedHealthRange, setSelectedHealthRange] = useState(0);
   const [selectedUnit, setSelectedUnit] = useState('');
@@ -69,14 +68,28 @@ export default function OperatorsPage() {
     loadOperators();
   }, [loadOperators]);
 
-  // Extraire les unités et pays uniques pour les filtres
-  const { uniqueUnits, uniqueCountries } = useMemo(() => {
-    if (!operators) return { uniqueUnits: [], uniqueCountries: [] };
+  // Extraire les unités, pays et rôles uniques pour les filtres
+  const { uniqueUnits, uniqueCountries, uniqueRoles } = useMemo(() => {
+    if (!operators) return { uniqueUnits: [], uniqueCountries: [], uniqueRoles: [] };
     
     const units = [...new Set(operators.map((op: Operator) => op.unit))].filter(Boolean).sort() as string[];
     const countries = [...new Set(operators.map((op: Operator) => op.birthplace))].filter(Boolean).sort() as string[];
     
-    return { uniqueUnits: units, uniqueCountries: countries };
+    // Extraire tous les rôles uniques à partir des arrays de rôles
+    const allRoles = new Set<string>();
+    operators.forEach((op: Operator) => {
+      if (Array.isArray(op.roles)) {
+        op.roles.forEach(role => {
+          if (role && typeof role === 'string') {
+            allRoles.add(role);
+          }
+        });
+      }
+    });
+    
+    const roles = ['Tous', ...Array.from(allRoles).sort()];
+    
+    return { uniqueUnits: units, uniqueCountries: countries, uniqueRoles: roles };
   }, [operators]);
 
   // Filtrage et tri des opérateurs
@@ -97,14 +110,21 @@ export default function OperatorsPage() {
         }
       }
 
-      // Filtrage par rôle
-      if (selectedRole !== 'Tous' && operator.roles !== selectedRole) {
-        return false;
+      // Filtrage par côté (ATK/DEF)
+      if (selectedSide !== 'Tous') {
+        const operatorSideCode = operator.side === 'attacker' ? 'ATK' : 'DEF';
+        if (operatorSideCode !== selectedSide) {
+          return false;
+        }
       }
 
-      // Filtrage par côté
-      if (selectedSide !== 'Tous' && operator.side !== selectedSide) {
-        return false;
+      // Filtrage par rôle spécialisé
+      if (selectedRole !== 'Tous') {
+        // Vérifier si l'opérateur a ce rôle dans son array de rôles
+        const hasRole = Array.isArray(operator.roles) && operator.roles.includes(selectedRole);
+        if (!hasRole) {
+          return false;
+        }
       }
 
       // Filtrage par vitesse
@@ -112,10 +132,11 @@ export default function OperatorsPage() {
         return false;
       }
 
-      // Filtrage par santé
+      // Filtrage par santé (armor level)
       const healthRange = healthRanges[selectedHealthRange];
       if (healthRange && healthRange.label !== 'Tous') {
-        if (operator.health < healthRange.min || operator.health > healthRange.max) {
+        const operatorHealth = typeof operator.health === 'string' ? parseInt(operator.health) : operator.health;
+        if (isNaN(operatorHealth) || operatorHealth < healthRange.min || operatorHealth > healthRange.max) {
           return false;
         }
       }
@@ -158,13 +179,13 @@ export default function OperatorsPage() {
     });
 
     return filtered;
-  }, [operators, searchTerm, selectedRole, selectedSide, selectedSpeed, selectedHealthRange, selectedUnit, selectedCountry, sortBy]);
+  }, [operators, searchTerm, selectedSide, selectedRole, selectedSpeed, selectedHealthRange, selectedUnit, selectedCountry, sortBy]);
 
   // Fonction pour réinitialiser tous les filtres
   const resetFilters = () => {
     setSearchTerm('');
-    setSelectedRole('Tous');
     setSelectedSide('Tous');
+    setSelectedRole('Tous');
     setSelectedSpeed('Tous');
     setSelectedHealthRange(0);
     setSelectedUnit('');
@@ -173,7 +194,7 @@ export default function OperatorsPage() {
   };
 
   // Vérifier si des filtres sont actifs
-  const hasActiveFilters = searchTerm || selectedRole !== 'Tous' || selectedSide !== 'Tous' || 
+  const hasActiveFilters = searchTerm || selectedSide !== 'Tous' || selectedRole !== 'Tous' || 
     selectedSpeed !== 'Tous' || selectedHealthRange !== 0 || selectedUnit || selectedCountry;
 
   // Fonctions utilitaires pour les couleurs
@@ -272,25 +293,6 @@ export default function OperatorsPage() {
 
           {/* Filtres avancés */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-4">
-            {/* Rôle */}
-            <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                <i className="pi pi-user mr-2"></i>
-                Rôle
-              </label>
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {roles.map(role => (
-                  <option key={role} value={role} className="bg-slate-800">
-                    {role}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             {/* Côté */}
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
@@ -305,6 +307,25 @@ export default function OperatorsPage() {
                 {sides.map(side => (
                   <option key={side} value={side} className="bg-slate-800">
                     {side === 'ATK' ? 'Attaque' : side === 'DEF' ? 'Défense' : side}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Rôle */}
+            <div>
+              <label className="block text-sm font-medium text-white/80 mb-2">
+                <i className="pi pi-user mr-2"></i>
+                Rôle
+              </label>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {uniqueRoles.map(role => (
+                  <option key={role} value={role} className="bg-slate-800">
+                    {role}
                   </option>
                 ))}
               </select>
@@ -333,7 +354,7 @@ export default function OperatorsPage() {
             <div>
               <label className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-heart mr-2"></i>
-                Santé
+                Armure
               </label>
               <select
                 value={selectedHealthRange}

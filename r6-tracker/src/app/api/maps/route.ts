@@ -60,6 +60,17 @@ export async function GET(request: NextRequest) {
 
     let maps = await response.json();
 
+    // Déduplication des cartes par nom (garder seulement la première occurrence)
+    const seenNames = new Set<string>();
+    maps = maps.filter((map: { name: string }) => {
+      if (seenNames.has(map.name)) {
+        console.log(`⚠️ Carte dupliquée supprimée: ${map.name}`);
+        return false;
+      }
+      seenNames.add(map.name);
+      return true;
+    });
+
     // Application des filtres côté serveur
     if (name) {
       maps = maps.filter((map: { name: string }) => 
@@ -68,9 +79,11 @@ export async function GET(request: NextRequest) {
     }
 
     if (playlists) {
-      maps = maps.filter((map: { playlists: string }) => 
-        map.playlists?.toLowerCase().includes(playlists.toLowerCase())
-      );
+      maps = maps.filter((map: { name: string; playlists: string }) => {
+        const mapPlaylists = map.playlists?.toLowerCase() || '';
+        const searchPlaylist = playlists.toLowerCase();
+        return mapPlaylists.includes(searchPlaylist);
+      });
     }
 
     const result = {
