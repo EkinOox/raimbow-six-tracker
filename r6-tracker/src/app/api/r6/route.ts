@@ -59,8 +59,8 @@ export async function GET(request: NextRequest) {
     
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
-    // Erreurs spécifiques
-    if (errorMessage.includes('Joueur non trouvé')) {
+    // Erreurs spÃ©cifiques
+    if (errorMessage.includes('Joueur non trouvÃ©')) {
       return NextResponse.json(
         { 
           success: false,

@@ -60,6 +60,7 @@ export default function PlayerSearch() {
       }
 
       console.log('✅ Données de joueur:', result.data);
+      
       console.log('🔍 DEBUG - Structure des données reçues:');
       console.log('  - Info:', result.data?.info);
       console.log('  - Stats:', result.data?.stats);
