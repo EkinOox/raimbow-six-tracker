@@ -82,7 +82,7 @@ export default function OperatorsPage() {
       }
 
       // Filtrage par rôle
-      if (selectedRole !== 'Tous' && operator.roles !== selectedRole) {
+      if (selectedRole !== 'Tous' && !operator.roles.includes(selectedRole)) {
         return false;
       }
 

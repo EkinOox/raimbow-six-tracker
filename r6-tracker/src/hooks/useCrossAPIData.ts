@@ -170,7 +170,9 @@ export const useCrossAPIData = () => {
     
     return enrichedOperators.filter(operator => {
       if (activeFilters.operatorSide && activeFilters.operatorSide !== 'ALL') {
-        if (operator.side !== activeFilters.operatorSide) return false;
+        // Convertir les valeurs pour correspondre aux nouvelles données de l'API
+        const operatorSideCode = operator.side === 'attacker' ? 'ATK' : 'DEF';
+        if (operatorSideCode !== activeFilters.operatorSide) return false;
       }
       
       if (activeFilters.weaponType && activeFilters.weaponType !== 'all') {
