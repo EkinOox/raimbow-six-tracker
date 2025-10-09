@@ -1,83 +1,76 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Operator, OperatorFilters, ApiState } from '../../types/r6-api-types';
+import { Operator, OperatorFilters } from '../../types/r6-api-types';
 
-// Durée de cache en millisecondes (30 minutes)
-const CACHE_DURATION = 30 * 60 * 1000;
+interface OperatorsState {
+  operators: Operator[];
+  loading: boolean;
+  error: string | null;
+  filters: OperatorFilters;
+  lastFetch: number | null;
+  cacheExpiry: number;
+}
 
-// État initial
-const initialState: ApiState<Operator> = {
-  data: [],
+const initialState: OperatorsState = {
+  operators: [],
   loading: false,
   error: null,
+  filters: {},
   lastFetch: null,
-  filters: {}
+  cacheExpiry: 30 * 60 * 1000, // 30 minutes en millisecondes
 };
 
-// Thunk pour récupérer les opérateurs depuis l'API
+// Thunk pour récupérer les opérateurs via notre API serveur
 export const fetchOperators = createAsyncThunk(
   'operators/fetchOperators',
-  async (filters: OperatorFilters = {}, { getState, rejectWithValue }) => {
-    try {
-      const state = getState() as { operators: ApiState<Operator> };
-      const now = Date.now();
-      
-      // Vérifier si les données sont encore valides (cache)
-      if (
-        state.operators.data.length > 0 && 
-        state.operators.lastFetch && 
-        (now - state.operators.lastFetch) < CACHE_DURATION &&
-        JSON.stringify(state.operators.filters) === JSON.stringify(filters)
-      ) {
-        console.log('🎯 Utilisation du cache pour les opérateurs');
-        return { data: state.operators.data, fromCache: true };
+  async (filters: OperatorFilters = {}) => {
+    console.log('🌐 Récupération des opérateurs depuis notre API serveur...');
+    
+    // Construire l'URL avec les filtres
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString());
       }
-
-      console.log('🌐 Récupération des opérateurs depuis l\'API...');
-      
-      // Construire l'URL avec les filtres
-      const params = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          params.append(key, value.toString());
-        }
-      });
-      
-      const url = `https://r6-api.vercel.app/api/operators${params.toString() ? `?${params.toString()}` : ''}`;
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`Erreur ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      
-      console.log(`✅ ${data.length} opérateurs récupérés`);
-      
-      return { data, fromCache: false };
-    } catch (error) {
-      console.error('❌ Erreur lors de la récupération des opérateurs:', error);
-      return rejectWithValue(error instanceof Error ? error.message : 'Erreur inconnue');
+    });
+    
+    const url = `/api/operators${params.toString() ? `?${params.toString()}` : ''}`;
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur ${response.status}: ${response.statusText}`);
     }
+    
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    
+    console.log(`✅ ${data.operators?.length || 0} opérateurs récupérés`);
+    
+    return {
+      operators: data.operators || [],
+      count: data.count || 0,
+      cached: data.cached || false
+    };
   }
 );
 
-// Slice Redux
 const operatorsSlice = createSlice({
   name: 'operators',
   initialState,
   reducers: {
     setFilters: (state, action: PayloadAction<OperatorFilters>) => {
-      state.filters = action.payload as Record<string, unknown>;
+      state.filters = action.payload;
     },
     clearOperators: (state) => {
-      state.data = [];
+      state.operators = [];
       state.lastFetch = null;
-      state.error = null;
     },
     clearError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -87,16 +80,17 @@ const operatorsSlice = createSlice({
       })
       .addCase(fetchOperators.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload.data;
-        state.lastFetch = action.payload.fromCache ? state.lastFetch : Date.now();
-        state.filters = action.meta.arg as Record<string, unknown>;
+        state.operators = action.payload.operators;
+        state.lastFetch = Date.now();
         state.error = null;
+        console.log('✅ Opérateurs chargés dans Redux:', action.payload.operators.length);
       })
       .addCase(fetchOperators.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.error.message || 'Erreur lors du chargement des opérateurs';
+        console.error('❌ Erreur chargement opérateurs:', action.error.message);
       });
-  }
+  },
 });
 
 export const { setFilters, clearOperators, clearError } = operatorsSlice.actions;

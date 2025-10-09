@@ -6,6 +6,7 @@
 import { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import Navbar from '../Navbar/Navbar';
 
 interface LayoutProps {
@@ -97,9 +98,9 @@ export default function Layout({ children, className = '' }: LayoutProps) {
                   </a>
                 </li>
                 <li>
-                  <a href="/operators" className="text-r6-light/70 hover:text-r6-primary transition-colors">
+                  <Link href="/operators" className="text-r6-light/70 hover:text-r6-primary transition-colors">
                     Opérateurs
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <a href="/maps" className="text-r6-light/70 hover:text-r6-primary transition-colors">

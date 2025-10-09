@@ -1,5 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Interfaces pour typer les réponses de l'API R6 Tracker
+interface R6TrackerStat {
+  displayValue?: string;
+  metadata?: {
+    tierName?: string;
+    iconUrl?: string;
+  };
+}
+
+interface R6TrackerSegment {
+  type: string;
+  stats: Record<string, R6TrackerStat>;
+}
+
+interface R6TrackerProfile {
+  platformInfo?: {
+    platformUserHandle?: string;
+    platformSlug?: string;
+  };
+  avatarUrl?: string;
+  segments?: R6TrackerSegment[];
+}
+
+interface R6TrackerResponse {
+  data: R6TrackerProfile;
+}
+
 // Service alternatif utilisant directement l'API R6 Tracker
 async function fetchR6TrackerData(platform: string, username: string, type: string) {
   const baseUrl = 'https://r6.tracker.network/api/v1/standard/profile';
@@ -28,7 +55,7 @@ async function fetchR6TrackerData(platform: string, username: string, type: stri
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
-    const data = await response.json();
+    const data: R6TrackerResponse = await response.json();
     console.log('R6 Tracker Response:', data);
     
     return transformR6TrackerData(data, type);
@@ -38,26 +65,21 @@ async function fetchR6TrackerData(platform: string, username: string, type: stri
   }
 }
 
-function transformR6TrackerData(data: unknown, type: string) {
-  if (!data || typeof data !== 'object' || !('data' in data)) {
-    throw new Error('Invalid response from R6 Tracker');
-  }
-  
-  const responseData = data as { data: any };
-  const profile = responseData.data;
+function transformR6TrackerData(data: R6TrackerResponse, type: string) {
+  const profile = data.data;
   const segments = profile.segments || [];
   
   // Trouver le segment approprié
-  let segment;
+  let segment: R6TrackerSegment | undefined;
   switch (type) {
     case 'general':
-      segment = segments.find((s: { type: string }) => s.type === 'overview');
+      segment = segments.find((s) => s.type === 'overview');
       break;
     case 'ranked':
-      segment = segments.find((s: { type: string }) => s.type === 'ranked');
+      segment = segments.find((s) => s.type === 'ranked');
       break;
     case 'casual':
-      segment = segments.find((s: { type: string }) => s.type === 'casual');
+      segment = segments.find((s) => s.type === 'casual');
       break;
     default:
       segment = segments[0];

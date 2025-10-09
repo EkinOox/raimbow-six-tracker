@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { r6DataService } from '../../../services/r6DataService';
+import { r6DataAPI } from '../../../services/r6DataService';
 import { Platform } from '../../../types/r6-data-types';
 
 export async function GET(request: NextRequest) {
@@ -31,13 +31,13 @@ export async function GET(request: NextRequest) {
     
     switch (type) {
       case 'info':
-        data = await r6DataService.getPlayerInfo(username, platform);
+        data = await r6DataAPI.getAccountInfo(username, platform);
         break;
       case 'stats':
-        data = await r6DataService.getPlayerStats(username, platform);
+        data = await r6DataAPI.getPlayerStats(username, platform);
         break;
       case 'complete':
-        data = await r6DataService.getCompletePlayerData(username, platform);
+        data = await r6DataAPI.getPlayerStats(username, platform);
         break;
       default:
         return NextResponse.json(
@@ -97,14 +97,13 @@ export async function GET(request: NextRequest) {
 export async function POST() {
   try {
     // Test simple avec les informations d'un joueur
-    const testData = await r6DataService.getPlayerInfo('Pengu', 'uplay');
+    await r6DataAPI.getAccountInfo('Pengu', 'uplay');
     
     return NextResponse.json({
       success: true,
       message: 'R6 Data API connection successful',
-      testUser: testData.username,
-      testLevel: testData.level,
-      timestamp: new Date().toISOString()
+      testUser: 'Pengu',
+      testLevel: 'Unknown'
     });
     
   } catch (error) {

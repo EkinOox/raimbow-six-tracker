@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, platform, action } = body;
+    const { username, platform } = body;
 
     if (!username || !platform) {
       return NextResponse.json(

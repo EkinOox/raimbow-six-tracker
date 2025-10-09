@@ -60,7 +60,7 @@ export default function WeaponsPage() {
         {/* En-tête */}
         <SectionHeader
           title="Weapons"
-          description="Explorez l'arsenal complet de Rainbow Six Siege avec les statistiques détaillées de chaque arme."
+          description="Explorez l&apos;arsenal complet de Rainbow Six Siege avec les statistiques détaillées de chaque arme."
           icon="pi-shield"
           useLogo={true}
         />

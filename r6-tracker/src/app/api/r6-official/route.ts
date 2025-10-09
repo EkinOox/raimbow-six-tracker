@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { R6GeneralStats, R6RankedStats, R6CasualStats } from '@/types/r6Api';
+// import { R6GeneralStats, R6RankedStats, R6CasualStats } from '@/types/r6Api';
 
 // Interface pour l'API R6 (côté serveur seulement)
 interface R6ApiServerService {
   validateUsername(username: string, platform: string): Promise<boolean>;
-  getGeneralStats(username: string, platform: string): Promise<R6GeneralStats>;
-  getRankedStats(username: string, platform: string): Promise<R6RankedStats>;
-  getCasualStats(username: string, platform: string): Promise<R6CasualStats>;
+  getGeneralStats(username: string, platform: string): Promise<unknown>;
+  getRankedStats(username: string, platform: string): Promise<unknown>;
+  getCasualStats(username: string, platform: string): Promise<unknown>;
 }
 
 // Désactivation temporaire du type any pour l'API externe
@@ -68,7 +68,7 @@ class R6ApiServer implements R6ApiServerService {
     }
   }
 
-  async getGeneralStats(username: string, platform: string): Promise<R6GeneralStats> {
+  async getGeneralStats(username: string, platform: string): Promise<unknown> {
     try {
       if (!this.r6api) await this.initializeAPI();
       if (!this.r6api) throw new Error('API R6 non disponible');
@@ -106,7 +106,7 @@ class R6ApiServer implements R6ApiServerService {
     }
   }
 
-  async getRankedStats(username: string, platform: string): Promise<R6RankedStats> {
+  async getRankedStats(username: string, platform: string): Promise<unknown> {
     try {
       if (!this.r6api) await this.initializeAPI();
       if (!this.r6api) throw new Error('API R6 non disponible');
@@ -158,7 +158,7 @@ class R6ApiServer implements R6ApiServerService {
     }
   }
 
-  async getCasualStats(username: string, platform: string): Promise<R6CasualStats> {
+  async getCasualStats(username: string, platform: string): Promise<unknown> {
     try {
       if (!this.r6api) await this.initializeAPI();
       if (!this.r6api) throw new Error('API R6 non disponible');

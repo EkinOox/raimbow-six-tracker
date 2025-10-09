@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:quick": "node quick-test.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",

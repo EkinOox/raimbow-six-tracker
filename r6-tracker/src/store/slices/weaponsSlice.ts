@@ -1,83 +1,76 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Weapon, WeaponFilters, ApiState } from '../../types/r6-api-types';
+import { Weapon, WeaponFilters } from '../../types/r6-api-types';
 
-// Durée de cache en millisecondes (30 minutes)
-const CACHE_DURATION = 30 * 60 * 1000;
+interface WeaponsState {
+  weapons: Weapon[];
+  loading: boolean;
+  error: string | null;
+  filters: WeaponFilters;
+  lastFetch: number | null;
+  cacheExpiry: number;
+}
 
-// État initial
-const initialState: ApiState<Weapon> = {
-  data: [],
+const initialState: WeaponsState = {
+  weapons: [],
   loading: false,
   error: null,
+  filters: {},
   lastFetch: null,
-  filters: {}
+  cacheExpiry: 30 * 60 * 1000, // 30 minutes en millisecondes
 };
 
-// Thunk pour récupérer les armes depuis l'API
+// Thunk pour récupérer les weapons via notre API serveur
 export const fetchWeapons = createAsyncThunk(
   'weapons/fetchWeapons',
-  async (filters: WeaponFilters = {}, { getState, rejectWithValue }) => {
-    try {
-      const state = getState() as { weapons: ApiState<Weapon> };
-      const now = Date.now();
-      
-      // Vérifier si les données sont encore valides (cache)
-      if (
-        state.weapons.data.length > 0 && 
-        state.weapons.lastFetch && 
-        (now - state.weapons.lastFetch) < CACHE_DURATION &&
-        JSON.stringify(state.weapons.filters) === JSON.stringify(filters)
-      ) {
-        console.log('🎯 Utilisation du cache pour les armes');
-        return { data: state.weapons.data, fromCache: true };
+  async (filters: WeaponFilters = {}) => {
+    console.log('🌐 Récupération des weapons depuis notre API serveur...');
+    
+    // Construire l'URL avec les filtres
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString());
       }
-
-      console.log('🌐 Récupération des armes depuis l\'API...');
-      
-      // Construire l'URL avec les filtres
-      const params = new URLSearchParams();
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          params.append(key, value.toString());
-        }
-      });
-      
-      const url = `https://r6-api.vercel.app/api/weapons${params.toString() ? `?${params.toString()}` : ''}`;
-      
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`Erreur ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      
-      console.log(`✅ ${data.length} armes récupérées`);
-      
-      return { data, fromCache: false };
-    } catch (error) {
-      console.error('❌ Erreur lors de la récupération des armes:', error);
-      return rejectWithValue(error instanceof Error ? error.message : 'Erreur inconnue');
+    });
+    
+    const url = `/api/weapons${params.toString() ? `?${params.toString()}` : ''}`;
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur ${response.status}: ${response.statusText}`);
     }
+    
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    
+    console.log(`✅ ${data.weapons?.length || 0} weapons récupérées`);
+    
+    return {
+      weapons: data.weapons || [],
+      count: data.count || 0,
+      cached: data.cached || false
+    };
   }
 );
 
-// Slice Redux
 const weaponsSlice = createSlice({
   name: 'weapons',
   initialState,
   reducers: {
     setFilters: (state, action: PayloadAction<WeaponFilters>) => {
-      state.filters = action.payload as Record<string, unknown>;
+      state.filters = action.payload;
     },
     clearWeapons: (state) => {
-      state.data = [];
+      state.weapons = [];
       state.lastFetch = null;
-      state.error = null;
     },
     clearError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -87,16 +80,17 @@ const weaponsSlice = createSlice({
       })
       .addCase(fetchWeapons.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload.data;
-        state.lastFetch = action.payload.fromCache ? state.lastFetch : Date.now();
-        state.filters = action.meta.arg as Record<string, unknown>;
+        state.weapons = action.payload.weapons;
+        state.lastFetch = Date.now();
         state.error = null;
+        console.log('✅ Weapons chargées dans Redux:', action.payload.weapons.length);
       })
       .addCase(fetchWeapons.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.error.message || 'Erreur lors du chargement des weapons';
+        console.error('❌ Erreur chargement weapons:', action.error.message);
       });
-  }
+  },
 });
 
 export const { setFilters, clearWeapons, clearError } = weaponsSlice.actions;

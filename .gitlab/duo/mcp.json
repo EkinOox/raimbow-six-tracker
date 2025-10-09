@@ -1,0 +1,34 @@
+{
+  // GitLab Duo MCP (Model Context Protocol) Configuration
+  // This file configures MCP servers that extend GitLab Duo's capabilities.
+  // MCP servers provide additional tools and resources that can be used during conversations.
+  //
+  // GitLab MCP Documentation: https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_clients/
+  // MCP Prerequisites: https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_clients/#prerequisites
+
+  // Uncomment and modify the example below to add your first MCP server:
+
+  "mcpServers": {
+    // Example: Local server
+    // "enterprise-data-v2": {
+    //       "type": "stdio",
+    //       "command": "node",
+    //       "args": ["src/server.js"],
+    //       "cwd": "</path/to/your-mcp-server>"
+    // }
+    //
+    // Example: Remote server
+    // "aws-knowledge": {
+    //   "type": sse,
+    //   "command": "npx",
+    //   "args": [
+    //     "mcp-remote",
+    //     "https://knowledge-mcp.global.api.aws"
+    //   ]
+    // }
+    //
+
+    // Add your MCP server configurations here
+  },
+  "files.encoding":"utf-8"
+}
