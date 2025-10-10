@@ -94,19 +94,45 @@ export default function TeamComparison() {
   const inputRef1 = useRef<HTMLInputElement>(null);
   const inputRef2 = useRef<HTMLInputElement>(null);
 
-  // Fonction pour obtenir l'image du rang
-  const getRankImage = (rankId: number): string => {
-    const rankMappings: { [key: number]: string } = {
-      0: '/images/ranks/copper-5.webp', 1: '/images/ranks/copper-4.webp', 2: '/images/ranks/copper-3.webp', 3: '/images/ranks/copper-2.webp', 4: '/images/ranks/copper-1.webp',
-      5: '/images/ranks/bronze-5.webp', 6: '/images/ranks/bronze-4.webp', 7: '/images/ranks/bronze-3.webp', 8: '/images/ranks/bronze-2.webp', 9: '/images/ranks/bronze-1.webp',
-      10: '/images/ranks/silver-5.webp', 11: '/images/ranks/silver-4.webp', 12: '/images/ranks/silver-3.webp', 13: '/images/ranks/silver-2.webp', 14: '/images/ranks/silver-1.webp',
-      15: '/images/ranks/gold-5.webp', 16: '/images/ranks/gold-4.webp', 17: '/images/ranks/gold-3.webp', 18: '/images/ranks/gold-2.webp', 19: '/images/ranks/gold-1.webp',
-      20: '/images/ranks/platinum-5.png', 21: '/images/ranks/platinum-4.png', 22: '/images/ranks/platinum-3.png', 23: '/images/ranks/platinum-2.png', 24: '/images/ranks/platinum-1.png',
-      25: '/images/ranks/emerald-5.avif', 26: '/images/ranks/emerald-4.avif', 27: '/images/ranks/emerald-3.avif', 28: '/images/ranks/emerald-2.avif', 29: '/images/ranks/emerald-1.png',
-      30: '/images/ranks/diamond-5.webp', 31: '/images/ranks/diamond-4.webp', 32: '/images/ranks/diamond-3.webp', 33: '/images/ranks/diamond-2.webp', 34: '/images/ranks/diamond-1.webp',
-      35: '/images/ranks/champion.webp'
-    };
-    return rankMappings[rankId] || '/images/ranks/copper-5.webp';
+  // Fonction pour obtenir l'image du rang (même logique que PlayerComparison)
+  const getRankImage = (rank: number): string => {
+    if (rank === 0) return '/images/ranks/copper-5.webp';
+    if (rank === 1) return '/images/ranks/copper-5.webp';
+    if (rank === 2) return '/images/ranks/copper-4.webp';
+    if (rank === 3) return '/images/ranks/copper-3.webp';
+    if (rank === 4) return '/images/ranks/copper-2.webp';
+    if (rank === 5) return '/images/ranks/copper-1.webp';
+    if (rank === 6) return '/images/ranks/bronze-5.webp';
+    if (rank === 7) return '/images/ranks/bronze-4.webp';
+    if (rank === 8) return '/images/ranks/bronze-3.webp';
+    if (rank === 9) return '/images/ranks/bronze-2.webp';
+    if (rank === 10) return '/images/ranks/bronze-1.webp';
+    if (rank === 11) return '/images/ranks/silver-5.webp';
+    if (rank === 12) return '/images/ranks/silver-4.webp';
+    if (rank === 13) return '/images/ranks/silver-3.webp';
+    if (rank === 14) return '/images/ranks/silver-2.webp';
+    if (rank === 15) return '/images/ranks/silver-1.webp';
+    if (rank === 16) return '/images/ranks/gold-5.webp';
+    if (rank === 17) return '/images/ranks/gold-4.webp';
+    if (rank === 18) return '/images/ranks/gold-3.webp';
+    if (rank === 19) return '/images/ranks/gold-2.webp';
+    if (rank === 20) return '/images/ranks/gold-1.webp';
+    if (rank === 21) return '/images/ranks/platinum-5.png';
+    if (rank === 22) return '/images/ranks/platinum-4.png';
+    if (rank === 23) return '/images/ranks/platinum-3.png';
+    if (rank === 24) return '/images/ranks/platinum-2.png';
+    if (rank === 25) return '/images/ranks/platinum-1.png';
+    if (rank === 26) return '/images/ranks/emerald-5.avif';
+    if (rank === 27) return '/images/ranks/emerald-4.avif';
+    if (rank === 28) return '/images/ranks/emerald-3.avif';
+    if (rank === 29) return '/images/ranks/emerald-2.avif';
+    if (rank === 30) return '/images/ranks/emerald-1.png';
+    if (rank === 31) return '/images/ranks/diamond-5.webp';
+    if (rank === 32) return '/images/ranks/diamond-4.webp';
+    if (rank === 33) return '/images/ranks/diamond-3.webp';
+    if (rank === 34) return '/images/ranks/diamond-2.webp';
+    if (rank === 35) return '/images/ranks/diamond-1.webp';
+    return '/images/ranks/champion.webp';
   };
 
   // Recherche de joueur pour équipe 1 (mémorisée)
@@ -365,8 +391,11 @@ export default function TeamComparison() {
     const avgLevel = team.players.reduce((sum, p) => sum + p.accountInfo.level, 0) / team.players.length;
     const totalExp = team.players.reduce((sum, p) => sum + p.accountInfo.level, 0);
 
-    // Score d'équipe (pondéré)
-    const teamScore = (avgMMR * 0.4) + (avgKD * 1000 * 0.3) + (avgWinRate * 5000 * 0.2) + (avgLevel * 0.07) + (team.players.length * 500 * 0.03);
+    // Score d'équipe avec coefficients optimisés pour des prédictions réalistes
+    const teamSkillScore = (avgMMR * 0.5) + (avgKD * 1200 * 0.3) + (avgWinRate * 4000 * 0.15) + (avgLevel * 0.05);
+    
+    // Puissance d'équipe = score de skill d'équipe × nombre de joueurs
+    const teamScore = teamSkillScore * team.players.length;
 
     return {
       averageMMR: avgMMR,
@@ -389,25 +418,15 @@ export default function TeamComparison() {
       return;
     }
 
-    // Facteur de déséquilibre des effectifs
-    const sizeRatio = Math.min(stats1.playerCount, stats2.playerCount) / Math.max(stats1.playerCount, stats2.playerCount);
-    const sizePenalty = Math.pow(sizeRatio, 0.5); // Pénalité pour l'équipe plus nombreuse
+    // Calcul de probabilité pure basée sur les forces d'équipe réelles
+    const teamPower1 = stats1.teamScore;
+    const teamPower2 = stats2.teamScore;
+    
+    // Probabilité de victoire basée sur la puissance relative (sans pénalité artificielle)
+    const totalPower = teamPower1 + teamPower2;
+    const team1WinProb = totalPower > 0 ? (teamPower1 / totalPower) * 100 : 50;
 
-    // Ajustement des scores selon la taille des équipes
-    let adjustedScore1 = stats1.teamScore;
-    let adjustedScore2 = stats2.teamScore;
-
-    if (stats1.playerCount > stats2.playerCount) {
-      adjustedScore1 *= sizePenalty;
-    } else if (stats2.playerCount > stats1.playerCount) {
-      adjustedScore2 *= sizePenalty;
-    }
-
-    // Calcul du pourcentage de victoire
-    const totalScore = adjustedScore1 + adjustedScore2;
-    const team1WinProb = totalScore > 0 ? (adjustedScore1 / totalScore) * 100 : 50;
-
-    const winner = adjustedScore1 > adjustedScore2 ? 'team1' : adjustedScore2 > adjustedScore1 ? 'team2' : 'tie';
+    const winner = teamPower1 > teamPower2 ? 'team1' : teamPower2 > teamPower1 ? 'team2' : 'tie';
 
     const comparisonResult: TeamComparison = {
       team1Stats: stats1,
@@ -750,14 +769,14 @@ export default function TeamComparison() {
                 Comment fonctionne la prédiction d&apos;équipe ?
               </h3>
               <div className="text-sm text-purple-200 space-y-1">
-                <p>• <strong>MMR Moyen (40%)</strong> : Moyenne des rangs de l&apos;équipe</p>
-                <p>• <strong>K/D Moyen (30%)</strong> : Capacité de frag collective</p>
-                <p>• <strong>Win Rate Moyen (20%)</strong> : Capacité à gagner en équipe</p>
-                <p>• <strong>Équilibrage des effectifs</strong> : Pénalité pour l&apos;équipe plus nombreuse</p>
-                <p>• <strong>Expérience (10%)</strong> : Niveau et expérience combinée</p>
+                <p>• <strong>MMR (50%)</strong> : Principal indicateur de skill</p>
+                <p>• <strong>K/D Ratio (30%)</strong> : Capacité de frag et survie</p>
+                <p>• <strong>Win Rate (15%)</strong> : Capacité à gagner les matchs</p>
+                <p>• <strong>Expérience (5%)</strong> : Niveau et expérience de jeu</p>
+                <p>• <strong>Effectifs</strong> : Puissance totale = skill moyen × nb joueurs</p>
               </div>
               <div className="mt-3 text-xs text-purple-300">
-                💡 L&apos;algorithme s&apos;adapte automatiquement aux effectifs déséquilibrés (1v2, 3v5, etc.)
+                💡 Calcul réaliste : Plus l&apos;équipe a de skill ET de joueurs, plus elle gagne !
               </div>
             </div>
           </div>
