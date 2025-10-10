@@ -50,12 +50,6 @@ const features = [
     description: 'Analysez vos performances sur chaque carte du jeu.',
     href: '/maps'
   },
-  {
-    icon: 'pi-cog',
-    title: 'API Test',
-    description: 'Testez la connectivité et explorez les fonctionnalités de l&apos;API.',
-    href: '/api-test'
-  }
 ];
 
 const containerVariants = {

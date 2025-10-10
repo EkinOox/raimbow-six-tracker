@@ -22,7 +22,6 @@ const navItems: NavItem[] = [
   { label: 'Comparaison', href: '/comparison', icon: 'pi-arrow-right-arrow-left' },
   { label: 'Opérateurs', href: '/operators', icon: 'pi-users' },
   { label: 'Cartes', href: '/maps', icon: 'pi-map' },
-  { label: 'API Test', href: '/api-test', icon: 'pi-cog' },
 ];
 
 export default function Navbar() {

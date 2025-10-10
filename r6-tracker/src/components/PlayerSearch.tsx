@@ -128,6 +128,47 @@ export default function PlayerSearch() {
     return 'text-purple-400'; // Champion
   };
 
+  // Fonction pour obtenir l'image du rang
+  const getRankImage = (rank: number): string => {
+    if (rank === 0) return '/images/ranks/copper-5.webp'; // Non classé -> Copper 5 par défaut
+    if (rank === 1) return '/images/ranks/copper-5.webp';
+    if (rank === 2) return '/images/ranks/copper-4.webp';
+    if (rank === 3) return '/images/ranks/copper-3.webp';
+    if (rank === 4) return '/images/ranks/copper-2.webp';
+    if (rank === 5) return '/images/ranks/copper-1.webp';
+    if (rank === 6) return '/images/ranks/bronze-5.webp';
+    if (rank === 7) return '/images/ranks/bronze-4.webp';
+    if (rank === 8) return '/images/ranks/bronze-3.webp';
+    if (rank === 9) return '/images/ranks/bronze-2.webp';
+    if (rank === 10) return '/images/ranks/bronze-1.webp';
+    if (rank === 11) return '/images/ranks/silver-5.webp';
+    if (rank === 12) return '/images/ranks/silver-4.webp';
+    if (rank === 13) return '/images/ranks/silver-3.webp';
+    if (rank === 14) return '/images/ranks/silver-2.webp';
+    if (rank === 15) return '/images/ranks/silver-1.webp';
+    if (rank === 16) return '/images/ranks/gold-5.webp';
+    if (rank === 17) return '/images/ranks/gold-4.webp';
+    if (rank === 18) return '/images/ranks/gold-3.webp';
+    if (rank === 19) return '/images/ranks/gold-2.webp';
+    if (rank === 20) return '/images/ranks/gold-1.webp';
+    if (rank === 21) return '/images/ranks/platinum-5.png';
+    if (rank === 22) return '/images/ranks/platinum-4.png';
+    if (rank === 23) return '/images/ranks/platinum-3.png';
+    if (rank === 24) return '/images/ranks/platinum-2.png';
+    if (rank === 25) return '/images/ranks/platinum-1.png';
+    if (rank === 26) return '/images/ranks/emerald-5.avif';
+    if (rank === 27) return '/images/ranks/emerald-4.avif';
+    if (rank === 28) return '/images/ranks/emerald-3.avif';
+    if (rank === 29) return '/images/ranks/emerald-2.avif';
+    if (rank === 30) return '/images/ranks/emerald-1.png';
+    if (rank === 31) return '/images/ranks/diamond-5.webp';
+    if (rank === 32) return '/images/ranks/diamond-4.webp';
+    if (rank === 33) return '/images/ranks/diamond-3.webp';
+    if (rank === 34) return '/images/ranks/diamond-2.webp';
+    if (rank === 35) return '/images/ranks/diamond-1.webp';
+    return '/images/ranks/champion.webp'; // Champion pour 36+
+  };
+
   // Fonction pour calculer le K/D ratio
   const calculateKD = (kills: number, deaths: number): string => {
     if (deaths === 0) return kills.toString();
@@ -204,17 +245,19 @@ export default function PlayerSearch() {
       const accountResult = await accountResponse.json();
       
       if (!accountResult.success) {
-        // Pour PlayStation/Xbox, essayer automatiquement de chercher via les profils liés
+        // Pour PlayStation/Xbox, expliquer le problème d'API et donner une solution
         if (selectedPlatform === 'playstation' || selectedPlatform === 'xbox') {
           console.log(`🔄 Recherche directe ${selectedPlatform} échouée, suggestion de recherche via Uplay...`);
-          throw new Error(`❌ Recherche directe impossible sur ${selectedPlatform.toUpperCase()}.
+          throw new Error(`🚧 L'API ${selectedPlatform.toUpperCase()} d'Ubisoft est actuellement indisponible (erreur serveur).
 
-🎯 Solution recommandée :
-1. Trouvez le nom Uplay/PC du joueur
-2. Recherchez avec ce nom sur "PC (Uplay)"
-3. Vous verrez alors tous ses profils liés (PlayStation, Xbox, etc.)
+🔄 Solution de contournement :
+1. Recherchez avec le nom Uplay/PC du joueur  
+2. Vous verrez tous ses profils liés (PlayStation, Xbox, etc.)
+3. Cliquez sur le profil ${selectedPlatform.toUpperCase()} pour voir ses stats console
 
-💡 Astuce : Les comptes Ubisoft Connect lient automatiquement toutes les plateformes.`);
+💡 Cette méthode fonctionne même quand l'API ${selectedPlatform.toUpperCase()} directe a des problèmes.
+
+📖 Exemple : Pour "mofofranco3" (PSN), recherchez "SPYDEUR-MAN" (Uplay)`);
         }
         throw new Error(accountResult.error || 'Erreur lors de la récupération des informations du compte');
       }
@@ -362,9 +405,27 @@ export default function PlayerSearch() {
                   </div>
                 )}
                 <div className="flex-1">
-                  <h2 className="text-3xl font-bold text-white mb-1">
-                    {username}
-                  </h2>
+                  <div className="flex items-center space-x-3 mb-1">
+                    <h2 className="text-3xl font-bold text-white">
+                      {username}
+                    </h2>
+                    {/* Badge de rang rapide */}
+                    {rankedData && rankedData.profile.rank > 0 && (
+                      <div className="flex items-center space-x-2 bg-white/10 rounded-lg px-3 py-1 border border-white/20">
+                        <Image 
+                          src={getRankImage(rankedData.profile.rank)}
+                          alt={getRankName(rankedData.profile.rank)}
+                          width={24}
+                          height={24}
+                          className="w-6 h-6 object-contain"
+                          unoptimized={true}
+                        />
+                        <span className={`text-sm font-medium ${getRankColor(rankedData.profile.rank)}`}>
+                          {getRankName(rankedData.profile.rank)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center space-x-4 text-white/70">
                     <span className="flex items-center">
                       <i className="pi pi-star mr-2 text-yellow-400"></i>
@@ -471,22 +532,42 @@ export default function PlayerSearch() {
                     {/* Informations de rang */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                       <div className="text-center p-4 bg-white/5 rounded-xl">
-                        <div className="text-sm text-white/60 mb-2">Rang Actuel</div>
-                        <div className={`text-2xl font-bold mb-1 ${getRankColor(rankedData.profile.rank)}`}>
-                          {getRankName(rankedData.profile.rank)}
-                        </div>
-                        <div className="text-blue-400">
-                          {rankedData.profile.rank_points} MMR
+                        <div className="text-sm text-white/60 mb-3">Rang Actuel</div>
+                        <div className="flex flex-col items-center space-y-3">
+                          <Image 
+                            src={getRankImage(rankedData.profile.rank)}
+                            alt={getRankName(rankedData.profile.rank)}
+                            width={64}
+                            height={64}
+                            className="w-16 h-16 object-contain drop-shadow-lg hover:scale-105 transition-transform duration-200"
+                            unoptimized={true}
+                          />
+                          <div className={`text-xl font-bold ${getRankColor(rankedData.profile.rank)}`}>
+                            {getRankName(rankedData.profile.rank)}
+                          </div>
+                          <div className="text-blue-400 text-sm">
+                            {rankedData.profile.rank_points} MMR
+                          </div>
                         </div>
                       </div>
                       
                       <div className="text-center p-4 bg-white/5 rounded-xl">
-                        <div className="text-sm text-white/60 mb-2">Meilleur Rang</div>
-                        <div className={`text-2xl font-bold mb-1 ${getRankColor(rankedData.profile.max_rank)}`}>
-                          {getRankName(rankedData.profile.max_rank)}
-                        </div>
-                        <div className="text-blue-400">
-                          {rankedData.profile.max_rank_points} MMR
+                        <div className="text-sm text-white/60 mb-3">Meilleur Rang</div>
+                        <div className="flex flex-col items-center space-y-3">
+                          <Image 
+                            src={getRankImage(rankedData.profile.max_rank)}
+                            alt={getRankName(rankedData.profile.max_rank)}
+                            width={64}
+                            height={64}
+                            className="w-16 h-16 object-contain drop-shadow-lg hover:scale-105 transition-transform duration-200"
+                            unoptimized={true}
+                          />
+                          <div className={`text-xl font-bold ${getRankColor(rankedData.profile.max_rank)}`}>
+                            {getRankName(rankedData.profile.max_rank)}
+                          </div>
+                          <div className="text-blue-400 text-sm">
+                            {rankedData.profile.max_rank_points} MMR
+                          </div>
                         </div>
                       </div>
                     </div>

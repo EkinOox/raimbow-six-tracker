@@ -61,6 +61,9 @@ export async function POST(request: NextRequest) {
         });
         break;
         
+      // Note: getSeasonStats n'existe pas dans r6-data.js
+    // Utiliser getPlayerStats pour les statistiques de la saison actuelle
+        
       default:
         return NextResponse.json(
           { error: `Action non supportée: ${action}` },

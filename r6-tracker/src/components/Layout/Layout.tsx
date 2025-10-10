@@ -107,11 +107,6 @@ export default function Layout({ children, className = '' }: LayoutProps) {
                     Cartes
                   </a>
                 </li>
-                <li>
-                  <a href="/api-test" className="text-r6-light/70 hover:text-r6-primary transition-colors">
-                    API Test
-                  </a>
-                </li>
               </ul>
             </div>
 
