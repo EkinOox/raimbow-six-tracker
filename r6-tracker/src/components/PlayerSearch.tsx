@@ -323,7 +323,7 @@ export default function PlayerSearch() {
           <div className="space-y-4">
             <div>
               <label className="block text-white font-medium mb-2">Plateforme</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {platforms.map((platform) => (
                   <button
                     key={platform.value}

@@ -1,230 +1,210 @@
 'use client';
 
+'use client';
+
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import SectionHeader from '../../components/ui/SectionHeader';
-import { useCrossAPIData, EnrichedOperator, SynergyData } from '../../hooks/useCrossAPIData';
+import PlayerComparison from '../../components/PlayerComparison';
+import TeamComparison from '../../components/TeamComparison';
 
-export default function AdvancedComparisonPage() {
-  const {
-    operators,
-    weapons,
-    maps,
-    loading,
-    error,
-    analyzeSynergies
-  } = useCrossAPIData();
+type ComparisonMode = 'select' | 'player' | 'team';
 
-  const [selectedOperators, setSelectedOperators] = useState<EnrichedOperator[]>([]);
-  const [comparisonMode, setComparisonMode] = useState<'operators' | 'weapons' | 'maps'>('operators');
-  const [showSynergies, setShowSynergies] = useState(false);
-  const [synergiesData, setSynergiesData] = useState<SynergyData | null>(null);
+export default function ComparisonPage() {
+  const [mode, setMode] = useState<ComparisonMode>('select');
 
-  const handleOperatorSelect = (operator: EnrichedOperator) => {
-    if (selectedOperators.find(op => op.name === operator.name)) {
-      setSelectedOperators(prev => prev.filter(op => op.name !== operator.name));
-    } else if (selectedOperators.length < 4) {
-      setSelectedOperators(prev => [...prev, operator]);
-    }
-  };
-
-  const handleAnalyzeSynergies = () => {
-    if (selectedOperators.length > 0) {
-      const data = analyzeSynergies(selectedOperators);
-      setSynergiesData(data);
-      setShowSynergies(true);
-    }
-  };
-
-  if (loading) {
+  if (mode === 'player') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Chargement des données avancées...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-red-400 text-xl">Erreur: {error}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-8">
-      <div className="max-w-7xl mx-auto">
-        <SectionHeader 
-          title="Comparaison Avancée R6"
-          description="Analyse croisée des opérateurs, armes et cartes avec synergies intelligentes"
-        />
-
-        {/* Modes de comparaison */}
-        <div className="flex justify-center space-x-4 mb-8">
-          {(['operators', 'weapons', 'maps'] as const).map((mode) => (
-            <button
-              key={mode}
-              onClick={() => setComparisonMode(mode)}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                comparisonMode === mode
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white/10 text-white/70 hover:bg-white/20'
-              }`}
-            >
-              {mode === 'operators' ? 'Opérateurs' : mode === 'weapons' ? 'Armes' : 'Cartes'}
-            </button>
-          ))}
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20">
+        {/* Bouton retour */}
+        <div className="p-6">
+          <button
+            onClick={() => setMode('select')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+          >
+            <i className="pi pi-arrow-left"></i>
+            Retour au menu
+          </button>
         </div>
+        <PlayerComparison />
+      </div>
+    );
+  }
 
-        {/* Section de sélection d'opérateurs */}
-        {comparisonMode === 'operators' && (
-          <motion.div 
-            className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+  if (mode === 'team') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20">
+        {/* Bouton retour */}
+        <div className="p-6">
+          <button
+            onClick={() => setMode('select')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
           >
-            <h3 className="text-xl font-bold text-white mb-4">
-              Sélection d&apos;opérateurs ({selectedOperators.length}/4)
-            </h3>
+            <i className="pi pi-arrow-left"></i>
+            Retour au menu
+          </button>
+        </div>
+        <TeamComparison />
+      </div>
+    );
+  }
+
+  // Mode sélection avec design liquid glass
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20 relative overflow-hidden">
+      {/* Effets de fond liquid glass */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+      </div>
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+        <div className="max-w-6xl mx-auto text-center">
+          {/* En-tête principal */}
+          <div className="mb-16">
+            <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Mode Comparaison
+            </h1>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              Choisissez votre mode de comparaison pour analyser les performances 
+              et prédire les résultats de vos matchs Rainbow Six Siege
+            </p>
+          </div>
+
+          {/* Cartes de sélection */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
-              {operators.slice(0, 24).map((operator) => (
-                <motion.div
-                  key={operator.name}
-                  className={`relative p-4 rounded-xl cursor-pointer transition-all duration-200 ${
-                    selectedOperators.find(op => op.name === operator.name)
-                      ? 'bg-blue-600 border-2 border-blue-400'
-                      : 'bg-white/10 border border-white/20 hover:bg-white/20'
-                  }`}
-                  onClick={() => handleOperatorSelect(operator)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-2 rounded-lg bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">{operator.name.charAt(0)}</span>
-                    </div>
-                    <h4 className="text-white font-medium text-sm mb-1">{operator.name}</h4>
-                    <p className="text-white/60 text-xs">{operator.side}</p>
-                  </div>
-                  
-                  {selectedOperators.find(op => op.name === operator.name) && (
-                    <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">✓</span>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-
-            {selectedOperators.length > 0 && (
-              <div className="flex justify-center">
-                <button
-                  onClick={handleAnalyzeSynergies}
-                  className="px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium rounded-xl hover:from-green-700 hover:to-blue-700 transition-all duration-200"
-                >
-                  Analyser les Synergies ({selectedOperators.length} opérateurs)
-                </button>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {/* Résultats des synergies */}
-        {showSynergies && synergiesData && (
-          <motion.div 
-            className="space-y-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {/* Meilleures combinaisons Opérateur-Arme */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-white mb-4">🎯 Meilleures Combinaisons Opérateur-Arme</h3>
-              <div className="space-y-3">
-                {synergiesData.bestOperatorWeaponCombos?.slice(0, 5).map((combo, index) => (
-                  <div key={index} className="flex items-center space-x-4 p-3 bg-white/5 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-blue-400 font-medium">{combo.operator.name}</span>
-                        <span className="text-white/60">+</span>
-                        <span className="text-green-400 font-medium">{combo.weapon.name}</span>
-                      </div>
-                      <p className="text-white/60 text-sm">{combo.reasons.join(', ')}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-yellow-400 font-bold">{Math.round(combo.synergyScore)}</div>
-                      <div className="text-white/60 text-xs">Score</div>
+            {/* Comparaison de Joueurs */}
+            <div 
+              onClick={() => setMode('player')}
+              className="group cursor-pointer transform hover:scale-105 transition-all duration-500"
+            >
+              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 hover:border-blue-400/50 hover:bg-white/20 transition-all duration-500 overflow-hidden">
+                {/* Effet liquid glass */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  {/* Icône principale */}
+                  <div className="mb-6">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <i className="pi pi-user text-3xl text-white"></i>
                     </div>
                   </div>
-                ))}
+
+                  {/* Titre */}
+                  <h2 className="text-3xl font-bold text-white mb-4 group-hover:text-blue-300 transition-colors duration-300">
+                    Comparaison 1v1
+                  </h2>
+
+                  {/* Description */}
+                  <p className="text-gray-300 text-lg mb-6 leading-relaxed">
+                    Comparez deux joueurs en duel et découvrez qui a le plus de chances de gagner 
+                    grâce à notre algorithme basé sur le MMR, K/D et statistiques ranked.
+                  </p>
+
+                  {/* Fonctionnalités */}
+                  <div className="space-y-3 text-left">
+                    <div className="flex items-center gap-3 text-gray-200">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                      <span>Analyse MMR & K/D détaillée</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-gray-200">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                      <span>Prédiction avec pourcentage</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-gray-200">
+                      <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
+                      <span>Multi-plateforme (PC, PS, Xbox)</span>
+                    </div>
+                  </div>
+
+                  {/* Bouton d'action */}
+                  <div className="mt-8">
+                    <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">
+                      Commencer le duel
+                      <i className="pi pi-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Icônes décoratives */}
+                <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+                  <i className="pi pi-bolt text-4xl text-blue-400"></i>
+                </div>
               </div>
             </div>
 
-            {/* Recommandations de cartes */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-white mb-4">🗺️ Recommandations de Cartes</h3>
-              <div className="space-y-3">
-                {synergiesData.mapOperatorRecommendations?.slice(0, 5).map((rec, index) => (
-                  <div key={index} className="p-3 bg-white/5 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-purple-400 font-medium">{rec.map.name}</span>
-                      <span className="text-white/60 text-sm">{rec.reasoning}</span>
-                    </div>
-                    <div className="flex space-x-4 text-sm">
-                      <div>
-                        <span className="text-red-400">Attaque: </span>
-                        <span className="text-white">{rec.recommendedAttackers.map(op => op.name).join(', ')}</span>
-                      </div>
-                      <div>
-                        <span className="text-blue-400">Défense: </span>
-                        <span className="text-white">{rec.recommendedDefenders.map(op => op.name).join(', ')}</span>
-                      </div>
+            {/* Comparaison d'Équipes */}
+            <div 
+              onClick={() => setMode('team')}
+              className="group cursor-pointer transform hover:scale-105 transition-all duration-500"
+            >
+              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 hover:border-red-400/50 hover:bg-white/20 transition-all duration-500 overflow-hidden">
+                {/* Effet liquid glass */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-transparent to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative z-10">
+                  {/* Icône principale */}
+                  <div className="mb-6">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <i className="pi pi-users text-3xl text-white"></i>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Efficacité des armes */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-white mb-4">⚔️ Efficacité des Armes</h3>
-              <div className="space-y-3">
-                {synergiesData.weaponEffectiveness?.slice(0, 5).map((weapon, index) => (
-                  <div key={index} className="flex items-center space-x-4 p-3 bg-white/5 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-green-400 font-medium">{weapon.weapon.name}</span>
-                        <span className="text-white/60">({weapon.weapon.type})</span>
-                      </div>
-                      <div className="text-white/60 text-sm">
-                        Meilleurs opérateurs: {weapon.bestOperators.join(', ')}
-                      </div>
+                  {/* Titre */}
+                  <h2 className="text-3xl font-bold text-white mb-4 group-hover:text-red-300 transition-colors duration-300">
+                    Comparaison d&apos;Équipes
+                  </h2>
+
+                  {/* Description */}
+                  <p className="text-gray-300 text-lg mb-6 leading-relaxed">
+                    Analysez et comparez deux équipes complètes. Supports les matchs déséquilibrés 
+                    (1v2, 3v5, etc.) avec équilibrage automatique.
+                  </p>
+
+                  {/* Fonctionnalités */}
+                  <div className="space-y-3 text-left">
+                    <div className="flex items-center gap-3 text-gray-200">
+                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                      <span>Équipes de 1 à 5 joueurs</span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-yellow-400 font-bold">{weapon.effectivenessScore}</div>
-                      <div className="text-white/60 text-xs">Efficacité</div>
+                    <div className="flex items-center gap-3 text-gray-200">
+                      <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                      <span>Équilibrage automatique</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-gray-200">
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <span>Statistiques moyennes d&apos;équipe</span>
                     </div>
                   </div>
-                ))}
+
+                  {/* Bouton d'action */}
+                  <div className="mt-8">
+                    <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 rounded-xl text-white font-semibold group-hover:from-red-500 group-hover:to-orange-500 transition-all duration-300">
+                      Organiser le match
+                      <i className="pi pi-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Icônes décoratives */}
+                <div className="absolute top-4 right-4 opacity-20 group-hover:opacity-40 transition-opacity duration-300">
+                  <i className="pi pi-shield text-4xl text-red-400"></i>
+                </div>
               </div>
             </div>
-          </motion.div>
-        )}
-
-        {/* Statistiques globales */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-blue-400 mb-2">{operators.length}</div>
-            <div className="text-white/70">Opérateurs Analysés</div>
           </div>
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-green-400 mb-2">{weapons.length}</div>
-            <div className="text-white/70">Armes Référencées</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-purple-400 mb-2">{maps.length}</div>
-            <div className="text-white/70">Cartes Étudiées</div>
+
+          {/* Footer informatif */}
+          <div className="mt-16 max-w-4xl mx-auto">
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
+              <div className="flex items-center justify-center gap-4 text-gray-300">
+                <i className="pi pi-info-circle text-xl text-blue-400"></i>
+                <p className="text-center">
+                  Les prédictions sont basées sur les données officielles Rainbow Six Siege : 
+                  <span className="text-white font-semibold"> MMR, K/D ratio, Win rate et expérience</span>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
