@@ -112,7 +112,8 @@ function SimplePlayerSearch({ onPlayerFound }: SimplePlayerSearchProps) {
       const accountResult = await accountResponse.json();
       
       if (!accountResult.success) {
-        throw new Error(`Joueur non trouvé sur ${selectedPlatform.toUpperCase()}`);
+        const serverMsg = accountResult.error || `Joueur non trouvé sur ${selectedPlatform.toUpperCase()}`;
+        throw new Error(serverMsg);
       }
 
       // Récupération des statistiques ranked
@@ -132,7 +133,8 @@ function SimplePlayerSearch({ onPlayerFound }: SimplePlayerSearchProps) {
       const statsResult = await statsResponse.json();
       
       if (!statsResult.success) {
-        throw new Error('Impossible de récupérer les statistiques');
+        const serverMsg = statsResult.error || 'Impossible de récupérer les statistiques';
+        throw new Error(serverMsg);
       }
 
       // Adapter le format des stats

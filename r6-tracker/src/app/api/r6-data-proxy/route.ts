@@ -81,14 +81,18 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ API Proxy erreur:', error);
-    
+
+    const anyErr: any = error;
+    const status = anyErr?.response?.status || 500;
+    const message = anyErr?.response?.data?.message || anyErr?.message || 'Erreur inconnue';
+
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Erreur inconnue',
+      {
+        success: false,
+        error: message,
         timestamp: new Date().toISOString()
       },
-      { status: 500 }
+      { status }
     );
   }
 }
