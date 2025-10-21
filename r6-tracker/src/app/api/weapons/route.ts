@@ -64,11 +64,52 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    let filteredData = data;
+    
+    // Transformer les données pour correspondre à notre interface
+    const transformedData = data.map((weapon: {
+      name: string;
+      type: string;
+      stats_damage?: number;
+      stats_firerate?: number;
+      stats_ammo?: number;
+      stats_maxammo?: number;
+      stats_difficulty?: number;
+      operators?: string;
+      scopes?: string;
+      barrels?: string;
+      grips?: string;
+      image_url?: string;
+      family?: string;
+    }) => ({
+      name: weapon.name,
+      type: weapon.type,
+      damage: weapon.stats_damage || 0,
+      fireRate: weapon.stats_firerate || 0,
+      mobility: weapon.stats_difficulty ? (5 - weapon.stats_difficulty) * 10 : 25, // Estimation basée sur difficulté
+      capacity: weapon.stats_ammo || 0,
+      class: weapon.type,
+      availableFor: weapon.operators ? weapon.operators.split(';').map(op => op.trim()) : [],
+      operators: weapon.operators,
+      image_url: weapon.image_url,
+      family: weapon.family,
+      // Stats additionnelles si disponibles
+      reloadTime: undefined, // Non fourni par l'API
+      range: undefined, // Non fourni par l'API
+      accuracy: undefined, // Non fourni par l'API
+      controlability: weapon.stats_difficulty, // Utiliser difficulty comme proxy
+      penetration: undefined, // Non fourni par l'API
+      fireMode: undefined, // Non fourni par l'API
+      sights: weapon.scopes ? weapon.scopes.split(';').map(s => s.trim()).filter(s => s) : [],
+      barrels: weapon.barrels ? weapon.barrels.split(';').map(b => b.trim()).filter(b => b) : [],
+      grips: weapon.grips ? weapon.grips.split(';').map(g => g.trim()).filter(g => g) : [],
+      underBarrels: undefined, // Non fourni par l'API
+    }));
+    
+    let filteredData = transformedData;
 
     // Filtrage côté serveur
     if (name || type || family) {
-      filteredData = data.filter((weapon: { name?: string; type?: string; family?: string }) => {
+      filteredData = transformedData.filter((weapon: { name?: string; type?: string; family?: string }) => {
         const matchName = !name || weapon.name?.toLowerCase().includes(name.toLowerCase());
         const matchType = !type || weapon.type?.toLowerCase() === type.toLowerCase();
         const matchFamily = !family || weapon.family?.toLowerCase().includes(family.toLowerCase());
@@ -80,7 +121,7 @@ export async function GET(request: NextRequest) {
     // Mise en cache
     setCachedData(cacheKey, filteredData);
     
-    console.log(`✅ ${filteredData.length} armes récupérées et mises en cache`);
+    console.log(`✅ ${filteredData.length} armes transformées et mises en cache`);
     return NextResponse.json(filteredData);
 
   } catch (error) {

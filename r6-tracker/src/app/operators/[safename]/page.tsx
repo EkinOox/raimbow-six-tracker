@@ -477,8 +477,63 @@ export default function OperatorDetailPage() {
                           </div>
                         </div>
                         
-                        <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
-                          <span>Chargeur: {weapon.capacity}</span>
+                        {/* Statistiques additionnelles en grille */}
+                        <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-2 text-xs">
+                          <div className="flex items-center space-x-1">
+                            <i className="pi pi-inbox text-white/40"></i>
+                            <span className="text-white/60">Chargeur:</span>
+                            <span className="text-white font-medium">{weapon.capacity}</span>
+                          </div>
+                          
+                          {weapon.reloadTime && (
+                            <div className="flex items-center space-x-1">
+                              <i className="pi pi-sync text-white/40"></i>
+                              <span className="text-white/60">Recharg.:</span>
+                              <span className="text-white font-medium">{weapon.reloadTime}s</span>
+                            </div>
+                          )}
+                          
+                          {weapon.range && (
+                            <div className="flex items-center space-x-1">
+                              <i className="pi pi-arrow-right text-white/40"></i>
+                              <span className="text-white/60">Portée:</span>
+                              <span className="text-white font-medium">{weapon.range}m</span>
+                            </div>
+                          )}
+                          
+                          {weapon.accuracy && (
+                            <div className="flex items-center space-x-1">
+                              <i className="pi pi-circle text-white/40"></i>
+                              <span className="text-white/60">Précision:</span>
+                              <span className="text-white font-medium">{weapon.accuracy}</span>
+                            </div>
+                          )}
+                          
+                          {weapon.controlability && (
+                            <div className="flex items-center space-x-1">
+                              <i className="pi pi-sliders-h text-white/40"></i>
+                              <span className="text-white/60">Contrôle:</span>
+                              <span className="text-white font-medium">{weapon.controlability}</span>
+                            </div>
+                          )}
+                          
+                          {weapon.penetration && (
+                            <div className="flex items-center space-x-1">
+                              <i className="pi pi-shield text-white/40"></i>
+                              <span className="text-white/60">Pénétration:</span>
+                              <span className="text-white font-medium">{weapon.penetration}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                          <span className="text-white/50">
+                            {weapon.fireMode && Array.isArray(weapon.fireMode) && weapon.fireMode.length > 0 ? (
+                              <span>Modes: {weapon.fireMode.join(', ')}</span>
+                            ) : (
+                              <span>Classe: {weapon.class}</span>
+                            )}
+                          </span>
                           <span className="text-orange-400 group-hover:text-orange-300">Voir détails →</span>
                         </div>
                       </Link>
