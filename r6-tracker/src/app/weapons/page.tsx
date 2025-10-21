@@ -10,6 +10,7 @@ import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
 import { useWeapons } from '../../hooks/useR6Data';
 import { WeaponFilters, Weapon } from '../../types/r6-api-types';
+import { getWeaponImageUrl } from '../../utils/weaponImages';
 
 const weaponTypes = ['Tous', 'Assault Rifle', 'SMG', 'LMG', 'Marksman Rifle', 'Sniper Rifle', 'Shotgun', 'Machine Pistol', 'Handgun'];
 const weaponFamilies = ['Tous', 'ATK', 'DEF'];
@@ -191,21 +192,18 @@ export default function WeaponsPage() {
                   <Link href={`/weapons/${weapon.name.toLowerCase().replace(/\s+/g, '-')}`}>
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer h-full flex flex-col">
                       {/* Image de l'arme */}
-                      <div className="relative h-32 bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center">
-                        {weapon.image_url ? (
-                          <Image
-                            src={weapon.image_url}
-                            alt={`Arme ${weapon.name}`}
-                            width={120}
-                            height={60}
-                            className="object-contain"
-                          />
-                        ) : (
-                          <div className="text-center">
-                            <i className="pi pi-shield text-white/30 text-3xl mb-1"></i>
-                            <p className="text-white/50 text-xs">{weapon.name}</p>
-                          </div>
-                        )}
+                      <div className="relative h-40 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
+                        <Image
+                          src={getWeaponImageUrl(weapon.name, weapon.image_url)}
+                          alt={`Arme ${weapon.name}`}
+                          width={160}
+                          height={80}
+                          className="object-contain drop-shadow-2xl"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/images/logo/r6x-logo-ww.avif';
+                          }}
+                        />
                         <div className="absolute top-2 left-2">
                           <span className={`px-2 py-1 text-xs rounded-full font-medium ${
                             weapon.family === 'ATK' 
@@ -244,7 +242,7 @@ export default function WeaponsPage() {
                         </div>
 
                         {/* Opérateurs utilisant cette arme */}
-                        {weapon.operators && weapon.operators.length > 0 && (
+                        {weapon.operators && Array.isArray(weapon.operators) && weapon.operators.length > 0 && (
                           <div className="mt-2">
                             <p className="text-xs text-white/50 mb-1">
                               Utilisée par {weapon.operators.length} opérateur(s)

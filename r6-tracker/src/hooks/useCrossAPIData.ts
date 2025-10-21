@@ -99,9 +99,22 @@ export const useCrossAPIData = () => {
         : 0;
       
       // Déterminer si l'opérateur a des armes uniques
-      const hasUniqueWeapon = operatorWeapons.some((weapon: any) =>
-        weapon.operators && weapon.operators.length <= 2
-      );
+      const hasUniqueWeapon = operatorWeapons.some((weapon: any) => {
+        if (!weapon.operators) return false;
+        
+        // Gérer le cas string "Op1; Op2"
+        if (typeof weapon.operators === 'string') {
+          const opList = weapon.operators.split(';').map((op: string) => op.trim());
+          return opList.length <= 2;
+        }
+        
+        // Gérer le cas tableau
+        if (Array.isArray(weapon.operators)) {
+          return weapon.operators.length <= 2;
+        }
+        
+        return false;
+      });
 
       return {
         ...operator,

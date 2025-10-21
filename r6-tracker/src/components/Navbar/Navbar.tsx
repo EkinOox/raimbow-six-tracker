@@ -19,7 +19,7 @@ const navItems: NavItem[] = [
   { label: 'Accueil', href: '/', icon: 'pi-home' },
   { label: 'Recherche', href: '/search', icon: 'pi-search' },
   { label: 'Dashboard', href: '/dashboard', icon: 'pi-chart-bar' },
-  { label: 'Comparaison', href: '/comparison', icon: 'pi-arrow-right-arrow-left' },
+  { label: 'Comparaison', href: '/comparaison', icon: 'pi-arrow-right-arrow-left' },
   { label: 'Opérateurs', href: '/operators', icon: 'pi-users' },
   { label: 'Cartes', href: '/maps', icon: 'pi-map' },
 ];

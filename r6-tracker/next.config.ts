@@ -27,6 +27,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'r6-api.vercel.app',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'r6data.eu',
+        pathname: '/**',
       }
     ],
   },

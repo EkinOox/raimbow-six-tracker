@@ -43,16 +43,20 @@ export const fetchWeapons = createAsyncThunk(
     
     const data = await response.json();
     
+    // Vérifier si c'est une erreur
     if (data.error) {
-      throw new Error(data.error);
+      throw new Error(data.message || data.error);
     }
     
-    console.log(`✅ ${data.weapons?.length || 0} weapons récupérées`);
+    // L'API retourne directement un tableau d'armes
+    const weaponsArray = Array.isArray(data) ? data : [];
+    
+    console.log(`✅ ${weaponsArray.length} weapons récupérées`);
     
     return {
-      weapons: data.weapons || [],
-      count: data.count || 0,
-      cached: data.cached || false
+      weapons: weaponsArray,
+      count: weaponsArray.length,
+      cached: false
     };
   }
 );

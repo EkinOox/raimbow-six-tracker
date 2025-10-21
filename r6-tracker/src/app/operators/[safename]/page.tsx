@@ -40,14 +40,39 @@ export default function OperatorDetailPage() {
   const operatorWeapons = useMemo(() => {
     if (!operator || !weapons || weapons.length === 0) return { primary: [], secondary: [] };
 
-    const primary = weapons.filter((weapon: Weapon) => 
-      weapon.availableFor?.includes(operator.name) && 
-      ['Assault Rifle', 'SMG', 'LMG', 'Shotgun', 'DMR', 'Sniper Rifle'].includes(weapon.type)
+    // Filtrer les armes qui ont cet opérateur dans leur liste
+    const operatorName = operator.name;
+    
+    const allWeapons = weapons.filter((weapon: Weapon) => {
+      if (!weapon.operators) return false;
+      
+      // Gérer le cas où operators est une string (format "Nomad; Kaid")
+      if (typeof weapon.operators === 'string') {
+        const operatorsList = weapon.operators.split(';').map(op => op.trim());
+        return operatorsList.includes(operatorName);
+      }
+      
+      // Gérer le cas où operators est un tableau
+      if (Array.isArray(weapon.operators)) {
+        return weapon.operators.includes(operatorName);
+      }
+      
+      return false;
+    });
+
+    // Types d'armes principales
+    const primaryTypes = ['Assault Rifle', 'Submachine Gun', 'SMG', 'Light Machine Gun', 'LMG', 
+                          'Shotgun', 'Marksman Rifle', 'DMR', 'Sniper Rifle'];
+    
+    // Types d'armes secondaires
+    const secondaryTypes = ['Handgun', 'Pistol', 'Machine Pistol', 'Revolver'];
+
+    const primary = allWeapons.filter((weapon: Weapon) => 
+      primaryTypes.some(type => weapon.type.toLowerCase().includes(type.toLowerCase()))
     );
 
-    const secondary = weapons.filter((weapon: Weapon) =>
-      weapon.availableFor?.includes(operator.name) && 
-      ['Pistol', 'Machine Pistol', 'Revolver'].includes(weapon.type)
+    const secondary = allWeapons.filter((weapon: Weapon) =>
+      secondaryTypes.some(type => weapon.type.toLowerCase().includes(type.toLowerCase()))
     );
 
     return { primary, secondary };
@@ -65,24 +90,11 @@ export default function OperatorDetailPage() {
     return side === 'attacker' ? 'Attaquant' : 'Défenseur';
   };
 
-  const getSpeedIcon = (speed: string) => {
-    const speedNum = parseInt(speed);
-    if (speedNum === 3) return '⚡⚡⚡';
-    if (speedNum === 2) return '⚡⚡☆';
-    return '⚡☆☆';
-  };
-
   const getSpeedLabel = (speed: string) => {
     const speedNum = parseInt(speed);
     if (speedNum === 3) return 'Rapide';
     if (speedNum === 2) return 'Moyen';
     return 'Lent';
-  };
-
-  const getArmorIcon = (health: number) => {
-    if (health >= 125) return '🛡️🛡️🛡️';
-    if (health >= 110) return '🛡️🛡️☆';
-    return '🛡️☆☆';
   };
 
   const getArmorLabel = (health: number) => {
@@ -220,67 +232,116 @@ export default function OperatorDetailPage() {
               </div>
             </motion.div>
 
-            {/* Statistiques */}
+            {/* Statistiques de combat - Données réelles uniquement */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
             >
-              <h3 className="text-xl font-bold text-white mb-4">
+              <h3 className="text-xl font-bold text-white mb-6">
                 <i className="pi pi-chart-bar mr-2"></i>
                 Statistiques de combat
               </h3>
               
-              <div className="space-y-4">
-                {/* Santé/Armure */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <i className="pi pi-heart mr-2 text-red-400"></i>
-                    <span className="text-white/70">Santé & Armure</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center justify-end space-x-2 mb-1">
-                      <span className="text-white font-medium">{operator.health} HP</span>
-                      <span>{getArmorIcon(operator.health)}</span>
+              <div className="space-y-6">
+                {/* Santé/Armure - Données réelles (100-140 HP) */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i className="pi pi-heart text-red-400 text-lg"></i>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Santé</div>
+                        <div className="text-white/50 text-xs">{getArmorLabel(operator.health)}</div>
+                      </div>
                     </div>
-                    <div className="text-xs text-white/60">{getArmorLabel(operator.health)}</div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-white">{operator.health}</div>
+                      <div className="text-white/60 text-xs">HP</div>
+                    </div>
+                  </div>
+                  {/* Barre: HP min=100, max=140 (donc 100HP = 0%, 140HP = 100%) */}
+                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full transition-all"
+                      style={{ width: `${((operator.health - 100) / 40) * 100}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between mt-1 text-xs text-white/40">
+                    <span>100 HP</span>
+                    <span>140 HP</span>
                   </div>
                 </div>
 
-                {/* Vitesse */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className="mr-2">{getSpeedIcon(operator.speed)}</span>
-                    <span className="text-white/70">Vitesse</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center justify-end space-x-2 mb-1">
-                      <span className="text-white font-medium">Niveau {operator.speed}</span>
+                {/* Vitesse - Données réelles (1-3) */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i className="pi pi-forward text-yellow-400 text-lg"></i>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Vitesse</div>
+                        <div className="text-white/50 text-xs">{getSpeedLabel(operator.speed)}</div>
+                      </div>
                     </div>
-                    <div className="text-xs text-white/60">{getSpeedLabel(operator.speed)}</div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-white">{operator.speed}</div>
+                      <div className="text-white/60 text-xs">/ 3</div>
+                    </div>
+                  </div>
+                  {/* Barre: Vitesse de 1 à 3 (1=33%, 2=67%, 3=100%) */}
+                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full transition-all"
+                      style={{ width: `${(parseInt(operator.speed) / 3) * 100}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between mt-1 text-xs text-white/40">
+                    <span>1 (Lent)</span>
+                    <span>2 (Moyen)</span>
+                    <span>3 (Rapide)</span>
                   </div>
                 </div>
 
-                {/* Difficulté (basée sur la vitesse et santé) */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <i className="pi pi-star mr-2 text-yellow-400"></i>
-                    <span className="text-white/70">Difficulté</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex space-x-1">
-                      {[...Array(3)].map((_, i) => (
-                        <i
-                          key={i}
-                          className={`pi pi-star ${ 
-                            i < (parseInt(operator.speed) + (operator.health > 110 ? 0 : 1)) / 2 
-                              ? 'text-yellow-400' 
-                              : 'text-white/20'
-                          }`}
-                        />
-                      ))}
+                {/* Niveau d'armure - Dérivé de la santé */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i className="pi pi-shield text-blue-400 text-lg"></i>
+                      </div>
+                      <div>
+                        <div className="text-white font-semibold">Niveau d&apos;armure</div>
+                        <div className="text-white/50 text-xs">
+                          {operator.health >= 125 ? 'Lourd (3 armures)' : 
+                           operator.health >= 110 ? 'Moyen (2 armures)' : 
+                           'Léger (1 armure)'}
+                        </div>
+                      </div>
                     </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-blue-400">
+                        {operator.health >= 125 ? '3' : operator.health >= 110 ? '2' : '1'}
+                      </div>
+                      <div className="text-white/60 text-xs">Armure</div>
+                    </div>
+                  </div>
+                  {/* Barre: Armure 1-3 */}
+                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all"
+                      style={{ 
+                        width: `${(operator.health >= 125 ? 3 : operator.health >= 110 ? 2 : 1) / 3 * 100}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between mt-1 text-xs text-white/40">
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
                   </div>
                 </div>
               </div>
@@ -352,25 +413,75 @@ export default function OperatorDetailPage() {
                 <h4 className="text-lg font-semibold text-white/90 mb-3 flex items-center">
                   <i className="pi pi-angle-right mr-2 text-orange-400"></i>
                   Armes principales
+                  <span className="ml-2 text-sm text-white/50">({operatorWeapons.primary.length})</span>
                 </h4>
                 
                 {operatorWeapons.primary.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {operatorWeapons.primary.map((weapon: Weapon, index: number) => (
-                      <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h5 className="text-white font-medium">{weapon.name}</h5>
+                      <Link
+                        key={index}
+                        href={`/weapons/${weapon.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all group"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-white font-medium group-hover:text-orange-400 transition-colors">
+                            {weapon.name}
+                          </h5>
                           <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded">
                             {weapon.type}
                           </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm text-white/70">
-                          <div>Dégâts: <span className="text-red-400 font-medium">{weapon.damage}</span></div>
-                          <div>Cadence: <span className="text-yellow-400 font-medium">{weapon.fireRate}</span></div>
-                          <div>Mobilité: <span className="text-blue-400 font-medium">{weapon.mobility}</span></div>
-                          <div>Capacité: <span className="text-green-400 font-medium">{weapon.capacity}</span></div>
+                        
+                        <div className="space-y-2">
+                          {/* Dégâts */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-white/60">Dégâts</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-red-400 font-medium">{weapon.damage}</span>
+                              <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+                                  style={{ width: `${Math.min((weapon.damage / 60) * 100, 100)}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Cadence */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-white/60">Cadence</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-yellow-400 font-medium">{weapon.fireRate} RPM</span>
+                              <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full"
+                                  style={{ width: `${Math.min((weapon.fireRate / 1200) * 100, 100)}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Mobilité */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-white/60">Mobilité</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-blue-400 font-medium">{weapon.mobility}</span>
+                              <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"
+                                  style={{ width: `${(weapon.mobility / 50) * 100}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                        
+                        <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
+                          <span>Chargeur: {weapon.capacity}</span>
+                          <span className="text-orange-400 group-hover:text-orange-300">Voir détails →</span>
+                        </div>
+                      </Link>
                     ))}
                   </div>
                 ) : (
@@ -385,25 +496,75 @@ export default function OperatorDetailPage() {
                 <h4 className="text-lg font-semibold text-white/90 mb-3 flex items-center">
                   <i className="pi pi-angle-right mr-2 text-blue-400"></i>
                   Armes secondaires
+                  <span className="ml-2 text-sm text-white/50">({operatorWeapons.secondary.length})</span>
                 </h4>
                 
                 {operatorWeapons.secondary.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {operatorWeapons.secondary.map((weapon: Weapon, index: number) => (
-                      <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h5 className="text-white font-medium">{weapon.name}</h5>
+                      <Link
+                        key={index}
+                        href={`/weapons/${weapon.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all group"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="text-white font-medium group-hover:text-blue-400 transition-colors">
+                            {weapon.name}
+                          </h5>
                           <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded">
                             {weapon.type}
                           </span>
                         </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm text-white/70">
-                          <div>Dégâts: <span className="text-red-400 font-medium">{weapon.damage}</span></div>
-                          <div>Cadence: <span className="text-yellow-400 font-medium">{weapon.fireRate}</span></div>
-                          <div>Mobilité: <span className="text-blue-400 font-medium">{weapon.mobility}</span></div>
-                          <div>Capacité: <span className="text-green-400 font-medium">{weapon.capacity}</span></div>
+                        
+                        <div className="space-y-2">
+                          {/* Dégâts */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-white/60">Dégâts</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-red-400 font-medium">{weapon.damage}</span>
+                              <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+                                  style={{ width: `${Math.min((weapon.damage / 80) * 100, 100)}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Cadence */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-white/60">Cadence</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-yellow-400 font-medium">{weapon.fireRate} RPM</span>
+                              <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full"
+                                  style={{ width: `${Math.min((weapon.fireRate / 1200) * 100, 100)}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Mobilité */}
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-white/60">Mobilité</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-blue-400 font-medium">{weapon.mobility}</span>
+                              <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full"
+                                  style={{ width: `${(weapon.mobility / 50) * 100}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                        
+                        <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
+                          <span>Chargeur: {weapon.capacity}</span>
+                          <span className="text-blue-400 group-hover:text-blue-300">Voir détails →</span>
+                        </div>
+                      </Link>
                     ))}
                   </div>
                 ) : (
@@ -422,25 +583,25 @@ export default function OperatorDetailPage() {
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6"
             >
               <h3 className="text-xl font-bold text-white mb-4">
-                <i className="pi pi-gamepad mr-2"></i>
-                Actions rapides
+                <i className="pi pi-bolt mr-2"></i>
+                Navigation rapide
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Link
-                  href="/comparison"
-                  className="flex items-center justify-center p-4 bg-blue-600/20 border border-blue-500/30 rounded-xl text-blue-300 hover:bg-blue-600/30 transition-colors"
+                  href={`/operators-comparison?op1=${operator.safename}`}
+                  className="flex items-center justify-center p-4 bg-purple-600/20 border border-purple-500/30 rounded-xl text-purple-300 hover:bg-purple-600/30 transition-colors group"
                 >
-                  <i className="pi pi-chart-line mr-2"></i>
-                  Comparer cet opérateur
+                  <i className="pi pi-sync mr-2 group-hover:animate-spin"></i>
+                  Comparer avec un autre
                 </Link>
                 
                 <Link
                   href="/operators"
-                  className="flex items-center justify-center p-4 bg-green-600/20 border border-green-500/30 rounded-xl text-green-300 hover:bg-green-600/30 transition-colors"
+                  className="flex items-center justify-center p-4 bg-blue-600/20 border border-blue-500/30 rounded-xl text-blue-300 hover:bg-blue-600/30 transition-colors"
                 >
                   <i className="pi pi-users mr-2"></i>
-                  Voir tous les opérateurs
+                  Tous les opérateurs
                 </Link>
                 
                 <Link
@@ -448,24 +609,80 @@ export default function OperatorDetailPage() {
                   className="flex items-center justify-center p-4 bg-orange-600/20 border border-orange-500/30 rounded-xl text-orange-300 hover:bg-orange-600/30 transition-colors"
                 >
                   <i className="pi pi-shield mr-2"></i>
-                  Explorer les armes
+                  Arsenal complet
                 </Link>
                 
                 <Link
                   href="/maps"
-                  className="flex items-center justify-center p-4 bg-purple-600/20 border border-purple-500/30 rounded-xl text-purple-300 hover:bg-purple-600/30 transition-colors"
+                  className="flex items-center justify-center p-4 bg-green-600/20 border border-green-500/30 rounded-xl text-green-300 hover:bg-green-600/30 transition-colors"
                 >
                   <i className="pi pi-map mr-2"></i>
-                  Découvrir les cartes
+                  Cartes du jeu
                 </Link>
               </div>
+            </motion.div>
+
+            {/* Comparaison rapide */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6"
+            >
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                <i className="pi pi-sync mr-3 text-purple-400"></i>
+                Comparer rapidement
+              </h3>
+              
+              <p className="text-white/70 mb-4">
+                Comparez <strong className="text-white">{operator.name}</strong> avec d&apos;autres opérateurs pour analyser les synergies ou les contres.
+              </p>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {operators && operators
+                  .filter(op => op.safename !== operator.safename && op.side === operator.side)
+                  .slice(0, 6)
+                  .map((op) => (
+                    <Link
+                      key={op.safename}
+                      href={`/operators-comparison?op1=${operator.safename}&op2=${op.safename}`}
+                      className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/50 rounded-lg p-3 transition-all"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 rounded overflow-hidden bg-slate-700 flex-shrink-0 relative">
+                          <Image
+                            src={op.icon_url || '/images/logo/r6-logo.png'}
+                            alt={op.name}
+                            width={32}
+                            height={32}
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-white text-sm font-medium truncate group-hover:text-purple-300">
+                            vs {op.name}
+                          </div>
+                        </div>
+                        <i className="pi pi-arrow-right text-white/50 text-xs group-hover:text-purple-400"></i>
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+
+              <Link
+                href={`/operators-comparison?op1=${operator.safename}`}
+                className="block mt-4 text-center py-3 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 rounded-xl text-purple-300 transition-colors"
+              >
+                <i className="pi pi-plus-circle mr-2"></i>
+                Comparaison personnalisée
+              </Link>
             </motion.div>
 
             {/* Informations sur les données */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
+              transition={{ delay: 0.8 }}
               className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4"
             >
               <div className="flex items-start">

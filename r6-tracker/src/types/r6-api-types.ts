@@ -64,7 +64,18 @@ export interface Weapon {
   availableFor: string[];
   image_url?: string;
   family?: string;
-  operators?: string[];
+  operators?: string[] | string; // Peut être un tableau ou une string "Op1; Op2"
+  // Propriétés additionnelles possibles
+  reloadTime?: number;
+  range?: number;
+  accuracy?: number;
+  controlability?: number;
+  penetration?: number;
+  fireMode?: string[];
+  sights?: string[];
+  barrels?: string[];
+  grips?: string[];
+  underBarrels?: string[];
 }
 
 // Types pour les maps R6
