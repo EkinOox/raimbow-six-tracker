@@ -18,7 +18,7 @@ const features = [
     icon: 'pi-chart-bar',
     title: 'Statistiques Détailées',
     description: 'Consultez les stats générales, ranked et casual avec des visualisations modernes.',
-    href: '/dashboard'
+    href: '/dashboard-new'
   },
   {
     icon: 'pi-arrow-right-arrow-left',
@@ -137,7 +137,7 @@ export default function HomePage() {
                 Commencer la Recherche
               </Link>
               <Link
-                href="/dashboard"
+                href="/dashboard-new"
                 className="inline-flex items-center justify-center px-8 py-4 bg-glass-bg/20 backdrop-blur-sm border border-glass-border/30 text-r6-light font-semibold rounded-xl hover:border-r6-primary/50 hover:scale-105 transition-all duration-200"
               >
                 <i className="pi pi-chart-bar mr-2"></i>

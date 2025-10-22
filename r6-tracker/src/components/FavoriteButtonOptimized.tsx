@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppSelector } from '../store';
 
 type ItemType = 'map' | 'operator' | 'weapon';
 
-interface FavoriteButtonProps {
+interface FavoriteButtonOptimizedProps {
   itemType: ItemType;
   itemId: string;
   itemName: string;
+  isFavorite: boolean;
+  onToggle?: (itemId: string, newState: boolean) => void;
   metadata?: {
     image?: string;
     type?: string;
@@ -20,54 +22,24 @@ interface FavoriteButtonProps {
   };
   className?: string;
   size?: 'sm' | 'md' | 'lg';
-  showLabel?: boolean;
 }
 
-export default function FavoriteButton({
+export default function FavoriteButtonOptimized({
   itemType,
   itemId,
   itemName,
+  isFavorite: initialIsFavorite,
+  onToggle,
   metadata = {},
   className = '',
   size = 'md',
-  showLabel = false,
-}: FavoriteButtonProps) {
+}: FavoriteButtonOptimizedProps) {
   const { isAuthenticated, token } = useAppSelector((state) => state.auth);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isHovered, setIsHovered] = useState(false);
-
-  // Vérifier si l'item est en favoris au chargement
-  useEffect(() => {
-    const checkFavoriteStatus = async () => {
-      if (!isAuthenticated || !token) return;
-      
-      try {
-        const response = await fetch('/api/favorites/check', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            itemType,
-            itemId,
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setIsFavorite(data.isFavorite);
-        }
-      } catch (error) {
-        console.error('Erreur lors de la vérification du favori:', error);
-      }
-    };
-
-    checkFavoriteStatus();
-  }, [isAuthenticated, token, itemType, itemId]);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -99,10 +71,16 @@ export default function FavoriteButton({
 
       if (response.ok) {
         const data = await response.json();
-        setIsFavorite(data.action === 'added');
+        const newState = data.action === 'added';
+        setIsFavorite(newState);
         setToastMessage(data.message);
         setShowToast(true);
         setTimeout(() => setShowToast(false), 3000);
+        
+        // Notifier le parent du changement
+        if (onToggle) {
+          onToggle(itemId, newState);
+        }
       } else {
         throw new Error('Erreur lors de la modification du favori');
       }
@@ -164,13 +142,6 @@ export default function FavoriteButton({
           />
         )}
 
-        {/* Label optionnel */}
-        {showLabel && (
-          <span className="ml-2 text-sm font-medium">
-            {isFavorite ? 'Favori' : 'Ajouter'}
-          </span>
-        )}
-
         {/* Animation de particules lors de l'ajout */}
         {isFavorite && (
           <motion.div
@@ -199,4 +170,3 @@ export default function FavoriteButton({
     </>
   );
 }
-

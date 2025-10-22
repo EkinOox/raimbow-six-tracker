@@ -73,3 +73,73 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+/**
+ * POST /api/favorites/check
+ * Vérifier si un élément spécifique est en favori (via body)
+ */
+export async function POST(request: NextRequest) {
+  try {
+    await connectDB();
+
+    // Vérifier l'authentification
+    const authHeader = request.headers.get('Authorization');
+    const token = extractTokenFromHeader(authHeader);
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Token d\'authentification manquant' },
+        { status: 401 }
+      );
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Token invalide ou expiré' },
+        { status: 401 }
+      );
+    }
+
+    // Récupérer les données du body
+    const body = await request.json();
+    const { itemType, itemId } = body;
+
+    if (!itemType || !itemId) {
+      return NextResponse.json(
+        { error: 'Les paramètres itemType et itemId sont requis' },
+        { status: 400 }
+      );
+    }
+
+    if (!Object.values(FavoriteType).includes(itemType as FavoriteType)) {
+      return NextResponse.json(
+        { error: 'Type de favori invalide' },
+        { status: 400 }
+      );
+    }
+
+    // Vérifier si c'est un favori
+    const isFavorite = await Favorite.isFavorite(
+      decoded.userId,
+      itemType as FavoriteType,
+      itemId
+    );
+
+    return NextResponse.json(
+      {
+        isFavorite,
+        itemType,
+        itemId,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('❌ Erreur lors de la vérification du favori:', error);
+    
+    return NextResponse.json(
+      { error: 'Erreur lors de la vérification', details: error instanceof Error ? error.message : 'Erreur inconnue' },
+      { status: 500 }
+    );
+  }
+}

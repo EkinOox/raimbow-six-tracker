@@ -5,11 +5,13 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
+import FavoriteButtonOptimized from '../../components/FavoriteButtonOptimized';
+import OperatorImage from '../../components/OperatorImage';
 import { useOperators } from '../../hooks/useR6Data';
 import { Operator } from '../../types/r6-api-types';
+import { useAppSelector } from '../../store';
 
 // Options de filtrage
 const sides = ['Tous', 'ATK', 'DEF'];
@@ -51,6 +53,7 @@ function getValidImageUrl(url: string | undefined): string {
 
 export default function OperatorsPage() {
   const { operators, loading, error, loadOperators } = useOperators();
+  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
   
   // États pour les filtres
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,11 +65,60 @@ export default function OperatorsPage() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // État pour les favoris (chargés une seule fois)
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
 
   // Charger les opérateurs au montage du composant
   useEffect(() => {
     loadOperators();
   }, [loadOperators]);
+  
+  // Charger tous les favoris une seule fois
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (!isAuthenticated || !token) return;
+      
+      setFavoritesLoading(true);
+      try {
+        const response = await fetch('/api/favorites', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const ids = new Set<string>(
+            data.favorites
+              .filter((f: { itemType: string }) => f.itemType === 'operator')
+              .map((f: { itemId: string }) => f.itemId)
+          );
+          setFavoriteIds(ids);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des favoris:', error);
+      } finally {
+        setFavoritesLoading(false);
+      }
+    };
+    
+    loadFavorites();
+  }, [isAuthenticated, token]);
+  
+  // Callback pour mettre à jour l'état des favoris localement
+  const handleFavoriteToggle = (itemId: string, newState: boolean) => {
+    setFavoriteIds(prev => {
+      const newSet = new Set(prev);
+      if (newState) {
+        newSet.add(itemId);
+      } else {
+        newSet.delete(itemId);
+      }
+      return newSet;
+    });
+  };
 
   // Extraire les unités, pays et rôles uniques pour les filtres
   const { uniqueUnits, uniqueCountries, uniqueRoles } = useMemo(() => {
@@ -486,20 +538,32 @@ export default function OperatorsPage() {
                       <div className="p-4">
                         <div className="relative mb-4">
                           <div className="aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
-                            <Image
+                            <OperatorImage
                               src={getValidImageUrl(operator.icon_url)}
                               alt={operator.name}
                               width={200}
                               height={200}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/images/logo/r6-logo.png';
-                              }}
                             />
                           </div>
                           <div className={`absolute top-2 right-2 px-2 py-1 rounded-lg text-xs font-medium ${getOperatorTypeBg(operator.side)} ${getOperatorTypeColor(operator.side)}`}>
                             {operator.side}
+                          </div>
+                          {/* Bouton favori */}
+                          <div className="absolute top-2 left-2" onClick={(e) => e.preventDefault()}>
+                            <FavoriteButtonOptimized
+                              itemType="operator"
+                              itemId={operator.safename}
+                              itemName={operator.name}
+                              isFavorite={favoriteIds.has(operator.safename)}
+                              onToggle={handleFavoriteToggle}
+                              metadata={{
+                                image: operator.icon_url,
+                                side: operator.side,
+                                type: 'operator',
+                              }}
+                              size="sm"
+                            />
                           </div>
                         </div>
                         
@@ -530,20 +594,32 @@ export default function OperatorsPage() {
                       <div className="flex items-center p-4 space-x-4">
                         <div className="relative flex-shrink-0">
                           <div className="w-16 h-16 rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
-                            <Image
+                            <OperatorImage
                               src={getValidImageUrl(operator.icon_url)}
                               alt={operator.name}
                               width={64}
                               height={64}
                               className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/images/logo/r6-logo.png';
-                              }}
                             />
                           </div>
                           <div className={`absolute -top-1 -right-1 px-1.5 py-0.5 rounded text-xs font-medium ${getOperatorTypeBg(operator.side)} ${getOperatorTypeColor(operator.side)}`}>
                             {operator.side}
+                          </div>
+                          {/* Bouton favori */}
+                          <div className="absolute -bottom-1 -left-1" onClick={(e) => e.preventDefault()}>
+                            <FavoriteButtonOptimized
+                              itemType="operator"
+                              itemId={operator.safename}
+                              itemName={operator.name}
+                              isFavorite={favoriteIds.has(operator.safename)}
+                              onToggle={handleFavoriteToggle}
+                              metadata={{
+                                image: operator.icon_url,
+                                side: operator.side,
+                                type: 'operator',
+                              }}
+                              size="sm"
+                            />
                           </div>
                         </div>
                         

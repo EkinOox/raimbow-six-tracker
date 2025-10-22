@@ -139,6 +139,16 @@ const authSlice = createSlice({
         localStorage.setItem('token', action.payload);
       }
     },
+    // Nouvelle action pour restaurer le token depuis localStorage
+    restoreToken: (state) => {
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        if (token) {
+          state.token = token;
+          // Note: isAuthenticated sera mis à true par getMe() si le token est valide
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     // Register
@@ -202,5 +212,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError, setToken } = authSlice.actions;
+export const { logout, clearError, setToken, restoreToken } = authSlice.actions;
 export default authSlice.reducer;

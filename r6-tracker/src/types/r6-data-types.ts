@@ -113,22 +113,39 @@ export interface SimplePlayerStats {
     deaths: number;
     kd: number;
     winRate: number;
+    totalMatches: number;
   };
   ranked: {
     mmr: number;
+    rankId: number;
     rankName: string;
     maxMmr: number;
+    maxRankId: number;
     maxRankName: string;
     wins: number;
     losses: number;
+    abandons: number;
+    winRate: number;
+    kd: number;
+    kills: number;
+    deaths: number;
+    seasonId: number;
+    topRankPosition: number;
+  };
+  casual: {
+    wins: number;
+    losses: number;
+    abandons: number;
     winRate: number;
     kd: number;
     kills: number;
     deaths: number;
   };
-  casual: {
+  // Nouveau mode: Living Game Mode (événements/arcade)
+  event?: {
     wins: number;
     losses: number;
+    abandons: number;
     winRate: number;
     kd: number;
     kills: number;

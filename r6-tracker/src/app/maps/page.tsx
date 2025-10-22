@@ -8,20 +8,68 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
+import FavoriteButtonOptimized from '../../components/FavoriteButtonOptimized';
 import { useMaps } from '../../hooks/useR6Data';
-import { MapFilters, Map } from '../../types/r6-api-types';
+import type { Map, MapFilters } from '../../types/r6-api-types';
+import { useAppSelector } from '../../store';
 
 const playlists = ['Tous', 'Ranked', 'Standard', 'Team Deathmatch', 'Quick Match'];
 
 export default function MapsPage() {
   const { maps, loading, error, loadMaps, updateFilters, filters, loadMapImage } = useMaps();
+  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState('Tous');
+  
+  // État pour les favoris (chargés une seule fois)
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
     // Charger les maps au montage du composant
   useEffect(() => {
     loadMaps();
   }, [loadMaps]);
+  
+  // Charger tous les favoris une seule fois
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (!isAuthenticated || !token) return;
+      
+      try {
+        const response = await fetch('/api/favorites', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const ids = new Set<string>(
+            data.favorites
+              .filter((f: { itemType: string }) => f.itemType === 'map')
+              .map((f: { itemId: string }) => f.itemId)
+          );
+          setFavoriteIds(ids);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des favoris:', error);
+      }
+    };
+    
+    loadFavorites();
+  }, [isAuthenticated, token]);
+  
+  // Callback pour mettre à jour l'état des favoris localement
+  const handleFavoriteToggle = (itemId: string, newState: boolean) => {
+    setFavoriteIds(prev => {
+      const newSet = new Set(prev);
+      if (newState) {
+        newSet.add(itemId);
+      } else {
+        newSet.delete(itemId);
+      }
+      return newSet;
+    });
+  };
 
   // Charger les images pour toutes les cartes
   useEffect(() => {
@@ -178,7 +226,7 @@ export default function MapsPage() {
                 >
                  
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer h-full flex flex-col">
-                      {/* Image de la carte */}
+                      {/* Image de la carte avec bouton favori */}
                       <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex-shrink-0">
                         <Image
                           src={map.imageUrl || '/images/logo/r6-logo.png'}
@@ -197,6 +245,23 @@ export default function MapsPage() {
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/20"></div>
+                        
+                        {/* Bouton favori en haut à droite */}
+                        <div className="absolute top-3 right-3 z-10">
+                          <FavoriteButtonOptimized
+                            itemType="map"
+                            itemId={map.name}
+                            itemName={map.name}
+                            isFavorite={favoriteIds.has(map.name)}
+                            onToggle={handleFavoriteToggle}
+                            metadata={{
+                              image: map.imageUrl,
+                              type: 'map',
+                              location: map.location,
+                            }}
+                            size="md"
+                          />
+                        </div>
                       </div>
 
                       {/* Informations de la carte */}

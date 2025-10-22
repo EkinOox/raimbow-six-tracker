@@ -20,6 +20,7 @@ export interface IFavorite extends Document {
     type?: string;
     side?: string; // Pour les opérateurs (attacker/defender)
     category?: string; // Pour les armes
+    location?: string; // Pour les maps
   };
   createdAt: Date;
   updatedAt: Date;
@@ -66,10 +67,8 @@ const favoriteSchema = new Schema<IFavorite, IFavoriteModel>(
       trim: true,
     },
     metadata: {
-      image: String,
-      type: String,
-      side: String,
-      category: String,
+      type: Schema.Types.Mixed,
+      default: {},
     },
   },
   {
@@ -133,6 +132,11 @@ favoriteSchema.statics.toggleFavorite = async function (
 };
 
 // Créer ou récupérer le modèle
+// En dev, supprimer le modèle en cache pour éviter les problèmes de schéma
+if (process.env.NODE_ENV === 'development' && mongoose.models.Favorite) {
+  delete mongoose.models.Favorite;
+}
+
 const Favorite: IFavoriteModel = 
   (mongoose.models.Favorite as IFavoriteModel) || 
   mongoose.model<IFavorite, IFavoriteModel>('Favorite', favoriteSchema);

@@ -8,23 +8,71 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import SectionHeader from '../../components/ui/SectionHeader';
+import FavoriteButtonOptimized from '../../components/FavoriteButtonOptimized';
 import { useWeapons } from '../../hooks/useR6Data';
 import { WeaponFilters, Weapon } from '../../types/r6-api-types';
 import { getWeaponImageUrl } from '../../utils/weaponImages';
+import { useAppSelector } from '../../store';
 
 const weaponTypes = ['Tous', 'Assault Rifle', 'SMG', 'LMG', 'Marksman Rifle', 'Sniper Rifle', 'Shotgun', 'Machine Pistol', 'Handgun'];
 const weaponFamilies = ['Tous', 'ATK', 'DEF'];
 
 export default function WeaponsPage() {
   const { weapons, loading, error, loadWeapons, updateFilters, filters } = useWeapons();
+  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('Tous');
   const [selectedFamily, setSelectedFamily] = useState('Tous');
+  
+  // État pour les favoris (chargés une seule fois)
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   // Charger les weapons au montage du composant
   useEffect(() => {
     loadWeapons();
   }, [loadWeapons]);
+  
+  // Charger tous les favoris une seule fois
+  useEffect(() => {
+    const loadFavorites = async () => {
+      if (!isAuthenticated || !token) return;
+      
+      try {
+        const response = await fetch('/api/favorites', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const ids = new Set<string>(
+            data.favorites
+              .filter((f: { itemType: string }) => f.itemType === 'weapon')
+              .map((f: { itemId: string }) => f.itemId)
+          );
+          setFavoriteIds(ids);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des favoris:', error);
+      }
+    };
+    
+    loadFavorites();
+  }, [isAuthenticated, token]);
+  
+  // Callback pour mettre à jour l'état des favoris localement
+  const handleFavoriteToggle = (itemId: string, newState: boolean) => {
+    setFavoriteIds(prev => {
+      const newSet = new Set(prev);
+      if (newState) {
+        newSet.add(itemId);
+      } else {
+        newSet.delete(itemId);
+      }
+      return newSet;
+    });
+  };
 
   // Appliquer les filtres quand ils changent
   useEffect(() => {
@@ -180,7 +228,11 @@ export default function WeaponsPage() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {weapons.map((weapon: Weapon, index: number) => (
+              {weapons.map((weapon: Weapon, index: number) => {
+                const weaponId = weapon.name.toLowerCase().replace(/\s+/g, '-');
+                const isFav = favoriteIds.has(weaponId);
+                
+                return (
                 <motion.div
                   key={weapon.name}
                   initial={{ opacity: 0, y: 20 }}
@@ -212,6 +264,22 @@ export default function WeaponsPage() {
                           }`}>
                             {weapon.family === 'ATK' ? 'ATK' : 'DEF'}
                           </span>
+                        </div>
+                        {/* Bouton favori */}
+                        <div className="absolute top-2 right-2" onClick={(e) => e.preventDefault()}>
+                          <FavoriteButtonOptimized
+                            itemType="weapon"
+                            itemId={weaponId}
+                            itemName={weapon.name}
+                            isFavorite={isFav}
+                            onToggle={handleFavoriteToggle}
+                            metadata={{
+                              image: weapon.image_url,
+                              type: weapon.type,
+                              category: weapon.family,
+                            }}
+                            size="sm"
+                          />
                         </div>
                       </div>
 
@@ -268,7 +336,8 @@ export default function WeaponsPage() {
                     </div>
                   </Link>
                 </motion.div>
-              ))}
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>

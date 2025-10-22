@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { getMe, logout } from '../../store/slices/authSlice';
-import { fetchFavorites, FavoriteType } from '../../store/slices/favoritesSlice';
+import { fetchFavorites, FavoriteType, toggleFavorite } from '../../store/slices/favoritesSlice';
+import { getWeaponImageUrl } from '../../utils/weaponImages';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -35,6 +36,16 @@ export default function DashboardPage() {
   const handleLogout = () => {
     dispatch(logout());
     router.push('/');
+  };
+
+  const handleRemoveFavorite = async (itemType: FavoriteType, itemId: string, itemName: string) => {
+    try {
+      await dispatch(toggleFavorite({ itemType, itemId, itemName })).unwrap();
+      // Recharger les favoris après suppression
+      dispatch(fetchFavorites(undefined));
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+    }
   };
 
   if (authLoading) {
@@ -145,6 +156,7 @@ export default function DashboardPage() {
                     key={fav._id}
                     favorite={fav}
                     href={`/operators/${fav.itemId}`}
+                    onRemove={() => handleRemoveFavorite(FavoriteType.OPERATOR, fav.itemId, fav.itemName)}
                   />
                 ))}
               </div>
@@ -166,6 +178,7 @@ export default function DashboardPage() {
                     key={fav._id}
                     favorite={fav}
                     href={`/weapons/${fav.itemId}`}
+                    onRemove={() => handleRemoveFavorite(FavoriteType.WEAPON, fav.itemId, fav.itemName)}
                   />
                 ))}
               </div>
@@ -187,6 +200,7 @@ export default function DashboardPage() {
                     key={fav._id}
                     favorite={fav}
                     href="/maps"
+                    onRemove={() => handleRemoveFavorite(FavoriteType.MAP, fav.itemId, fav.itemName)}
                   />
                 ))}
               </div>
@@ -263,58 +277,157 @@ interface FavoriteCardProps {
       type?: string;
       side?: string;
       category?: string;
+      location?: string;
     };
   };
   href: string;
+  onRemove?: () => void;
 }
 
-function FavoriteCard({ favorite, href }: FavoriteCardProps) {
+function FavoriteCard({ favorite, href, onRemove }: FavoriteCardProps) {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const handleRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowConfirm(true);
+  };
+
+  const confirmRemove = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRemove) {
+      await onRemove();
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }
+    setShowConfirm(false);
+  };
+
+  const cancelRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowConfirm(false);
+  };
+  
+  // Déterminer l'URL de l'image selon le type
+  const getImageUrl = () => {
+    if (favorite.itemType === FavoriteType.WEAPON) {
+      // Pour les armes, utiliser getWeaponImageUrl
+      return getWeaponImageUrl(favorite.itemName, favorite.metadata?.image);
+    }
+    // Pour les autres types, utiliser l'image depuis metadata
+    return favorite.metadata?.image || '/images/logo/r6x-logo-ww.avif';
+  };
+
   return (
-    <Link href={href}>
-      <motion.div
-        whileHover={{ scale: 1.05, y: -5 }}
-        className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover:border-white/40 transition-all cursor-pointer group"
-      >
-        {favorite.metadata?.image && (
-          <div className="relative w-full aspect-square mb-3 rounded-lg overflow-hidden bg-black/30">
+    <div className="relative">
+      <Link href={href}>
+        <motion.div
+          whileHover={{ scale: 1.05, y: -5 }}
+          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 hover:border-white/40 transition-all cursor-pointer group relative"
+        >
+          {/* Bouton de suppression */}
+          {!showConfirm && (
+            <button
+              onClick={handleRemove}
+              className="absolute top-2 right-2 z-10 w-8 h-8 bg-red-500/80 hover:bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center"
+              title="Retirer des favoris"
+            >
+              <i className="pi pi-times text-sm"></i>
+            </button>
+          )}
+
+          {/* Image avec gestion différente selon le type */}
+          <div className="relative w-full aspect-square mb-3 rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
             <Image
-              src={favorite.metadata.image}
+              src={getImageUrl()}
               alt={favorite.itemName}
               fill
-              className="object-cover group-hover:scale-110 transition-transform duration-300"
+              className={`${
+                favorite.itemType === FavoriteType.WEAPON 
+                  ? 'object-contain p-4' 
+                  : 'object-cover'
+              } group-hover:scale-110 transition-transform duration-300`}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/images/logo/r6x-logo-ww.avif';
+              }}
             />
           </div>
-        )}
-        
-        <h3 className="text-white font-medium text-center mb-1 truncate">
-          {favorite.itemName}
-        </h3>
-        
-        {favorite.metadata?.type && (
-          <p className="text-xs text-gray-400 text-center truncate">
-            {favorite.metadata.type}
-          </p>
-        )}
+          
+          <h3 className="text-white font-medium text-center mb-1 truncate">
+            {favorite.itemName}
+          </h3>
+          
+          {(favorite.metadata?.type || favorite.metadata?.location) && (
+            <p className="text-xs text-gray-400 text-center truncate">
+              {favorite.metadata?.location || favorite.metadata?.type}
+            </p>
+          )}
 
-        <div className="mt-2 flex justify-center">
-          <span className={`text-xs px-2 py-1 rounded-full ${
-            favorite.itemType === FavoriteType.OPERATOR
-              ? 'bg-orange-500/20 text-orange-400'
-              : favorite.itemType === FavoriteType.WEAPON
-              ? 'bg-blue-500/20 text-blue-400'
-              : 'bg-green-500/20 text-green-400'
-          }`}>
-            <i className={`pi ${
+          <div className="mt-2 flex justify-center">
+            <span className={`text-xs px-2 py-1 rounded-full ${
               favorite.itemType === FavoriteType.OPERATOR
-                ? 'pi-user'
+                ? 'bg-orange-500/20 text-orange-400'
                 : favorite.itemType === FavoriteType.WEAPON
-                ? 'pi-bookmark'
-                : 'pi-map'
-            } mr-1`}></i>
-            {favorite.metadata?.side || favorite.metadata?.category || favorite.itemType}
-          </span>
-        </div>
-      </motion.div>
-    </Link>
+                ? 'bg-blue-500/20 text-blue-400'
+                : 'bg-green-500/20 text-green-400'
+            }`}>
+              <i className={`pi ${
+                favorite.itemType === FavoriteType.OPERATOR
+                  ? 'pi-user'
+                  : favorite.itemType === FavoriteType.WEAPON
+                  ? 'pi-bookmark'
+                  : 'pi-map'
+              } mr-1`}></i>
+              {favorite.metadata?.side || favorite.metadata?.category || favorite.itemType}
+            </span>
+          </div>
+        </motion.div>
+      </Link>
+
+      {/* Modal de confirmation */}
+      {showConfirm && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="absolute inset-0 z-20 bg-black/90 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center p-4 border-2 border-red-500/50"
+        >
+          <i className="pi pi-exclamation-triangle text-3xl text-red-400 mb-3"></i>
+          <p className="text-white text-center text-sm mb-4">
+            Retirer <strong>{favorite.itemName}</strong> ?
+          </p>
+          <div className="flex gap-2 w-full">
+            <button
+              onClick={confirmRemove}
+              className="flex-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition-colors"
+            >
+              Oui
+            </button>
+            <button
+              onClick={cancelRemove}
+              className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm transition-colors"
+            >
+              Non
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Toast de confirmation de suppression */}
+      {showToast && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="fixed bottom-8 right-8 z-50 bg-green-500/90 backdrop-blur-sm text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-2"
+        >
+          <i className="pi pi-check-circle"></i>
+          <span>Retiré des favoris</span>
+        </motion.div>
+      )}
+    </div>
   );
 }

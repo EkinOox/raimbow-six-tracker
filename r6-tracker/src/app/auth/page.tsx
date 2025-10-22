@@ -23,7 +23,7 @@ export default function AuthPage() {
   // Rediriger si déjà connecté
   useEffect(() => {
     if (isAuthenticated && user) {
-      router.push('/dashboard');
+      router.push('/dashboard-new');
     }
   }, [isAuthenticated, user, router]);
 

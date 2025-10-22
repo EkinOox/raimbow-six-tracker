@@ -10,7 +10,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { logout, getMe } from '../../store/slices/authSlice';
+import { logout, getMe, restoreToken } from '../../store/slices/authSlice';
 
 interface NavItem {
   label: string;
@@ -40,6 +40,9 @@ export default function Navbar() {
 
   // Vérifier l'authentification au chargement
   useEffect(() => {
+    // Restaurer le token depuis localStorage
+    dispatch(restoreToken());
+    
     const token = localStorage.getItem('token');
     if (token && !user) {
       dispatch(getMe());
@@ -343,7 +346,7 @@ export default function Navbar() {
                             </div>
                           </Link>
 
-                          {/* Profil Uplay */}
+                          {/* Profil R6 Stats */}
                           {user.uplayProfile && (
                             <Link
                               href={`/profile/${user.uplayProfile}`}
@@ -353,14 +356,12 @@ export default function Navbar() {
                               <div className="flex items-center space-x-3">
                                 <i className="pi pi-id-card text-base"></i>
                                 <div>
-                                  <p className="font-medium">Profil Uplay</p>
+                                  <p className="font-medium">Profil R6</p>
                                   <p className="text-xs text-r6-light/60">Voir mes stats R6</p>
                                 </div>
                               </div>
                             </Link>
-                          )}
-
-                          {/* Séparateur */}
+                          )}                          {/* Séparateur */}
                           <div className="border-t border-glass-border-dark"></div>
 
                           {/* Déconnexion */}

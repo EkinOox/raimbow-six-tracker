@@ -82,18 +82,82 @@ export const getAccountInfo = async (username: string, platform: string) => {
       signal: AbortSignal.timeout(API_TIMEOUT)
     });
 
-    if (!response.ok) {
-      throw new Error(`Erreur API account info: ${response.status}`);
-    }
-
     const result = await response.json();
-    if (!result.success) {
-      throw new Error(result.error || 'Erreur lors de la récupération des informations du compte');
+    
+    if (!response.ok || !result.success) {
+      const errorMessage = result.error || `Joueur "${username}" non trouvé`;
+      throw new Error(errorMessage);
     }
 
     return result.data;
   } catch (error) {
     console.error('❌ Erreur lors de la récupération des informations du compte:', error);
+    throw error;
+  }
+};
+
+// Alternative: Récupérer l'ID du joueur via getId (plus fiable pour certains noms)
+export const getPlayerId = async (username: string, platform: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/r6-data-proxy`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'User-Agent': 'R6-Tracker-App/1.0' 
+      },
+      body: JSON.stringify({
+        action: 'getId',
+        params: {
+          platform,
+          username
+        }
+      }),
+      signal: AbortSignal.timeout(API_TIMEOUT)
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok || !result.success) {
+      const errorMessage = result.error || `Joueur "${username}" non trouvé`;
+      throw new Error(errorMessage);
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération de l\'ID du joueur:', error);
+    throw error;
+  }
+};
+
+// Récupérer les stats via l'ID (méthode alternative plus fiable)
+export const getStatsByPlayerId = async (playerId: string, platform: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/r6-data-proxy`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'User-Agent': 'R6-Tracker-App/1.0' 
+      },
+      body: JSON.stringify({
+        action: 'getStats',
+        params: {
+          platform,
+          playerId
+        }
+      }),
+      signal: AbortSignal.timeout(API_TIMEOUT)
+    });
+
+    const result = await response.json();
+    
+    if (!response.ok || !result.success) {
+      const errorMessage = result.error || `Statistiques non disponibles`;
+      throw new Error(errorMessage);
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des stats par ID:', error);
     throw error;
   }
 };
@@ -118,13 +182,11 @@ export const getPlayerStats = async (username: string, platform: string) => {
       signal: AbortSignal.timeout(API_TIMEOUT)
     });
 
-    if (!response.ok) {
-      throw new Error(`Erreur API player stats: ${response.status}`);
-    }
-
     const result = await response.json();
-    if (!result.success) {
-      throw new Error(result.error || 'Erreur lors de la récupération des statistiques du joueur');
+    
+    if (!response.ok || !result.success) {
+      const errorMessage = result.error || `Statistiques pour "${username}" non disponibles`;
+      throw new Error(errorMessage);
     }
 
     return result.data;
@@ -164,6 +226,8 @@ const r6DataService = {
   getMaps,
   getWeapons,
   getAccountInfo,
+  getPlayerId,
+  getStatsByPlayerId,
   getPlayerStats,
   validateUsername,
   testConnection

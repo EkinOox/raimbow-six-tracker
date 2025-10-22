@@ -34,6 +34,13 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       }
     ],
+    // Configuration des timeouts et erreurs
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Timeout augmenté pour les images lentes
+    unoptimized: false,
   },
 };
 
