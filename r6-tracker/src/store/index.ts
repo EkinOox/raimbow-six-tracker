@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // localStorage
 import { combineReducers } from '@reduxjs/toolkit';
 import operatorsReducer from './slices/operatorsSlice';
 import weaponsReducer from './slices/weaponsSlice';
 import mapsReducer from './slices/mapsSlice';
+import authReducer from './slices/authSlice';
+import favoritesReducer from './slices/favoritesSlice';
 
 // Configuration de persistence pour le cache d'images des cartes
 const mapsPersistConfig = {
@@ -20,6 +22,8 @@ const rootReducer = combineReducers({
   operators: operatorsReducer,
   weapons: weaponsReducer,
   maps: persistReducer(mapsPersistConfig, mapsReducer),
+  auth: authReducer,
+  favorites: favoritesReducer,
 });
 
 // Configuration du store Redux
@@ -28,11 +32,9 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignorer les actions de Redux Persist
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
     }),
-  devTools: process.env.NODE_ENV !== 'production',
 });
 
 // Créer le persistor
