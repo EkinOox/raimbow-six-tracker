@@ -90,10 +90,10 @@ export default function Navbar() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-glass-bg-dark/50 backdrop-blur-sm ${
         isScrolled 
-          ? 'bg-glass-bg-dark/90 backdrop-blur-glass border-b border-glass-border-dark' 
-          : 'bg-glass-bg-dark/70 backdrop-blur-md'
+          ? 'border-b border-glass-border-dark/50 shadow-glass' 
+          : ''
       }`}
     >
       {/* Effet Liquid Glass - Gradient animé qui suit la souris */}
@@ -196,8 +196,8 @@ export default function Navbar() {
                     href={item.href}
                     className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 group ${
                       isActive
-                        ? 'text-r6-primary bg-r6-primary/10'
-                        : 'text-r6-light/80 hover:text-r6-light hover:bg-glass-bg/50'
+                        ? 'text-r6-primary bg-r6-primary/10 backdrop-blur-md'
+                        : 'text-r6-light/80 hover:text-r6-light hover:bg-glass-bg/50 hover:backdrop-blur-md'
                     }`}
                   >
                     <i className={`pi ${item.icon} text-sm`}></i>
@@ -230,7 +230,7 @@ export default function Navbar() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-glass-bg/50 hover:bg-glass-bg text-r6-light border border-glass-border-dark transition-all"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-glass-bg/50 backdrop-blur-md hover:bg-glass-bg hover:backdrop-blur-glass text-r6-light border border-glass-border-dark transition-all"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-r6 flex items-center justify-center">
                       <i className="pi pi-user text-xs text-white"></i>
@@ -249,11 +249,11 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 mt-2 w-64 rounded-lg shadow-xl overflow-visible z-[100]"
+                        className="absolute right-0 mt-2 w-64 rounded-lg shadow-glass overflow-visible z-[100]"
                         style={{ maxHeight: '80vh', overflowY: 'auto' }}
                       >
                         {/* Conteneur avec effet liquid glass */}
-                        <div className="relative bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-lg overflow-hidden">
+                        <div className="relative bg-glass-bg-dark/95 backdrop-blur-glass border border-glass-border-dark rounded-lg overflow-hidden shadow-glass">
                           {/* Effet Liquid Glass pour le menu */}
                           <div className="absolute inset-0 pointer-events-none overflow-hidden">
                             <motion.div
@@ -335,7 +335,7 @@ export default function Navbar() {
                           <Link
                             href="/dashboard-new"
                             onClick={() => setShowUserMenu(false)}
-                            className="relative block px-4 py-3 text-sm text-r6-light hover:bg-r6-primary/10 hover:text-r6-primary transition-colors border-b border-glass-border-dark z-10"
+                            className="relative block px-4 py-3 text-sm text-r6-light hover:bg-r6-primary/10 hover:backdrop-blur-xl hover:text-r6-primary transition-colors border-b border-glass-border-dark z-10"
                           >
                             <div className="flex items-center space-x-3">
                               <i className="pi pi-chart-bar text-base"></i>
@@ -351,7 +351,7 @@ export default function Navbar() {
                             <Link
                               href={`/profile/${user.uplayProfile}`}
                               onClick={() => setShowUserMenu(false)}
-                              className="relative block px-4 py-3 text-sm text-r6-light hover:bg-r6-primary/10 hover:text-r6-primary transition-colors z-10"
+                              className="relative block px-4 py-3 text-sm text-r6-light hover:bg-r6-primary/10 hover:backdrop-blur-xl hover:text-r6-primary transition-colors z-10"
                             >
                               <div className="flex items-center space-x-3">
                                 <i className="pi pi-id-card text-base"></i>
@@ -367,7 +367,7 @@ export default function Navbar() {
                           {/* Déconnexion */}
                           <button
                             onClick={handleLogout}
-                            className="relative w-full px-4 py-3 text-sm text-left text-red-400 hover:bg-red-500/10 transition-colors flex items-center space-x-3 z-10"
+                            className="relative w-full px-4 py-3 text-sm text-left text-red-400 hover:bg-red-500/10 hover:backdrop-blur-xl transition-colors flex items-center space-x-3 z-10"
                           >
                             <i className="pi pi-sign-out text-base"></i>
                             <span className="font-medium">Déconnexion</span>
@@ -427,7 +427,7 @@ export default function Navbar() {
             className="md:hidden relative"
           >
             {/* Conteneur avec effet liquid glass */}
-            <div className="relative bg-glass-bg-dark/90 backdrop-blur-glass border-t border-glass-border-dark overflow-hidden">
+            <div className="relative bg-glass-bg-dark/95 backdrop-blur-glass border-t border-glass-border-dark overflow-hidden shadow-glass">
               {/* Effet Liquid Glass pour le menu mobile */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <motion.div
@@ -506,8 +506,8 @@ export default function Navbar() {
                       href={item.href}
                       className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-base font-medium transition-all duration-200 ${
                         isActive
-                          ? 'text-r6-primary bg-r6-primary/10 border-l-2 border-r6-primary'
-                          : 'text-r6-light/80 hover:text-r6-light hover:bg-glass-bg/50'
+                          ? 'text-r6-primary bg-r6-primary/10 backdrop-blur-md border-l-2 border-r6-primary'
+                          : 'text-r6-light/80 hover:text-r6-light hover:bg-glass-bg/50 hover:backdrop-blur-md'
                       }`}
                     >
                       <i className={`pi ${item.icon} text-lg`}></i>
@@ -539,7 +539,7 @@ export default function Navbar() {
                     {/* Dashboard */}
                     <Link
                       href="/dashboard-new"
-                      className="flex items-center space-x-3 px-3 py-2 mb-2 rounded-lg text-base font-medium text-r6-light hover:bg-r6-primary/10 hover:text-r6-primary transition-all"
+                      className="flex items-center space-x-3 px-3 py-2 mb-2 rounded-lg text-base font-medium text-r6-light hover:bg-r6-primary/10 hover:backdrop-blur-md hover:text-r6-primary transition-all"
                     >
                       <i className="pi pi-chart-bar text-lg"></i>
                       <div>
@@ -552,7 +552,7 @@ export default function Navbar() {
                     {user.uplayProfile && (
                       <Link
                         href={`/profile/${user.uplayProfile}`}
-                        className="flex items-center space-x-3 px-3 py-2 mb-2 rounded-lg text-base font-medium text-r6-light hover:bg-r6-primary/10 hover:text-r6-primary transition-all"
+                        className="flex items-center space-x-3 px-3 py-2 mb-2 rounded-lg text-base font-medium text-r6-light hover:bg-r6-primary/10 hover:backdrop-blur-md hover:text-r6-primary transition-all"
                       >
                         <i className="pi pi-id-card text-lg"></i>
                         <div>
@@ -565,7 +565,7 @@ export default function Navbar() {
                     {/* Déconnexion */}
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center space-x-3 px-3 py-2 mt-3 pt-3 border-t border-glass-border-dark rounded-lg text-base font-medium text-red-400 hover:bg-red-500/10 transition-all"
+                      className="w-full flex items-center space-x-3 px-3 py-2 mt-3 pt-3 border-t border-glass-border-dark rounded-lg text-base font-medium text-red-400 hover:bg-red-500/10 hover:backdrop-blur-md transition-all"
                     >
                       <i className="pi pi-sign-out text-lg"></i>
                       <span>Déconnexion</span>

@@ -35,6 +35,9 @@ function getMapImageUrl(mapName: string): string {
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
   
+  // Essayer plusieurs extensions (certaines cartes ont .png au lieu de .jpg)
+  // On retourne l'URL avec .jpg par défaut, mais l'image sera vérifiée côté client
+  // Si elle n'existe pas, on essaiera .png dans le cacheMapImage
   return `/images/maps/${fileName}.jpg`;
 }
 
@@ -42,22 +45,40 @@ function getMapImageUrl(mapName: string): string {
 export const cacheMapImage = createAsyncThunk(
   'maps/cacheMapImage',
   async (mapName: string) => {
-    const imageUrl = getMapImageUrl(mapName);
+    const fileName = mapName.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
     
-    // Vérifier si l'image existe en tentant de la charger
-    return new Promise<{ mapName: string; imageUrl: string; exists: boolean }>((resolve) => {
-      const img = new Image();
+    console.log(`🔍 Recherche image pour: "${mapName}" → fichier: "${fileName}"`);
+    
+    // Essayer différentes extensions
+    const extensions = ['jpg', 'png', 'jpeg', 'webp', 'avif'];
+    
+    for (const ext of extensions) {
+      const imageUrl = `/images/maps/${fileName}.${ext}`;
       
-      img.onload = () => {
-        resolve({ mapName, imageUrl, exists: true });
-      };
+      // Vérifier si l'image existe
+      const exists = await new Promise<boolean>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          console.log(`✅ Image trouvée: ${imageUrl}`);
+          resolve(true);
+        };
+        img.onerror = () => {
+          console.log(`❌ Image non trouvée: ${imageUrl}`);
+          resolve(false);
+        };
+        img.src = imageUrl;
+      });
       
-      img.onerror = () => {
-        resolve({ mapName, imageUrl: '/images/logo/r6-logo.png', exists: false });
-      };
-      
-      img.src = imageUrl;
-    });
+      if (exists) {
+        return { mapName, imageUrl, exists: true };
+      }
+    }
+    
+    console.warn(`⚠️ Aucune image trouvée pour "${mapName}", utilisation du logo par défaut`);
+    // Si aucune image n'est trouvée, utiliser l'image par défaut
+    return { mapName, imageUrl: '/images/logo/r6-logo.png', exists: false };
   }
 );
 

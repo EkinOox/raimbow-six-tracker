@@ -1,0 +1,22 @@
+# Rainbow Six Tracker - Robots.txt
+# https://www.robotstxt.org/
+
+User-agent: *
+Allow: /
+Allow: /maps
+Allow: /operators
+Allow: /weapons
+Allow: /search
+Allow: /comparaison
+
+# Désactiver les pages d'authentification
+Disallow: /api/
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /dashboard-new
+
+# Sitemap
+Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/sitemap.xml
+
+# Crawl-delay (optionnel, pour éviter la surcharge)
+Crawl-delay: 1

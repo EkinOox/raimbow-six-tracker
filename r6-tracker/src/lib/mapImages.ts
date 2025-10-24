@@ -20,9 +20,28 @@ function detectFloorFromFileName(fileName: string): FloorKey {
 }
 
 export function getMapCallImages(mapSlug: string) {
-  const callsDir = path.join(process.cwd(), 'public', 'images', 'maps', 'calls', mapSlug);
+  // Some map folders use spaces instead of kebab-case (e.g. "club house" vs "club-house").
+  // Try multiple candidate folder names so slugs generated from map names still resolve.
+  const candidates = [
+    mapSlug,
+    // replace dashes with spaces: 'club-house' -> 'club house'
+    mapSlug.replace(/-/g, ' '),
+    // also try decodeURIComponent in case slugs were encoded
+    decodeURIComponent(mapSlug),
+  ];
 
-  if (!fs.existsSync(callsDir)) {
+  let callsDir: string | null = null;
+  let foundCandidate = mapSlug;
+  for (const candidate of candidates) {
+    const p = path.join(process.cwd(), 'public', 'images', 'maps', 'calls', candidate);
+    if (fs.existsSync(p)) {
+      callsDir = p;
+      foundCandidate = candidate;
+      break;
+    }
+  }
+
+  if (!callsDir) {
     return [] as { floor: FloorKey; file: string }[];
   }
 
@@ -36,7 +55,7 @@ export function getMapCallImages(mapSlug: string) {
 
   files.forEach((file) => {
     const floor = detectFloorFromFileName(file);
-    const relPath = `/images/maps/calls/${mapSlug}/${file}`;
+  const relPath = `/images/maps/calls/${foundCandidate}/${file}`;
     const arr = mapFloors.get(floor) || [];
     arr.push(relPath);
     mapFloors.set(floor, arr);

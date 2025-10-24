@@ -1,0 +1,55 @@
+{
+  "name": "Rainbow Six Tracker - Statistiques R6 Siege",
+  "short_name": "R6 Tracker",
+  "description": "Suivez vos statistiques Rainbow Six Siege en temps réel. API Rainbow Six Siege complète.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0f16",
+  "theme_color": "#ff3d2c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/logo/r6x-logo-ww.avif",
+      "sizes": "192x192",
+      "type": "image/avif",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo/r6x-logo-ww.avif",
+      "sizes": "512x512",
+      "type": "image/avif",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "utilities", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "Recherche joueur",
+      "short_name": "Recherche",
+      "description": "Rechercher un joueur Rainbow Six Siege",
+      "url": "/search",
+      "icons": [{ "src": "/images/logo/r6x-logo-ww.avif", "sizes": "192x192" }]
+    },
+    {
+      "name": "Opérateurs",
+      "short_name": "Opérateurs",
+      "description": "Voir tous les opérateurs R6",
+      "url": "/operators",
+      "icons": [{ "src": "/images/logo/r6x-logo-ww.avif", "sizes": "192x192" }]
+    },
+    {
+      "name": "Cartes",
+      "short_name": "Cartes",
+      "description": "Voir toutes les cartes R6 avec callouts",
+      "url": "/maps",
+      "icons": [{ "src": "/images/logo/r6x-logo-ww.avif", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/logo/r6x-logo-ww.avif",
+      "sizes": "540x720",
+      "type": "image/avif"
+    }
+  ]
+}

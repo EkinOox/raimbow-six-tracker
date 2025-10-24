@@ -1,13 +1,32 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // localStorage
+import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 import { combineReducers } from '@reduxjs/toolkit';
 import operatorsReducer from './slices/operatorsSlice';
 import weaponsReducer from './slices/weaponsSlice';
 import mapsReducer from './slices/mapsSlice';
 import authReducer from './slices/authSlice';
 import favoritesReducer from './slices/favoritesSlice';
+
+// Créer un storage qui fonctionne côté serveur et client
+const createNoopStorage = () => {
+  return {
+    getItem() {
+      return Promise.resolve(null);
+    },
+    setItem(_key: string, value: string) {
+      return Promise.resolve(value);
+    },
+    removeItem() {
+      return Promise.resolve();
+    },
+  };
+};
+
+const storage = typeof window !== 'undefined' 
+  ? createWebStorage('local') 
+  : createNoopStorage();
 
 // Configuration de persistence pour le cache d'images des cartes
 const mapsPersistConfig = {
