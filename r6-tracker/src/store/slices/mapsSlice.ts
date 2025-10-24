@@ -49,34 +49,43 @@ export const cacheMapImage = createAsyncThunk(
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '');
     
-    console.log(`🔍 Recherche image pour: "${mapName}" → fichier: "${fileName}"`);
-    
     // Essayer différentes extensions
     const extensions = ['jpg', 'png', 'jpeg', 'webp', 'avif'];
     
     for (const ext of extensions) {
+      // Ajouter un timestamp pour éviter le cache du navigateur
+      const timestamp = Date.now();
       const imageUrl = `/images/maps/${fileName}.${ext}`;
       
       // Vérifier si l'image existe
       const exists = await new Promise<boolean>((resolve) => {
         const img = new Image();
+        
+        // Timeout de 5 secondes
+        const timeout = setTimeout(() => {
+          resolve(false);
+        }, 5000);
+        
         img.onload = () => {
-          console.log(`✅ Image trouvée: ${imageUrl}`);
+          clearTimeout(timeout);
           resolve(true);
         };
+        
         img.onerror = () => {
-          console.log(`❌ Image non trouvée: ${imageUrl}`);
+          clearTimeout(timeout);
           resolve(false);
         };
-        img.src = imageUrl;
+        
+        // Ajouter timestamp pour éviter le cache
+        img.src = `${imageUrl}?t=${timestamp}`;
       });
       
       if (exists) {
+        // Retourner l'URL sans le timestamp
         return { mapName, imageUrl, exists: true };
       }
     }
     
-    console.warn(`⚠️ Aucune image trouvée pour "${mapName}", utilisation du logo par défaut`);
     // Si aucune image n'est trouvée, utiliser l'image par défaut
     return { mapName, imageUrl: '/images/logo/r6-logo.png', exists: false };
   }

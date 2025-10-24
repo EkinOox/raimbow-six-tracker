@@ -278,7 +278,7 @@ export const useCrossAPIData = () => {
       mapOperatorRecommendations,
       weaponEffectiveness
     };
-  }, [enrichedOperators, enrichedWeapons, enrichedMaps]);
+  }, [enrichedWeapons, enrichedMaps]);
 
   // Fonctions de recherche intelligente
   const smartSearch = useCallback((query: string) => {

@@ -50,7 +50,7 @@ export const register = createAsyncThunk(
       }
 
       return data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Erreur réseau lors de l\'inscription');
     }
   }
@@ -79,7 +79,7 @@ export const login = createAsyncThunk(
       }
 
       return data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Erreur réseau lors de la connexion');
     }
   }
@@ -109,7 +109,7 @@ export const getMe = createAsyncThunk(
       }
 
       return data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Erreur réseau');
     }
   }

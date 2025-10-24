@@ -75,7 +75,7 @@ export const fetchFavorites = createAsyncThunk(
       }
 
       return data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Erreur réseau');
     }
   }
@@ -115,7 +115,7 @@ export const toggleFavorite = createAsyncThunk(
       }
 
       return { ...data, ...payload };
-    } catch (error) {
+    } catch {
       return rejectWithValue('Erreur réseau');
     }
   }
@@ -150,7 +150,7 @@ export const checkFavorite = createAsyncThunk(
       }
 
       return data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Erreur réseau');
     }
   }

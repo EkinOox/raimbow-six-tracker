@@ -5,10 +5,6 @@ export type FloorKey = 'basement' | 'first' | 'second' | 'third' | 'roof' | 'oth
 
 const floorOrder: FloorKey[] = ['basement', 'first', 'second', 'third', 'roof', 'other'];
 
-function normalizeFileName(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-');
-}
-
 function detectFloorFromFileName(fileName: string): FloorKey {
   const n = fileName.toLowerCase();
   if (n.includes('basement') || n.includes('bas')) return 'basement';

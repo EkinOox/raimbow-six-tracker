@@ -8,6 +8,7 @@ export default function ApiTestPage() {
   const [platform, setPlatform] = useState('pc');
   const [method, setMethod] = useState<'getAccountInfo' | 'getId' | 'getPlayerStats'>('getId');
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -118,7 +119,7 @@ export default function ApiTestPage() {
               <label className="block text-r6-light mb-2">Méthode API</label>
               <select
                 value={method}
-                onChange={(e) => setMethod(e.target.value as any)}
+                onChange={(e) => setMethod(e.target.value as 'getAccountInfo' | 'getId' | 'getPlayerStats')}
                 className="w-full px-4 py-2 bg-r6-dark border border-glass-border-dark rounded-lg text-r6-light focus:outline-none focus:border-r6-primary"
               >
                 <option value="getId">getId (Recommandé)</option>

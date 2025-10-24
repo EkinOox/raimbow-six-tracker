@@ -10,7 +10,7 @@ interface Params {
 async function getMapData(slug: string): Promise<Map | null> {
   try {
     // Appeler l'API pour récupérer toutes les cartes
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
     const response = await fetch(`${baseUrl}/api/maps`, {
       cache: 'no-store'
     });

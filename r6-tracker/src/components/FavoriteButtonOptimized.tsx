@@ -18,7 +18,7 @@ interface FavoriteButtonOptimizedProps {
     side?: string;
     category?: string;
     location?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   className?: string;
   size?: 'sm' | 'md' | 'lg';

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { fetchOperators, setFilters as setOperatorFilters, clearOperators, clearError as clearOperatorError } from '../store/slices/operatorsSlice';
-import { fetchWeapons, setFilters as setWeaponFilters, clearWeapons, clearError as clearWeaponError } from '../store/slices/weaponsSlice';
-import { fetchMaps, setFilters as setMapFilters, clearMaps, clearError as clearMapError, cacheMapImage } from '../store/slices/mapsSlice';
+import { fetchOperators, setFilters as setOperatorFilters, clearError as clearOperatorError } from '../store/slices/operatorsSlice';
+import { fetchWeapons, setFilters as setWeaponFilters, clearError as clearWeaponError } from '../store/slices/weaponsSlice';
+import { fetchMaps, setFilters as setMapFilters, clearError as clearMapError, cacheMapImage } from '../store/slices/mapsSlice';
 import { OperatorFilters, WeaponFilters, MapFilters } from '../types/r6-api-types';
 
 // Hook pour les opérateurs
@@ -24,10 +24,6 @@ export const useOperators = () => {
     },
     [dispatch]
   );
-
-  const clearData = useCallback(() => {
-    dispatch(clearOperators());
-  }, [dispatch]);
 
   const clearErrors = useCallback(() => {
     dispatch(clearOperatorError());
@@ -66,10 +62,6 @@ export const useWeapons = () => {
     [dispatch]
   );
 
-  const clearData = useCallback(() => {
-    dispatch(clearWeapons());
-  }, [dispatch]);
-
   const clearErrors = useCallback(() => {
     dispatch(clearWeaponError());
   }, [dispatch]);
@@ -82,7 +74,6 @@ export const useWeapons = () => {
     filters: filters as WeaponFilters,
     loadWeapons,
     updateFilters,
-    clearData,
     clearErrors,
   };
 };
@@ -116,10 +107,6 @@ export const useMaps = () => {
     [dispatch, imageCache]
   );
 
-  const clearData = useCallback(() => {
-    dispatch(clearMaps());
-  }, [dispatch]);
-
   const clearErrors = useCallback(() => {
     dispatch(clearMapError());
   }, [dispatch]);
@@ -134,7 +121,6 @@ export const useMaps = () => {
     loadMaps,
     updateFilters,
     loadMapImage,
-    clearData,
     clearErrors,
   };
 };

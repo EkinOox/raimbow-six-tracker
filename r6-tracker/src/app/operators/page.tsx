@@ -68,7 +68,6 @@ export default function OperatorsPage() {
   
   // État pour les favoris (chargés une seule fois)
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
-  const [favoritesLoading, setFavoritesLoading] = useState(false);
 
   // Charger les opérateurs au montage du composant
   useEffect(() => {
@@ -80,7 +79,6 @@ export default function OperatorsPage() {
     const loadFavorites = async () => {
       if (!isAuthenticated || !token) return;
       
-      setFavoritesLoading(true);
       try {
         const response = await fetch('/api/favorites', {
           headers: {
@@ -99,15 +97,11 @@ export default function OperatorsPage() {
         }
       } catch (error) {
         console.error('Erreur lors du chargement des favoris:', error);
-      } finally {
-        setFavoritesLoading(false);
       }
     };
-    
+
     loadFavorites();
-  }, [isAuthenticated, token]);
-  
-  // Callback pour mettre à jour l'état des favoris localement
+  }, [isAuthenticated, token]);  // Callback pour mettre à jour l'état des favoris localement
   const handleFavoriteToggle = (itemId: string, newState: boolean) => {
     setFavoriteIds(prev => {
       const newSet = new Set(prev);
