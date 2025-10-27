@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+// Ne pas forcer la présence de la variable à l'import pour éviter de planter
+// lors du build / de l'analyse statique. On vérifiera sa présence au moment
+// de la connexion effective.
+const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || 'r6tracker';
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -31,6 +30,9 @@ if (!global.mongoose) {
  * Utilise un cache pour éviter les reconnexions multiples en développement
  */
 export async function connectDB(): Promise<typeof mongoose> {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+  }
   // Si déjà connecté, retourner la connexion existante
   if (cached.conn) {
     console.log('🔗 Utilisation de la connexion MongoDB existante');
