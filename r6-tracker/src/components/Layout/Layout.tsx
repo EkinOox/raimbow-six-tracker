@@ -103,9 +103,9 @@ export default function Layout({ children, className = '' }: LayoutProps) {
                   </Link>
                 </li>
                 <li>
-                  <a href="/maps" className="text-r6-light/70 hover:text-r6-primary transition-colors">
+                  <Link href="/maps" className="text-r6-light/70 hover:text-r6-primary transition-colors">
                     Cartes
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
