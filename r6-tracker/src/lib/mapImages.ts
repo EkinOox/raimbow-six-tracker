@@ -1,82 +1,60 @@
-import fs from 'fs';
-import path from 'path';
+// Utiliser un manifeste statique généré à la build-time pour éviter d'inclure
+// le dossier `public/images` dans les bundles serverless.
+// Le script `scripts/generate-map-manifest.js` génère `src/data/mapCallouts.json`.
+import mapCallouts from '@/data/mapCallouts.json';
 
 export type FloorKey = 'basement' | 'first' | 'second' | 'third' | 'roof' | 'other';
 
-const floorOrder: FloorKey[] = ['basement', 'first', 'second', 'third', 'roof', 'other'];
-
-function detectFloorFromFileName(fileName: string): FloorKey {
-  const n = fileName.toLowerCase();
-  if (n.includes('basement') || n.includes('bas')) return 'basement';
-  if (n.includes('first') || n.includes('1st') || n === 'first') return 'first';
-  if (n.includes('second') || n.includes('2nd') || n === 'second') return 'second';
-  if (n.includes('third') || n.includes('3rd') || n === 'third') return 'third';
-  if (n.includes('roof')) return 'roof';
+// Mapping simple pour déduire l'étage à partir du nom de fichier.
+function detectFloorFromPath(p: string): FloorKey {
+  const n = p.toLowerCase();
+  if (n.includes('basement') || n.includes('/basement') || n.includes('bas')) return 'basement';
+  if (n.includes('/first') || n.includes('1st') || n.includes('first')) return 'first';
+  if (n.includes('/second') || n.includes('2nd') || n.includes('second')) return 'second';
+  if (n.includes('/third') || n.includes('3rd') || n.includes('third')) return 'third';
+  if (n.includes('/roof') || n.includes('roof')) return 'roof';
   return 'other';
 }
 
-export function getMapCallImages(mapSlug: string) {
-  // Some map folders use spaces instead of kebab-case (e.g. "club house" vs "club-house").
-  // Try multiple candidate folder names so slugs generated from map names still resolve.
-  const candidates = [
-    mapSlug,
-    // replace dashes with spaces: 'club-house' -> 'club house'
-    mapSlug.replace(/-/g, ' '),
-    // also try decodeURIComponent in case slugs were encoded
-    decodeURIComponent(mapSlug),
-  ];
+const floorOrder: FloorKey[] = ['basement', 'first', 'second', 'third', 'roof', 'other'];
 
-  let callsDir: string | null = null;
-  let foundCandidate = mapSlug;
-  for (const candidate of candidates) {
-    const p = path.join(process.cwd(), 'public', 'images', 'maps', 'calls', candidate);
-    if (fs.existsSync(p)) {
-      callsDir = p;
-      foundCandidate = candidate;
+export function getMapCallImages(mapSlug: string) {
+  // Supporter plusieurs variantes: 'stadium-alpha' -> 'stadium alpha' (manifest keys)
+  const candidates = [mapSlug, mapSlug.replace(/-/g, ' '), decodeURIComponent(mapSlug)];
+
+  let foundKey: string | undefined;
+  for (const c of candidates) {
+    if ((mapCallouts as Record<string, string[]>)[c]) {
+      foundKey = c;
       break;
     }
   }
 
-  if (!callsDir) {
-    return [] as { floor: FloorKey; file: string }[];
-  }
+  if (!foundKey) return [] as { floor: FloorKey; file: string }[];
 
-  const files = fs.readdirSync(callsDir)
-    .filter((f) => !f.startsWith('.'))
-    .filter((f) => /\.(png|jpg|jpeg|webp|avif)$/i.test(f));
+  const files = (mapCallouts as Record<string, string[]>)[foundKey] || [];
 
-  const imagesByFloor: { floor: FloorKey; files: string[] }[] = [];
-
+  // Grouper par étage et ordonner
   const mapFloors = new Map<FloorKey, string[]>();
-
   files.forEach((file) => {
-    const floor = detectFloorFromFileName(file);
-  const relPath = `/images/maps/calls/${foundCandidate}/${file}`;
+    const floor = detectFloorFromPath(file);
     const arr = mapFloors.get(floor) || [];
-    arr.push(relPath);
+    arr.push(file);
     mapFloors.set(floor, arr);
   });
 
-  // Build ordered result
+  const imagesByFloor: { floor: FloorKey; files: string[] }[] = [];
   floorOrder.forEach((f) => {
     const filesForFloor = mapFloors.get(f);
-    if (filesForFloor && filesForFloor.length > 0) {
-      imagesByFloor.push({ floor: f, files: filesForFloor.sort() });
-    }
+    if (filesForFloor && filesForFloor.length) imagesByFloor.push({ floor: f, files: filesForFloor.sort() });
   });
 
-  // Any floors not matched
   for (const [f, filesForFloor] of mapFloors) {
-    if (!floorOrder.includes(f)) {
-      imagesByFloor.push({ floor: f, files: filesForFloor.sort() });
-    }
+    if (!floorOrder.includes(f) && filesForFloor.length) imagesByFloor.push({ floor: f, files: filesForFloor.sort() });
   }
 
-  // Flatten to array of pairs
   const result: { floor: FloorKey; file: string }[] = [];
-  imagesByFloor.forEach((g) => {
-    g.files.forEach((file) => result.push({ floor: g.floor, file }));
-  });
+  imagesByFloor.forEach((g) => g.files.forEach((file) => result.push({ floor: g.floor, file })));
 
   return result;
 }

@@ -1,0 +1,150 @@
+{
+  "bank": [
+    "/images/maps/calls/bank/basement.png",
+    "/images/maps/calls/bank/first.png",
+    "/images/maps/calls/bank/roof.png",
+    "/images/maps/calls/bank/second.png"
+  ],
+  "border": [
+    "/images/maps/calls/border/first.png",
+    "/images/maps/calls/border/roof.png",
+    "/images/maps/calls/border/second.png"
+  ],
+  "chalet": [
+    "/images/maps/calls/chalet/basement.png",
+    "/images/maps/calls/chalet/first.png",
+    "/images/maps/calls/chalet/roof.png",
+    "/images/maps/calls/chalet/second.png"
+  ],
+  "club house": [
+    "/images/maps/calls/club house/basement.png",
+    "/images/maps/calls/club house/first.png",
+    "/images/maps/calls/club house/roof.png",
+    "/images/maps/calls/club house/second.png"
+  ],
+  "coastline": [
+    "/images/maps/calls/coastline/first.png",
+    "/images/maps/calls/coastline/roof.png",
+    "/images/maps/calls/coastline/second.png"
+  ],
+  "consulate": [
+    "/images/maps/calls/consulate/basement.png",
+    "/images/maps/calls/consulate/first.png",
+    "/images/maps/calls/consulate/roof.png",
+    "/images/maps/calls/consulate/second.png"
+  ],
+  "emerald plains": [
+    "/images/maps/calls/emerald plains/first.png",
+    "/images/maps/calls/emerald plains/roof.png",
+    "/images/maps/calls/emerald plains/second.png"
+  ],
+  "favela": [
+    "/images/maps/calls/favela/basement.png",
+    "/images/maps/calls/favela/first.png",
+    "/images/maps/calls/favela/roof.png",
+    "/images/maps/calls/favela/second.png",
+    "/images/maps/calls/favela/third.png"
+  ],
+  "fortress": [
+    "/images/maps/calls/fortress/first.png",
+    "/images/maps/calls/fortress/roof.png",
+    "/images/maps/calls/fortress/second.png"
+  ],
+  "hereford base": [
+    "/images/maps/calls/hereford base/basement.png",
+    "/images/maps/calls/hereford base/first.png",
+    "/images/maps/calls/hereford base/roof.png",
+    "/images/maps/calls/hereford base/second.png",
+    "/images/maps/calls/hereford base/third.png"
+  ],
+  "house": [
+    "/images/maps/calls/house/basement.png",
+    "/images/maps/calls/house/first.png",
+    "/images/maps/calls/house/roof.png",
+    "/images/maps/calls/house/second.png"
+  ],
+  "kafe dostoyevsky": [
+    "/images/maps/calls/kafe dostoyevsky/first.png",
+    "/images/maps/calls/kafe dostoyevsky/roof.png",
+    "/images/maps/calls/kafe dostoyevsky/second.png",
+    "/images/maps/calls/kafe dostoyevsky/third.png"
+  ],
+  "kanal": [
+    "/images/maps/calls/kanal/basement.png",
+    "/images/maps/calls/kanal/first.png",
+    "/images/maps/calls/kanal/roof.png",
+    "/images/maps/calls/kanal/second.png"
+  ],
+  "lair": [
+    "/images/maps/calls/lair/basement.png",
+    "/images/maps/calls/lair/first.png",
+    "/images/maps/calls/lair/roof.png",
+    "/images/maps/calls/lair/second.png"
+  ],
+  "nighthaven labs": [
+    "/images/maps/calls/nighthaven labs/basement.png",
+    "/images/maps/calls/nighthaven labs/first.png",
+    "/images/maps/calls/nighthaven labs/roof.png",
+    "/images/maps/calls/nighthaven labs/second.png"
+  ],
+  "oregon": [
+    "/images/maps/calls/oregon/basement.png",
+    "/images/maps/calls/oregon/first.png",
+    "/images/maps/calls/oregon/roof.png",
+    "/images/maps/calls/oregon/second.png",
+    "/images/maps/calls/oregon/third.png"
+  ],
+  "outback": [
+    "/images/maps/calls/outback/first.png",
+    "/images/maps/calls/outback/roof.png",
+    "/images/maps/calls/outback/second.png"
+  ],
+  "plane": [
+    "/images/maps/calls/plane/first.png",
+    "/images/maps/calls/plane/roof.png",
+    "/images/maps/calls/plane/second.png",
+    "/images/maps/calls/plane/third.png"
+  ],
+  "skyscraper": [
+    "/images/maps/calls/skyscraper/first.png",
+    "/images/maps/calls/skyscraper/roof.png",
+    "/images/maps/calls/skyscraper/second.png"
+  ],
+  "stadium alpha": [
+    "/images/maps/calls/stadium alpha/basement.png",
+    "/images/maps/calls/stadium alpha/first.png",
+    "/images/maps/calls/stadium alpha/roof.png",
+    "/images/maps/calls/stadium alpha/second.png"
+  ],
+  "stadium bravo": [
+    "/images/maps/calls/stadium bravo/basement.png",
+    "/images/maps/calls/stadium bravo/first.png",
+    "/images/maps/calls/stadium bravo/roof.png",
+    "/images/maps/calls/stadium bravo/second.png"
+  ],
+  "theme park": [
+    "/images/maps/calls/theme park/first.png",
+    "/images/maps/calls/theme park/roof.png",
+    "/images/maps/calls/theme park/second.png"
+  ],
+  "tower": [
+    "/images/maps/calls/tower/first.png",
+    "/images/maps/calls/tower/fourth.png",
+    "/images/maps/calls/tower/roof.png",
+    "/images/maps/calls/tower/second.png",
+    "/images/maps/calls/tower/third.png"
+  ],
+  "villa": [
+    "/images/maps/calls/villa/basement.png",
+    "/images/maps/calls/villa/first.png",
+    "/images/maps/calls/villa/roof.png",
+    "/images/maps/calls/villa/second.png"
+  ],
+  "yacht": [
+    "/images/maps/calls/yacht/first.png",
+    "/images/maps/calls/yacht/fourth.png",
+    "/images/maps/calls/yacht/roof.png",
+    "/images/maps/calls/yacht/second.png",
+    "/images/maps/calls/yacht/third.png"
+  ]
+}
