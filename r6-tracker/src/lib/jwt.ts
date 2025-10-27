@@ -1,12 +1,11 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { IUser } from '../models/User';
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+// Ne pas lever d'erreur à l'import : vérifier la présence du secret au moment
+// où on en a réellement besoin (sign / verify). Cela évite d'échouer lors du
+// build/collecting de Next.js qui importe les modules pour l'analyse.
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
-
-if (!JWT_SECRET) {
-  throw new Error('Please define the JWT_SECRET environment variable inside .env.local');
-}
 
 export interface JWTPayload {
   userId: string;
@@ -24,6 +23,10 @@ export function generateToken(user: IUser): string {
     username: user.username,
   };
 
+  if (!JWT_SECRET) {
+    throw new Error('Please define the JWT_SECRET environment variable inside .env.local');
+  }
+
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as SignOptions);
 }
 
@@ -32,6 +35,11 @@ export function generateToken(user: IUser): string {
  */
 export function verifyToken(token: string): JWTPayload | null {
   try {
+    if (!JWT_SECRET) {
+      console.error('JWT_SECRET not defined; skipping token verification');
+      return null;
+    }
+
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
     return decoded;
   } catch (error) {
