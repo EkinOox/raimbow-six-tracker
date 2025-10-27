@@ -2,7 +2,15 @@
 // Utilise uniquement les APIs Next.js internes pour éviter les problèmes CORS
 
 const API_TIMEOUT = parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || '15000');
-const API_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
+// Construire une base URL robuste :
+// 1. NEXT_PUBLIC_APP_URL (si défini spécifiquement)
+// 2. NEXT_PUBLIC_BASE_URL (présent dans .env.local de ce projet)
+// 3. window.location.origin (client)
+// 4. fallback localhost (port 3000 par défaut pour Next.js)
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : `http://localhost:${process.env.PORT || 3000}`);
 
 // API pour récupérer les opérateurs
 export const getOperators = async () => {
@@ -66,7 +74,8 @@ export const getWeapons = async () => {
 // API pour récupérer les informations du compte via le proxy r6-data
 export const getAccountInfo = async (username: string, platform: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/r6-data-proxy`, {
+    const url = `${API_BASE_URL.replace(/\/$/, '')}/api/r6-data-proxy`;
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -86,12 +95,12 @@ export const getAccountInfo = async (username: string, platform: string) => {
     
     if (!response.ok || !result.success) {
       const errorMessage = result.error || `Joueur "${username}" non trouvé`;
-      throw new Error(errorMessage);
+      throw new Error(`${errorMessage} (requested ${API_BASE_URL}/api/r6-data-proxy)`);
     }
 
     return result.data;
   } catch (error) {
-    console.error('❌ Erreur lors de la récupération des informations du compte:', error);
+    console.error('❌ Erreur lors de la récupération des informations du compte:', error, { apiUrl: `${API_BASE_URL}/api/r6-data-proxy`, username, platform });
     throw error;
   }
 };
