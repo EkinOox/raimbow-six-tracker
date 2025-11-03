@@ -5,14 +5,14 @@ import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useAppSelector } from '../../../store';
+import { useAuth } from '@/hooks/useAuth';
 import { transformPlayerStats, getRankImage } from '../../../utils/statsTransformer';
 import type { R6DataAccountInfo, SimplePlayerStats } from '../../../types/r6-data-types';
 
 export default function ProfilePage() {
   const params = useParams();
   const username = params.username as string;
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated } = useAuth();
   
   const [playerInfo, setPlayerInfo] = useState<R6DataAccountInfo | null>(null);
   const [playerStats, setPlayerStats] = useState<SimplePlayerStats | null>(null);

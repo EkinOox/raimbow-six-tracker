@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/useAuth';
 
 interface User {
   id: string;
@@ -17,6 +18,7 @@ interface User {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -34,22 +36,15 @@ export default function ProfilePage() {
 
   const fetchUserProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
+      if (!isAuthenticated) {
         router.push('/auth');
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch('/api/auth/me');
 
       if (!response.ok) {
         if (response.status === 401) {
-          localStorage.removeItem('token');
           router.push('/auth');
           return;
         }
@@ -71,9 +66,11 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    fetchUserProfile();
+    if (!authLoading) {
+      fetchUserProfile();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authLoading, isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,18 +80,15 @@ export default function ProfilePage() {
     setSubmitting(true);
 
     try {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
+      if (!isAuthenticated) {
         router.push('/auth');
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/auth/profile', {
+      const response = await fetch('/api/auth/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });

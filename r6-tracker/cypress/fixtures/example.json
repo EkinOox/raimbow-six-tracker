@@ -1,0 +1,41 @@
+{
+  "testUser": {
+    "email": "test@example.com",
+    "password": "Test123!",
+    "username": "TestUser"
+  },
+  "testOperators": [
+    {
+      "id": "ash",
+      "name": "Ash",
+      "side": "attacker",
+      "role": "breach"
+    },
+    {
+      "id": "jager",
+      "name": "Jäger",
+      "side": "defender",
+      "role": "anti-gadget"
+    }
+  ],
+  "testWeapons": [
+    {
+      "id": "r4-c",
+      "name": "R4-C",
+      "type": "assault_rifle",
+      "operator": "ash"
+    }
+  ],
+  "testMaps": [
+    {
+      "id": "bank",
+      "name": "Bank",
+      "playlist": "ranked"
+    },
+    {
+      "id": "oregon",
+      "name": "Oregon",
+      "playlist": "ranked"
+    }
+  ]
+}

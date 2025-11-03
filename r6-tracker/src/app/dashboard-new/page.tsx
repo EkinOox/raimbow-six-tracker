@@ -6,25 +6,23 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { getMe, logout } from '../../store/slices/authSlice';
 import { fetchFavorites, FavoriteType, toggleFavorite } from '../../store/slices/favoritesSlice';
 import { getWeaponImageUrl } from '../../utils/weaponImages';
+import { useAuth } from '@/hooks/useAuth';
+import { signOut } from 'next-auth/react';
 
 export default function DashboardPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user, isAuthenticated, loading: authLoading } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { operators, weapons, maps, loading: favoritesLoading } = useAppSelector((state) => state.favorites);
 
   useEffect(() => {
-    // Vérifier l'authentification au chargement
-    const token = localStorage.getItem('token');
-    if (token && !user) {
-      dispatch(getMe());
-    } else if (!token) {
+    // Rediriger si non authentifié
+    if (!authLoading && !isAuthenticated) {
       router.push('/auth');
     }
-  }, [dispatch, user, router]);
+  }, [authLoading, isAuthenticated, router]);
 
   useEffect(() => {
     // Charger les favoris si authentifié
@@ -33,8 +31,8 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, user, dispatch]);
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
     router.push('/');
   };
 
@@ -71,7 +69,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">
-                Bienvenue, <span className="text-orange-500">{user.username}</span>
+                Bienvenue, <span className="text-orange-500">{user.name || 'Utilisateur'}</span>
               </h1>
               <p className="text-gray-400">{user.email}</p>
               {user.uplayProfile && (

@@ -12,14 +12,14 @@ import FavoriteButtonOptimized from '../../components/FavoriteButtonOptimized';
 import { useWeapons } from '../../hooks/useR6Data';
 import { WeaponFilters, Weapon } from '../../types/r6-api-types';
 import { getWeaponImageUrl } from '../../utils/weaponImages';
-import { useAppSelector } from '../../store';
+import { useAuth } from '@/hooks/useAuth';
 
 const weaponTypes = ['Tous', 'Assault Rifle', 'SMG', 'LMG', 'Marksman Rifle', 'Sniper Rifle', 'Shotgun', 'Machine Pistol', 'Handgun'];
 const weaponFamilies = ['Tous', 'ATK', 'DEF'];
 
 export default function WeaponsPage() {
   const { weapons, loading, error, loadWeapons, updateFilters, filters } = useWeapons();
-  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('Tous');
   const [selectedFamily, setSelectedFamily] = useState('Tous');
@@ -35,14 +35,10 @@ export default function WeaponsPage() {
   // Charger tous les favoris une seule fois
   useEffect(() => {
     const loadFavorites = async () => {
-      if (!isAuthenticated || !token) return;
+      if (!isAuthenticated) return;
       
       try {
-        const response = await fetch('/api/favorites', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch('/api/favorites');
         
         if (response.ok) {
           const data = await response.json();
@@ -59,7 +55,7 @@ export default function WeaponsPage() {
     };
     
     loadFavorites();
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated]);
   
   // Callback pour mettre à jour l'état des favoris localement
   const handleFavoriteToggle = (itemId: string, newState: boolean) => {
@@ -141,13 +137,15 @@ export default function WeaponsPage() {
 
             {/* Filtre par type d'arme */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="weapon-type-select" className="block text-sm font-medium text-white/80 mb-2">
                 Type d&apos;arme
               </label>
               <select
+                id="weapon-type-select"
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                aria-label="Filtrer par type d'arme"
               >
                 {weaponTypes.map(type => (
                   <option key={type} value={type} className="bg-gray-800">
@@ -159,13 +157,15 @@ export default function WeaponsPage() {
 
             {/* Filtre par famille */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="weapon-side-select" className="block text-sm font-medium text-white/80 mb-2">
                 Côté
               </label>
               <select
+                id="weapon-side-select"
                 value={selectedFamily}
                 onChange={(e) => setSelectedFamily(e.target.value)}
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                aria-label="Filtrer par côté (Attaque ou Défense)"
               >
                 {weaponFamilies.map(family => (
                   <option key={family} value={family} className="bg-gray-800">
@@ -185,6 +185,7 @@ export default function WeaponsPage() {
               <button
                 onClick={() => updateFilters({})}
                 className="text-blue-400 hover:text-blue-300 transition-colors"
+                aria-label="Effacer tous les filtres"
               >
                 <i className="pi pi-times mr-1"></i>
                 Effacer les filtres

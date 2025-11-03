@@ -42,31 +42,17 @@ const initialState: FavoritesState = {
   error: null,
 };
 
-// Helper pour obtenir le token
-const getToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('token');
-  }
-  return null;
-};
-
 // Thunk pour récupérer tous les favoris
 export const fetchFavorites = createAsyncThunk(
   'favorites/fetchAll',
   async (type: FavoriteType | undefined, { rejectWithValue }) => {
     try {
-      const token = getToken();
-      if (!token) {
-        return rejectWithValue('Non authentifié');
-      }
+      // NextAuth gère l'authentification automatiquement via cookies HTTP-only
+      // Plus besoin de passer le token manuellement
 
       const url = type ? `/api/favorites?type=${type}` : '/api/favorites';
       
-      const response = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(url);
 
       const data = await response.json();
 
@@ -94,16 +80,12 @@ export const toggleFavorite = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const token = getToken();
-      if (!token) {
-        return rejectWithValue('Non authentifié');
-      }
+      // NextAuth gère l'authentification automatiquement via cookies HTTP-only
 
       const response = await fetch('/api/favorites', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -129,18 +111,10 @@ export const checkFavorite = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const token = getToken();
-      if (!token) {
-        return rejectWithValue('Non authentifié');
-      }
+      // NextAuth gère l'authentification automatiquement via cookies HTTP-only
 
       const response = await fetch(
-        `/api/favorites/check?type=${payload.itemType}&id=${payload.itemId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
+        `/api/favorites/check?type=${payload.itemType}&id=${payload.itemId}`
       );
 
       const data = await response.json();

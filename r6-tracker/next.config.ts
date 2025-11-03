@@ -48,11 +48,6 @@ const nextConfig: NextConfig = {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
-          // Protection XSS
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
           // Politique de référent
           {
             key: 'Referrer-Policy',
@@ -71,7 +66,7 @@ const nextConfig: NextConfig = {
           // Cross-Origin Resource Policy
           {
             key: 'Cross-Origin-Resource-Policy',
-            value: 'cross-origin',
+            value: 'same-origin',
           },
         ],
       },
@@ -154,7 +149,6 @@ const nextConfig: NextConfig = {
       },
     ],
     minimumCacheTTL: 31536000, // 1 an
-    dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com; frame-src https://www.youtube.com https://youtube.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://www.youtube.com; font-src 'self' data: https://cdn.jsdelivr.net;",
     unoptimized: false,

@@ -11,7 +11,7 @@ import FavoriteButtonOptimized from '../../components/FavoriteButtonOptimized';
 import OperatorImage from '../../components/OperatorImage';
 import { useOperators } from '../../hooks/useR6Data';
 import { Operator } from '../../types/r6-api-types';
-import { useAppSelector } from '../../store';
+import { useAuth } from '@/hooks/useAuth';
 
 // Options de filtrage
 const sides = ['Tous', 'ATK', 'DEF'];
@@ -53,7 +53,7 @@ function getValidImageUrl(url: string | undefined): string {
 
 export default function OperatorsPage() {
   const { operators, loading, error, loadOperators } = useOperators();
-  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAuth();
   
   // États pour les filtres
   const [searchTerm, setSearchTerm] = useState('');
@@ -77,14 +77,10 @@ export default function OperatorsPage() {
   // Charger tous les favoris une seule fois
   useEffect(() => {
     const loadFavorites = async () => {
-      if (!isAuthenticated || !token) return;
+      if (!isAuthenticated) return;
       
       try {
-        const response = await fetch('/api/favorites', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch('/api/favorites');
         
         if (response.ok) {
           const data = await response.json();
@@ -101,7 +97,7 @@ export default function OperatorsPage() {
     };
 
     loadFavorites();
-  }, [isAuthenticated, token]);  // Callback pour mettre à jour l'état des favoris localement
+  }, [isAuthenticated]);  // Callback pour mettre à jour l'état des favoris localement
   const handleFavoriteToggle = (itemId: string, newState: boolean) => {
     setFavoriteIds(prev => {
       const newSet = new Set(prev);
@@ -294,14 +290,16 @@ export default function OperatorsPage() {
             </div>
             <div className="flex gap-4">
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">
+                <label htmlFor="sort-select" className="block text-sm font-medium text-white/80 mb-2">
                   <i className="pi pi-sort mr-2"></i>
                   Tri
                 </label>
                 <select
+                  id="sort-select"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Trier les opérateurs"
                 >
                   {sortOptions.map(option => (
                     <option key={option.value} value={option.value} className="bg-slate-800">
@@ -311,16 +309,19 @@ export default function OperatorsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">
+                <label htmlFor="view-mode" className="block text-sm font-medium text-white/80 mb-2">
                   <i className="pi pi-th-large mr-2"></i>
                   Vue
                 </label>
-                <div className="flex bg-white/10 rounded-xl overflow-hidden">
+                <div className="flex bg-white/10 rounded-xl overflow-hidden" role="group" aria-label="Mode d'affichage">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`px-4 py-3 transition-colors ${
                       viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-white/70 hover:text-white'
                     }`}
+                    aria-label="Affichage en grille"
+                    aria-pressed={viewMode === 'grid'}
+                    title="Affichage en grille"
                   >
                     <i className="pi pi-th-large"></i>
                   </button>
@@ -329,6 +330,9 @@ export default function OperatorsPage() {
                     className={`px-4 py-3 transition-colors ${
                       viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-white/70 hover:text-white'
                     }`}
+                    aria-label="Affichage en liste"
+                    aria-pressed={viewMode === 'list'}
+                    title="Affichage en liste"
                   >
                     <i className="pi pi-list"></i>
                   </button>
@@ -341,14 +345,16 @@ export default function OperatorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-4">
             {/* Côté */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="side-select" className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-shield mr-2"></i>
                 Côté
               </label>
               <select
+                id="side-select"
                 value={selectedSide}
                 onChange={(e) => setSelectedSide(e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Filtrer par côté (Attaque ou Défense)"
               >
                 {sides.map(side => (
                   <option key={side} value={side} className="bg-slate-800">
@@ -360,14 +366,16 @@ export default function OperatorsPage() {
 
             {/* Rôle */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="role-select" className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-user mr-2"></i>
                 Rôle
               </label>
               <select
+                id="role-select"
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Filtrer par rôle spécialisé"
               >
                 {uniqueRoles.map(role => (
                   <option key={role} value={role} className="bg-slate-800">
@@ -379,14 +387,16 @@ export default function OperatorsPage() {
 
             {/* Vitesse */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="speed-select" className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-fast-forward mr-2"></i>
                 Vitesse
               </label>
               <select
+                id="speed-select"
                 value={selectedSpeed}
                 onChange={(e) => setSelectedSpeed(e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Filtrer par niveau de vitesse"
               >
                 {speeds.map(speed => (
                   <option key={speed} value={speed} className="bg-slate-800">
@@ -398,14 +408,16 @@ export default function OperatorsPage() {
 
             {/* Santé */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="health-select" className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-heart mr-2"></i>
                 Armure
               </label>
               <select
+                id="health-select"
                 value={selectedHealthRange}
                 onChange={(e) => setSelectedHealthRange(parseInt(e.target.value))}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Filtrer par niveau d'armure"
               >
                 {healthRanges.map((range, index) => (
                   <option key={index} value={index} className="bg-slate-800">
@@ -417,14 +429,16 @@ export default function OperatorsPage() {
 
             {/* Unité */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="unit-select" className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-flag mr-2"></i>
                 Unité
               </label>
               <select
+                id="unit-select"
                 value={selectedUnit}
                 onChange={(e) => setSelectedUnit(e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Filtrer par unité militaire"
               >
                 <option value="" className="bg-slate-800">Toutes</option>
                 {uniqueUnits.map((unit: string) => (
@@ -437,14 +451,16 @@ export default function OperatorsPage() {
 
             {/* Pays */}
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="country-select" className="block text-sm font-medium text-white/80 mb-2">
                 <i className="pi pi-map mr-2"></i>
                 Pays
               </label>
               <select
+                id="country-select"
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Filtrer par pays d'origine"
               >
                 <option value="" className="bg-slate-800">Tous</option>
                 {uniqueCountries.map((country: string) => (
@@ -465,6 +481,7 @@ export default function OperatorsPage() {
               <button
                 onClick={resetFilters}
                 className="text-blue-400 hover:text-blue-300 transition-colors flex items-center"
+                aria-label="Réinitialiser tous les filtres"
               >
                 <i className="pi pi-times mr-2"></i>
                 Réinitialiser les filtres
@@ -483,7 +500,7 @@ export default function OperatorsPage() {
             <div className="flex items-center text-red-300">
               <i className="pi pi-exclamation-triangle mr-3 text-xl"></i>
               <div>
-                <h3 className="font-semibold">Erreur de chargement</h3>
+                <h2 className="font-semibold">Erreur de chargement</h2>
                 <p className="text-red-300 mt-1">{error}</p>
               </div>
             </div>
@@ -562,9 +579,9 @@ export default function OperatorsPage() {
                         </div>
                         
                         <div className="text-center">
-                          <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">
+                          <h2 className="text-lg font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">
                             {operator.name}
-                          </h3>
+                          </h2>
                           <p className="text-white/60 text-sm mb-2">{operator.realname}</p>
                           
                           <div className="flex items-center justify-center space-x-4 text-xs text-white/70">
@@ -618,9 +635,9 @@ export default function OperatorsPage() {
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors">
+                          <h2 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors">
                             {operator.name}
-                          </h3>
+                          </h2>
                           <p className="text-white/60 text-sm">{operator.realname}</p>
                           <p className="text-white/50 text-xs">{operator.unit} • {operator.birthplace}</p>
                         </div>
@@ -664,13 +681,14 @@ export default function OperatorsPage() {
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="pi pi-search text-white/50 text-2xl"></i>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Aucun opérateur trouvé</h3>
+            <h2 className="text-xl font-semibold text-white mb-2">Aucun opérateur trouvé</h2>
             <p className="text-white/60 mb-4">
               Aucun opérateur ne correspond à vos critères de recherche.
             </p>
             <button
               onClick={resetFilters}
               className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+              aria-label="Réinitialiser tous les filtres"
             >
               Réinitialiser les filtres
             </button>

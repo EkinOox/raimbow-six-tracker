@@ -16,13 +16,13 @@ declare global {
 }
 
 // Cache de connexion pour éviter les reconnexions en développement
-const cached: MongooseCache = global.mongoose || {
+const cached: MongooseCache = globalThis.mongoose || {
   conn: null,
   promise: null,
 };
 
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!globalThis.mongoose) {
+  globalThis.mongoose = cached;
 }
 
 /**

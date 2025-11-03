@@ -6,7 +6,6 @@ import { combineReducers } from '@reduxjs/toolkit';
 import operatorsReducer from './slices/operatorsSlice';
 import weaponsReducer from './slices/weaponsSlice';
 import mapsReducer from './slices/mapsSlice';
-import authReducer from './slices/authSlice';
 import favoritesReducer from './slices/favoritesSlice';
 
 // Créer un storage qui fonctionne côté serveur et client
@@ -41,7 +40,6 @@ const rootReducer = combineReducers({
   operators: operatorsReducer,
   weapons: weaponsReducer,
   maps: persistReducer(mapsPersistConfig, mapsReducer),
-  auth: authReducer,
   favorites: favoritesReducer,
 });
 

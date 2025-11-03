@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Layout from "../components/Layout/Layout";
 import { ReduxProvider } from "../store/ReduxProvider";
+import { AuthProvider } from "../components/AuthProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -158,14 +159,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://staticctf.akamaized.net" />
         <link rel="dns-prefetch" href="https://www.gstatic.com" />
         
-        {/* Préchargement de l'image LCP (logo) */}
-        <link
-          rel="preload"
-          as="image"
-          href="/images/logo/r6x-logo-ww.avif"
-          fetchPriority="high"
-        />
-        
+        {/* Préchargement des ressources critiques */}
         <link 
           rel="preload" 
           href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" 
@@ -227,11 +221,13 @@ export default function RootLayout({
           <div className="ember-particle"></div>
           <div className="ember-particle"></div>
         </div>
-        <ReduxProvider>
-          <Layout>
-            {children}
-          </Layout>
-        </ReduxProvider>
+        <AuthProvider>
+          <ReduxProvider>
+            <Layout>
+              {children}
+            </Layout>
+          </ReduxProvider>
+        </AuthProvider>
       </body>
     </html>
   );

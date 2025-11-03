@@ -133,12 +133,12 @@ favoriteSchema.statics.toggleFavorite = async function (
 
 // Créer ou récupérer le modèle
 // En dev, supprimer le modèle en cache pour éviter les problèmes de schéma
-if (process.env.NODE_ENV === 'development' && mongoose.models.Favorite) {
+if (process.env.NODE_ENV === 'development' && mongoose.models && mongoose.models.Favorite) {
   delete mongoose.models.Favorite;
 }
 
 const Favorite: IFavoriteModel = 
-  (mongoose.models.Favorite as IFavoriteModel) || 
+  (mongoose.models && mongoose.models.Favorite as IFavoriteModel) || 
   mongoose.model<IFavorite, IFavoriteModel>('Favorite', favoriteSchema);
 
 export default Favorite;

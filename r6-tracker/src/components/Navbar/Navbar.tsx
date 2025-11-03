@@ -9,8 +9,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { logout, getMe, restoreToken } from '../../store/slices/authSlice';
+import { useAuth } from '../../hooks/useAuth';
+import { signOut } from 'next-auth/react';
 
 interface NavItem {
   label: string;
@@ -26,28 +26,17 @@ const navItems: NavItem[] = [
   { label: 'Opérateurs', href: '/operators', icon: 'pi-users' },
   { label: 'Armes', href: '/weapons', icon: 'pi-bookmark' },
   { label: 'Cartes', href: '/maps', icon: 'pi-map' },
+  { label: 'À Propos', href: '/about', icon: 'pi-info-circle' },
 ];
 
 export default function Navbar() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { user, isAuthenticated } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const pathname = usePathname();
-
-  // Vérifier l'authentification au chargement
-  useEffect(() => {
-    // Restaurer le token depuis localStorage
-    dispatch(restoreToken());
-    
-    const token = localStorage.getItem('token');
-    if (token && !user) {
-      dispatch(getMe());
-    }
-  }, [dispatch, user]);
 
   // Détecter le scroll pour l'effet glassmorphisme
   useEffect(() => {
@@ -79,8 +68,8 @@ export default function Navbar() {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
     setShowUserMenu(false);
     router.push('/');
   };
@@ -190,7 +179,7 @@ export default function Navbar() {
                     </div>
                     <div className="flex flex-col items-start">
                       <span className="text-xs text-r6-light/60">Profil</span>
-                      <span className="text-sm font-medium text-r6-light">{user.username}</span>
+                      <span className="text-sm font-medium text-r6-light">{user.name || user.email}</span>
                     </div>
                     <i className={`pi pi-chevron-down text-xs transition-transform ${showUserMenu ? 'rotate-180' : ''}`}></i>
                   </motion.button>
@@ -224,7 +213,7 @@ export default function Navbar() {
                           {/* Header Profil */}
                           <div className="relative px-4 py-3 bg-gradient-r6/10 border-b border-glass-border-dark z-10">
                             <p className="text-xs text-r6-light/60 mb-1">Connecté en tant que</p>
-                            <p className="text-sm font-bold text-r6-light">{user.username}</p>
+                            <p className="text-sm font-bold text-r6-light">{user.name || user.email}</p>
                             {user.email && (
                               <p className="text-xs text-r6-light/60 mt-0.5">{user.email}</p>
                             )}
@@ -396,7 +385,7 @@ export default function Navbar() {
                     {/* Profil Header */}
                     <div className="px-3 py-2 mb-3 bg-gradient-r6/10 rounded-lg">
                       <p className="text-xs text-r6-light/60 mb-1">Profil</p>
-                      <p className="text-sm font-bold text-r6-light">{user.username}</p>
+                      <p className="text-sm font-bold text-r6-light">{user.name || user.email}</p>
                       {user.email && (
                         <p className="text-xs text-r6-light/60">{user.email}</p>
                       )}

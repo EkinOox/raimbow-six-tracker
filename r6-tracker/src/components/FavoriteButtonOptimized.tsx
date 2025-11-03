@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useAppSelector } from '../store';
+import { useAuth } from '@/hooks/useAuth';
 
 type ItemType = 'map' | 'operator' | 'weapon';
 
@@ -34,7 +34,7 @@ export default function FavoriteButtonOptimized({
   className = '',
   size = 'md',
 }: FavoriteButtonOptimizedProps) {
-  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAuth();
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -59,7 +59,6 @@ export default function FavoriteButtonOptimized({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           itemType,

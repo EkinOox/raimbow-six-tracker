@@ -8,13 +8,13 @@ import SectionHeader from '../../components/ui/SectionHeader';
 import FavoriteButtonOptimized from '../../components/FavoriteButtonOptimized';
 import { useMaps } from '../../hooks/useR6Data';
 import type { MapFilters } from '../../types/r6-api-types';
-import { useAppSelector } from '../../store';
+import { useAuth } from '@/hooks/useAuth';
 
 const playlists = ['Tous', 'Ranked', 'Standard', 'Team Deathmatch', 'Quick Match'];
 
 export default function MapsPage() {
-  const { maps, loading, error, loadMaps, updateFilters, filters, loadMapImage } = useMaps();
-  const { isAuthenticated, token } = useAppSelector((state) => state.auth);
+  const { maps, loading, error, loadMaps, updateFilters, filters } = useMaps();
+  const { isAuthenticated } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState('Tous');
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
@@ -25,9 +25,9 @@ export default function MapsPage() {
 
   useEffect(() => {
     const loadFavorites = async () => {
-      if (!isAuthenticated || !token) return;
+      if (!isAuthenticated) return;
       try {
-        const res = await fetch('/api/favorites', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch('/api/favorites');
         if (!res.ok) return;
   const payload = await res.json() as { favorites?: Array<{ itemType: string; itemId: string }> };
   const ids = new Set<string>((payload.favorites || []).filter((f) => f.itemType === 'map').map((f) => f.itemId));
@@ -37,7 +37,7 @@ export default function MapsPage() {
       }
     };
     loadFavorites();
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated]);
 
   const handleFavoriteToggle = (itemId: string, newState: boolean) => {
     setFavoriteIds(prev => {
@@ -46,14 +46,6 @@ export default function MapsPage() {
       return copy;
     });
   };
-
-  useEffect(() => {
-    if (maps && maps.length > 0) {
-      maps.forEach(m => {
-        if (!m.imageLoaded) loadMapImage(m.name);
-      });
-    }
-  }, [maps, loadMapImage]);
 
   useEffect(() => {
     const applyFilters = () => {
@@ -83,8 +75,14 @@ export default function MapsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">Mode de jeu</label>
-              <select value={selectedPlaylist} onChange={(e) => setSelectedPlaylist(e.target.value)} className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white">
+              <label htmlFor="map-playlist-select" className="block text-sm font-medium text-white/80 mb-2">Mode de jeu</label>
+              <select 
+                id="map-playlist-select"
+                value={selectedPlaylist} 
+                onChange={(e) => setSelectedPlaylist(e.target.value)} 
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white"
+                aria-label="Filtrer par mode de jeu"
+              >
                 {playlists.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
@@ -92,7 +90,15 @@ export default function MapsPage() {
 
           <div className="mt-4 flex items-center justify-between text-sm text-white/60">
             <span>{loading ? 'Chargement...' : `${maps?.length || 0} carte(s) trouvée(s)`}</span>
-            {Object.keys(filters).length > 0 && <button onClick={() => updateFilters({})} className="text-blue-400">Effacer les filtres</button>}
+            {Object.keys(filters).length > 0 && (
+              <button 
+                onClick={() => updateFilters({})} 
+                className="text-blue-400"
+                aria-label="Effacer tous les filtres"
+              >
+                Effacer les filtres
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -115,7 +121,6 @@ export default function MapsPage() {
                           loading="lazy"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                        {!map.imageLoaded && <div className="absolute inset-0 flex items-center justify-center bg-black/50"><div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"/></div>}
                         <div className="absolute inset-0 bg-black/20" />
                         <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>
                           <FavoriteButtonOptimized itemType="map" itemId={map.name} itemName={map.name} isFavorite={favoriteIds.has(map.name)} onToggle={handleFavoriteToggle} metadata={{ image: map.imageUrl, type: 'map', location: map.location }} size="md" />

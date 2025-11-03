@@ -35,9 +35,8 @@ function getMapImageUrl(mapName: string): string {
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
   
-  // Essayer plusieurs extensions (certaines cartes ont .png au lieu de .jpg)
-  // On retourne l'URL avec .jpg par défaut, mais l'image sera vérifiée côté client
-  // Si elle n'existe pas, on essaiera .png dans le cacheMapImage
+  // Retourner directement l'URL avec .jpg par défaut
+  // Next.js optimisera automatiquement l'image
   return `/images/maps/${fileName}.jpg`;
 }
 
@@ -160,19 +159,12 @@ const mapsSlice = createSlice({
         // Enrichir chaque carte avec son URL d'image
         state.maps = action.payload.maps.map((map: Map) => ({
           ...map,
-          imageUrl: state.imageCache[map.name] || getMapImageUrl(map.name),
-          imageLoaded: !!state.imageCache[map.name]
+          imageUrl: getMapImageUrl(map.name),
+          imageLoaded: true // Considérer comme chargée par défaut
         }));
         state.lastFetch = Date.now();
         state.error = null;
         console.log('✅ Maps chargées dans Redux:', action.payload.maps.length);
-        
-        // Charger les images en cache pour toutes les cartes
-        action.payload.maps.forEach((map: Map) => {
-          if (!state.imageCache[map.name]) {
-            // Note: dispatch sera appelé depuis le hook
-          }
-        });
       })
       .addCase(fetchMaps.rejected, (state, action) => {
         state.loading = false;

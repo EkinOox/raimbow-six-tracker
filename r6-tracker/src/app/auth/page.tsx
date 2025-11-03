@@ -3,15 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { register, login, clearError } from '../../store/slices/authSlice';
+import { signIn } from 'next-auth/react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function AuthPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { user, isAuthenticated, loading, error } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAuth();
 
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -22,15 +23,15 @@ export default function AuthPage() {
 
   // Rediriger si déjà connecté
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated) {
       router.push('/dashboard-new');
     }
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, router]);
 
   // Nettoyer les erreurs au changement de mode
   useEffect(() => {
-    dispatch(clearError());
-  }, [isLogin, dispatch]);
+    setError('');
+  }, [isLogin]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -41,32 +42,77 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
+    setError('');
+    setLoading(true);
 
     if (isLogin) {
-      // Connexion
-      dispatch(login({
-        email: formData.email,
-        password: formData.password,
-      }));
+      // Connexion avec NextAuth
+      try {
+        const result = await signIn('credentials', {
+          email: formData.email,
+          password: formData.password,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          setError(result.error);
+        } else if (result?.ok) {
+          router.push('/dashboard-new');
+        }
+      } catch (err) {
+        setError('Erreur lors de la connexion');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     } else {
-      // Inscription
+      // Inscription via API puis connexion
       if (formData.password !== formData.confirmPassword) {
-        alert('Les mots de passe ne correspondent pas');
+        setError('Les mots de passe ne correspondent pas');
+        setLoading(false);
         return;
       }
 
       if (formData.password.length < 6) {
-        alert('Le mot de passe doit contenir au moins 6 caractères');
+        setError('Le mot de passe doit contenir au moins 6 caractères');
+        setLoading(false);
         return;
       }
 
-      dispatch(register({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        uplayProfile: formData.uplayProfile || undefined,
-      }));
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            uplayProfile: formData.uplayProfile || undefined,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(data.error || 'Erreur lors de l\'inscription');
+        } else {
+          // Connexion automatique après inscription réussie
+          const signInResult = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+          });
+
+          if (signInResult?.ok) {
+            router.push('/dashboard-new');
+          }
+        }
+      } catch (err) {
+        setError('Erreur réseau');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -101,7 +147,7 @@ export default function AuthPage() {
         {/* Card */}
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
           {/* Tabs */}
-          <div className="flex gap-4 mb-6">
+          <div className="flex gap-4 mb-6" role="tablist" aria-label="Mode d'authentification">
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 rounded-lg font-medium transition-all ${
@@ -109,6 +155,9 @@ export default function AuthPage() {
                   ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/50'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10'
               }`}
+              role="tab"
+              aria-selected={isLogin}
+              aria-controls="auth-panel"
             >
               Connexion
             </button>
@@ -119,6 +168,9 @@ export default function AuthPage() {
                   ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/50'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10'
               }`}
+              role="tab"
+              aria-selected={!isLogin}
+              aria-controls="auth-panel"
             >
               Inscription
             </button>

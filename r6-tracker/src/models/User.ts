@@ -113,6 +113,8 @@ userSchema.statics.findByUplayProfile = function (uplayProfile: string) {
 userSchema.index({ uplayProfile: 1 }, { unique: true, sparse: true });
 
 // Créer ou récupérer le modèle (évite les erreurs en développement avec hot-reload)
-const User: IUserModel = (mongoose.models.User as IUserModel) || mongoose.model<IUser, IUserModel>('User', userSchema);
+const User: IUserModel = 
+  (mongoose.models && mongoose.models.User as IUserModel) || 
+  mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export default User;
