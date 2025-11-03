@@ -32,7 +32,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'r6data.eu',
         pathname: '/**',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        pathname: '/**',
+      },
     ],
     // Configuration des timeouts et erreurs
     minimumCacheTTL: 60,

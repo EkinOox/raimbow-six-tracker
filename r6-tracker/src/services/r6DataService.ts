@@ -2,11 +2,6 @@
 // Utilise uniquement les APIs Next.js internes pour éviter les problèmes CORS
 
 const API_TIMEOUT = parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || '15000');
-// Construire une base URL robuste :
-// 1. NEXT_PUBLIC_APP_URL (si défini spécifiquement)
-// 2. NEXT_PUBLIC_BASE_URL (présent dans .env.local de ce projet)
-// 3. window.location.origin (client)
-// 4. fallback localhost (port 3000 par défaut pour Next.js)
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL ||
   process.env.NEXT_PUBLIC_BASE_URL ||
