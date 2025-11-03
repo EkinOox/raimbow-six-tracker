@@ -13,6 +13,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
@@ -29,9 +30,10 @@ export default function AuthPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Nettoyer les erreurs au changement de mode
+  // Nettoyer les messages au changement de mode
   useEffect(() => {
     setError('');
+    setSuccess('');
   }, [isLogin]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +46,7 @@ export default function AuthPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     if (isLogin) {
@@ -108,6 +111,8 @@ export default function AuthPage() {
           }
         } else {
           // Connexion automatique après inscription réussie
+          setSuccess('Compte créé avec succès ! Connexion en cours...');
+          
           const signInResult = await signIn('credentials', {
             email: formData.email,
             password: formData.password,
@@ -201,6 +206,23 @@ export default function AuthPage() {
                 <div className="flex items-start space-x-3">
                   <i className="pi pi-exclamation-circle text-red-400 text-lg mt-0.5"></i>
                   <p className="text-red-300 text-sm flex-1">{error}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Success Message */}
+          <AnimatePresence>
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg"
+              >
+                <div className="flex items-start space-x-3">
+                  <i className="pi pi-check-circle text-green-400 text-lg mt-0.5"></i>
+                  <p className="text-green-300 text-sm flex-1">{success}</p>
                 </div>
               </motion.div>
             )}

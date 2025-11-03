@@ -36,9 +36,9 @@ export const authConfig: NextAuthConfig = {
           await connectDB();
           console.log("✅ [AUTH] Database connected");
           
-          // Trouver l'utilisateur
+          // Trouver l'utilisateur avec le password (select: false par défaut)
           console.log("🔍 [AUTH] Searching for user:", email.toLowerCase());
-          const user = await User.findOne({ email: email.toLowerCase() });
+          const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
           
           if (!user) {
             console.error("❌ [AUTH] User not found:", email);

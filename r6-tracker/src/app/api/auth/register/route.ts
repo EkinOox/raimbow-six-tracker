@@ -38,13 +38,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Créer le nouvel utilisateur
-    const newUser = await User.create({
+    // Créer le nouvel utilisateur avec new User() pour que le middleware pre-save fonctionne
+    const newUser = new User({
       username,
       email: email.toLowerCase(),
-      password, // Le mot de passe sera hashé automatiquement par le middleware
+      password, // Le mot de passe sera hashé automatiquement par le middleware pre-save
       uplayProfile: uplayProfile || null,
     });
+    
+    await newUser.save(); // Déclenche le middleware pre-save qui hash le password
 
     // Générer un token JWT
     const token = generateToken(newUser);
