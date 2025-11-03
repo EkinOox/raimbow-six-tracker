@@ -1,6 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Optimisations de performance
+  experimental: {
+    optimizePackageImports: ['framer-motion', 'lucide-react', '@headlessui/react'],
+    scrollRestoration: true,
+  },
+  // Configuration des headers pour la CSP
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com; frame-src https://www.youtube.com https://youtube.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://www.youtube.com; font-src 'self' data:;",
+          },
+        ],
+      },
+    ];
+  },
+  // Configuration des images
   images: {
     remotePatterns: [
       {
@@ -43,7 +63,8 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // CSP mise à jour pour permettre YouTube
+    contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com; frame-src https://www.youtube.com https://youtube.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://www.youtube.com;",
     // Timeout augmenté pour les images lentes
     unoptimized: false,
   },
