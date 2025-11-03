@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState({
     username: '',
@@ -78,6 +79,7 @@ export default function ProfilePage() {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setFieldErrors({});
     setSubmitting(true);
 
     try {
@@ -100,7 +102,20 @@ export default function ProfilePage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Erreur lors de la mise à jour du profil');
+        // Gérer les erreurs spécifiques
+        if (response.status === 409) {
+          // Conflit - déterminer quel champ est en erreur
+          if (data.message.includes('Uplay') || data.message.includes('profil Uplay')) {
+            setFieldErrors({ uplayProfile: data.message });
+          } else if (data.message.includes('nom d\'utilisateur') || data.message.includes('username')) {
+            setFieldErrors({ username: data.message });
+          } else {
+            setError(data.message);
+          }
+        } else {
+          setError(data.message || 'Erreur lors de la mise à jour du profil');
+        }
+        return;
       }
 
       setUser(data.user);
@@ -129,6 +144,7 @@ export default function ProfilePage() {
     setIsEditing(false);
     setError('');
     setSuccess('');
+    setFieldErrors({});
   };
 
   if (loading) {
@@ -258,24 +274,43 @@ export default function ProfilePage() {
                   <span>Nom d&apos;utilisateur</span>
                 </label>
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-4 py-3 bg-glass-bg/50 backdrop-blur-md border border-glass-border-dark rounded-lg text-r6-light placeholder-r6-light/40 focus:outline-none focus:border-r6-primary focus:ring-2 focus:ring-r6-primary/20 transition-all"
-                    required
-                    minLength={3}
-                    maxLength={30}
-                    pattern="[a-zA-Z0-9_-]+"
-                    title="Seuls les lettres, chiffres, tirets et underscores sont autorisés"
-                    placeholder="VotreNomUtilisateur"
-                  />
+                  <>
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) => {
+                        setFormData({ ...formData, username: e.target.value });
+                        if (fieldErrors.username) {
+                          setFieldErrors({ ...fieldErrors, username: '' });
+                        }
+                      }}
+                      className={`w-full px-4 py-3 bg-glass-bg/50 backdrop-blur-md border ${
+                        fieldErrors.username ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'border-glass-border-dark focus:border-r6-primary focus:ring-r6-primary/20'
+                      } rounded-lg text-r6-light placeholder-r6-light/40 focus:outline-none focus:ring-2 transition-all`}
+                      required
+                      minLength={3}
+                      maxLength={30}
+                      pattern="[a-zA-Z0-9_-]+"
+                      title="Seuls les lettres, chiffres, tirets et underscores sont autorisés"
+                      placeholder="VotreNomUtilisateur"
+                    />
+                    {fieldErrors.username && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-2 bg-red-500/10 border border-red-500/50 text-red-400 px-3 py-2 rounded-lg flex items-start space-x-2 text-sm"
+                      >
+                        <i className="pi pi-exclamation-circle flex-shrink-0 mt-0.5"></i>
+                        <span>{fieldErrors.username}</span>
+                      </motion.div>
+                    )}
+                  </>
                 ) : (
                   <div className="px-4 py-3 bg-glass-bg/30 border border-glass-border-dark rounded-lg">
                     <p className="text-r6-light text-lg font-medium">{user.username}</p>
                   </div>
                 )}
-                {isEditing && (
+                {isEditing && !fieldErrors.username && (
                   <p className="mt-2 text-xs text-r6-light/50">
                     <i className="pi pi-info-circle mr-1"></i>
                     3-30 caractères, lettres, chiffres, tirets et underscores uniquement
@@ -326,17 +361,39 @@ export default function ProfilePage() {
                     <input
                       type="text"
                       value={formData.uplayProfile}
-                      onChange={(e) => setFormData({ ...formData, uplayProfile: e.target.value })}
-                      className="w-full px-4 py-3 bg-glass-bg/50 backdrop-blur-md border border-glass-border-dark rounded-lg text-r6-light placeholder-r6-light/40 focus:outline-none focus:border-r6-primary focus:ring-2 focus:ring-r6-primary/20 transition-all"
+                      onChange={(e) => {
+                        setFormData({ ...formData, uplayProfile: e.target.value });
+                        if (fieldErrors.uplayProfile) {
+                          setFieldErrors({ ...fieldErrors, uplayProfile: '' });
+                        }
+                      }}
+                      className={`w-full px-4 py-3 bg-glass-bg/50 backdrop-blur-md border ${
+                        fieldErrors.uplayProfile ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'border-glass-border-dark focus:border-r6-primary focus:ring-r6-primary/20'
+                      } rounded-lg text-r6-light placeholder-r6-light/40 focus:outline-none focus:ring-2 transition-all`}
                       placeholder="VotreNomUplay"
                     />
-                    <div className="mt-3 bg-orange-500/10 border border-orange-500/50 text-orange-400 px-4 py-3 rounded-lg flex items-start space-x-3">
-                      <i className="pi pi-exclamation-triangle text-xl flex-shrink-0"></i>
-                      <div className="text-sm">
-                        <p className="font-semibold mb-1">Important</p>
-                        <p>Ce profil Uplay doit être unique. Il ne peut pas être utilisé par un autre joueur inscrit sur la plateforme.</p>
+                    {fieldErrors.uplayProfile ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-3 bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg flex items-start space-x-3"
+                      >
+                        <i className="pi pi-exclamation-triangle text-xl flex-shrink-0"></i>
+                        <div className="text-sm">
+                          <p className="font-semibold mb-1">Profil Uplay déjà utilisé</p>
+                          <p>{fieldErrors.uplayProfile}</p>
+                          <p className="mt-2 text-red-300">Veuillez choisir votre propre profil Uplay ou un profil différent.</p>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <div className="mt-3 bg-orange-500/10 border border-orange-500/50 text-orange-400 px-4 py-3 rounded-lg flex items-start space-x-3">
+                        <i className="pi pi-exclamation-triangle text-xl flex-shrink-0"></i>
+                        <div className="text-sm">
+                          <p className="font-semibold mb-1">Important</p>
+                          <p>Ce profil Uplay doit être unique. Il ne peut pas être utilisé par un autre joueur inscrit sur la plateforme.</p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </>
                 ) : (
                   <div className="px-4 py-3 bg-glass-bg/30 border border-glass-border-dark rounded-lg">
