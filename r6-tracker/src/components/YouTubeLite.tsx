@@ -32,7 +32,7 @@ export default function YouTubeLite({
   if (!isLoaded) {
     return (
       <div
-        className={`relative cursor-pointer group ${className}`}
+        className={`relative cursor-pointer group h-full w-full ${className}`}
         onClick={handleLoad}
       >
         {/* Thumbnail YouTube */}
@@ -46,13 +46,13 @@ export default function YouTubeLite({
         />
         
         {/* Overlay sombre au hover */}
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300" />
         
-        {/* Bouton Play */}
+        {/* Bouton Play - Centré */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-red-700 transition-all duration-300 shadow-2xl">
             <svg
-              className="w-10 h-10 text-white ml-1"
+              className="w-8 h-8 md:w-10 md:h-10 text-white ml-1"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -61,9 +61,9 @@ export default function YouTubeLite({
           </div>
         </div>
         
-        {/* Badge "Cliquez pour charger" */}
-        <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm backdrop-blur-sm">
-          🎬 Cliquer pour charger la vidéo
+        {/* Badge "Cliquez pour charger" - Plus discret */}
+        <div className="absolute bottom-4 right-4 bg-black/60 text-white/80 px-3 py-1.5 rounded-lg text-xs backdrop-blur-sm opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+          Cliquer pour lancer la vidéo
         </div>
       </div>
     );

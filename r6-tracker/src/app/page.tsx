@@ -104,7 +104,8 @@ export default function HomePage() {
             className="object-cover opacity-100"
             priority
             fetchPriority="high"
-            quality={70}
+            quality={100}
+            unoptimized={false}
           />
         </motion.div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -239,13 +240,15 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         className="w-full mb-12"
       >
-        <div className="my-20 relative w-full h-[350px] bg-black/20 overflow-hidden shadow-2xl rounded-2xl">
-          <YouTubeLite
-            videoId="BI9fgQY0d5I"
-            title="Rainbow Six Siege - Présentation Officielle"
-            autoplay={false}
-            muted={true}
-          />
+        <div className="my-20 max-w-5xl mx-auto">
+          <div className="relative w-full aspect-video bg-black/20 overflow-hidden shadow-2xl rounded-2xl">
+            <YouTubeLite
+              videoId="BI9fgQY0d5I"
+              title="Rainbow Six Siege - Présentation Officielle"
+              autoplay={false}
+              muted={true}
+            />
+          </div>
         </div>
       </motion.div>
       
