@@ -111,10 +111,6 @@ export const authConfig: NextAuthConfig = {
       return session;
     },
   },
-  pages: {
-    signIn: "/auth",
-    error: "/auth", // Page d'erreur personnalisée
-  },
   cookies: {
     sessionToken: {
       name: `next-auth.session-token`,

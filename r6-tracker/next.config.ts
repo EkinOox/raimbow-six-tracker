@@ -21,9 +21,6 @@ const nextConfig: NextConfig = {
     } : false,
   },
   
-  // Configuration SWC pour cibler les navigateurs modernes
-  swcMinify: true,
-  
   // Configuration des headers pour la CSP et sécurité
   async headers() {
     return [

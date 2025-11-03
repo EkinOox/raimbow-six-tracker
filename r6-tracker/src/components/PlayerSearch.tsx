@@ -303,7 +303,7 @@ export default function PlayerSearch() {
       console.error('❌ Erreur lors de la recherche:', error);
       setError('Erreur de recherche');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
