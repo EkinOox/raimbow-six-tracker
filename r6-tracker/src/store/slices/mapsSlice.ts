@@ -26,6 +26,14 @@ const initialState: MapsState = {
   imageCache: {}, // Cache des images
 };
 
+// Mapping des cartes avec extensions spéciales (PNG au lieu de JPG)
+const MAP_EXTENSIONS: Record<string, string> = {
+  'stadium-bravo': 'png',
+  'stadium-alpha': 'png',
+  'lair': 'png',
+  'district': 'png',
+};
+
 // Fonction helper pour générer l'URL de l'image d'une carte
 function getMapImageUrl(mapName: string): string {
   if (!mapName) return '/images/logo/r6-logo.png';
@@ -35,9 +43,11 @@ function getMapImageUrl(mapName: string): string {
     .replace(/\s+/g, '-')
     .replace(/[^a-z0-9-]/g, '');
   
-  // Retourner directement l'URL avec .jpg par défaut
-  // Next.js optimisera automatiquement l'image
-  return `/images/maps/${fileName}.jpg`;
+  // Vérifier si cette carte a une extension spéciale
+  const extension = MAP_EXTENSIONS[fileName] || 'jpg';
+  
+  // Retourner l'URL avec la bonne extension
+  return `/images/maps/${fileName}.${extension}`;
 }
 
 // Thunk pour charger et cacher une image de carte
