@@ -2,23 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import { generateToken } from '@/lib/jwt';
+import { loginSchema } from '@/schemas/auth.schema';
+import { validateData } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
     // Connexion à la base de données
     await connectDB();
 
-    // Récupérer les données du corps de la requête
+    // Récupérer et valider les données
     const body = await request.json();
-    const { email, password } = body;
-
-    // Validation des données
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email et mot de passe requis' },
-        { status: 400 }
-      );
+    const validation = validateData(loginSchema, body);
+    
+    if (!validation.success) {
+      return validation.response;
     }
+    
+    const { email, password } = validation.data;
 
     // Trouver l'utilisateur par email (en incluant le mot de passe)
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');

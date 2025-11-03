@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
+import { updateProfileSchema } from '@/schemas/auth.schema';
+import { validateData } from '@/lib/validation';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -32,9 +34,15 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Récupérer le corps de la requête
+    // Récupérer et valider le corps de la requête
     const body = await request.json();
-    const { username, avatar, uplayProfile } = body;
+    const validation = validateData(updateProfileSchema, body);
+    
+    if (!validation.success) {
+      return validation.response;
+    }
+    
+    const { username, avatar, uplayProfile } = validation.data;
 
     // Trouver l'utilisateur actuel
     const user = await User.findById(decoded.userId);
