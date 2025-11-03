@@ -276,7 +276,7 @@ export default function HomePage() {
                 className="group"
               >
                 <Link href={feature.href}>
-                  <div className="card-glass group-hover:border-r6-primary/50 h-full">
+                  <div className="card-glass liquid-glass liquid-glass-hover group-hover:border-r6-primary/50 h-full">
                     <div className="relative w-full h-48 mb-4 overflow-hidden rounded-lg">
                       <Image
                         src={feature.image}
@@ -319,7 +319,7 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl lg:text-4xl font-bold text-r6-light mb-4">
-              Découvrez R6 Tracker en Vidéo
+              Découvrez R6 Tracker
             </h2>
             <p className="text-lg text-r6-light/70 max-w-2xl mx-auto">
               Regardez nos vidéos pour découvrir les fonctionnalités et la
@@ -361,7 +361,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="card-glass"
+            className="card-glass liquid-glass liquid-glass-hover"
           >
             <div className="py-8">
               <h2 className="text-3xl lg:text-4xl font-bold text-r6-light mb-4">

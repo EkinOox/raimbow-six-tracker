@@ -148,7 +148,7 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8 overflow-hidden"
+          className="relative bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8 overflow-hidden liquid-glass liquid-glass-hover"
         >
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <motion.div
@@ -272,7 +272,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8"
+          className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8 liquid-glass liquid-glass-hover"
         >
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <div className="flex items-center gap-4">
@@ -384,7 +384,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8"
+          className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8 liquid-glass liquid-glass-hover"
         >
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/5 border border-purple-500/30 flex items-center justify-center">
@@ -474,7 +474,7 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8"
+            className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8 liquid-glass liquid-glass-hover"
           >
             <div className="flex items-center gap-4 mb-8">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-pink-600/5 border border-pink-500/30 flex items-center justify-center">
@@ -545,7 +545,7 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8"
+          className="bg-glass-bg-dark/90 backdrop-blur-glass border border-glass-border-dark rounded-2xl p-8 mb-8 liquid-glass liquid-glass-hover"
         >
           <div className="flex items-center gap-4 mb-8">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/5 border border-blue-500/30 flex items-center justify-center">

@@ -127,6 +127,42 @@ export default function RootLayout({
         <meta name="theme-color" content="#ff3d2c" />
       </head>
       <body className="antialiased">
+        {/* Particules de cendre en fond */}
+        <div className="ash-particles">
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          <div className="ash-particle"></div>
+          {/* Particules de bois brûlé */}
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+          <div className="ember-particle"></div>
+        </div>
         <ReduxProvider>
           <Layout>
             {children}

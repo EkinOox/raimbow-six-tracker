@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useOperators, useWeapons } from '../../../hooks/useR6Data';
 import { Operator, Weapon } from '../../../types/r6-api-types';
+import { getWeaponImageUrl } from '../../../utils/weaponImages';
 
 export default function OperatorDetailPage() {
   const { safename } = useParams();
@@ -424,6 +425,20 @@ export default function OperatorDetailPage() {
                         href={`/weapons/${weapon.name.toLowerCase().replace(/\s+/g, '-')}`}
                         className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all group"
                       >
+                        {/* Image de l'arme */}
+                        <div className="relative w-full h-24 mb-3 bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-lg overflow-hidden">
+                          <Image
+                            src={getWeaponImageUrl(weapon.name)}
+                            alt={weapon.name}
+                            fill
+                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/images/logo/r6x-logo-ww.avif';
+                            }}
+                          />
+                        </div>
+                        
                         <div className="flex items-center justify-between mb-3">
                           <h5 className="text-white font-medium group-hover:text-orange-400 transition-colors">
                             {weapon.name}
@@ -562,6 +577,20 @@ export default function OperatorDetailPage() {
                         href={`/weapons/${weapon.name.toLowerCase().replace(/\s+/g, '-')}`}
                         className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all group"
                       >
+                        {/* Image de l'arme */}
+                        <div className="relative w-full h-20 mb-3 bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-lg overflow-hidden">
+                          <Image
+                            src={getWeaponImageUrl(weapon.name)}
+                            alt={weapon.name}
+                            fill
+                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/images/logo/r6x-logo-ww.avif';
+                            }}
+                          />
+                        </div>
+                        
                         <div className="flex items-center justify-between mb-3">
                           <h5 className="text-white font-medium group-hover:text-blue-400 transition-colors">
                             {weapon.name}

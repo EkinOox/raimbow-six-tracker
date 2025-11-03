@@ -108,53 +108,7 @@ export default function Navbar() {
         transition={{ type: 'tween', ease: 'linear', duration: 0.2 }}
       />
       
-      {/* Effet de vagues liquides */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          className="absolute w-full h-full"
-          animate={{
-            background: `linear-gradient(120deg, 
-              transparent 0%, 
-              rgba(255, 169, 0, 0.03) 30%, 
-              rgba(255, 69, 0, 0.02) 50%, 
-              transparent 70%)`,
-            backgroundSize: '200% 200%',
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
-      </div>
 
-      {/* Particules flottantes pour effet liquide */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-r6-primary/5 blur-xl"
-            style={{
-              width: `${100 + i * 50}px`,
-              height: `${100 + i * 50}px`,
-              left: `${20 + i * 30}%`,
-              top: '50%',
-            }}
-            animate={{
-              y: ['-50%', '-60%', '-50%'],
-              x: ['0%', `${10 + i * 5}%`, '0%'],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 4 + i * 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
-            }}
-          />
-        ))}
-      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center justify-between h-16">
@@ -266,54 +220,6 @@ export default function Navbar() {
                               }}
                               transition={{ type: 'tween', ease: 'linear', duration: 0.3 }}
                             />
-                          </div>
-
-                          {/* Effet de vagues liquides pour le menu */}
-                          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
-                            <motion.div
-                              className="absolute w-full h-full"
-                              animate={{
-                                background: `linear-gradient(135deg, 
-                                  transparent 0%, 
-                                  rgba(255, 169, 0, 0.04) 40%, 
-                                  rgba(255, 69, 0, 0.03) 60%, 
-                                  transparent 100%)`,
-                                backgroundSize: '200% 200%',
-                                backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-                              }}
-                              transition={{
-                                duration: 6,
-                                repeat: Infinity,
-                                ease: 'linear',
-                              }}
-                            />
-                          </div>
-
-                          {/* Particules flottantes pour effet liquide dans le menu */}
-                          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                            {[...Array(2)].map((_, i) => (
-                              <motion.div
-                                key={i}
-                                className="absolute rounded-full bg-r6-primary/5 blur-lg"
-                                style={{
-                                  width: `${60 + i * 30}px`,
-                                  height: `${60 + i * 30}px`,
-                                  left: `${30 + i * 40}%`,
-                                  top: `${20 + i * 30}%`,
-                                }}
-                                animate={{
-                                  y: ['0%', '-20%', '0%'],
-                                  x: ['0%', `${5 + i * 3}%`, '0%'],
-                                  opacity: [0.2, 0.4, 0.2],
-                                }}
-                                transition={{
-                                  duration: 3 + i * 1.5,
-                                  repeat: Infinity,
-                                  ease: 'easeInOut',
-                                  delay: i * 0.3,
-                                }}
-                              />
-                            ))}
                           </div>
 
                           {/* Header Profil */}
@@ -440,54 +346,6 @@ export default function Navbar() {
                   }}
                   transition={{ type: 'tween', ease: 'linear', duration: 0.3 }}
                 />
-              </div>
-
-              {/* Effet de vagues liquides pour le menu mobile */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
-                <motion.div
-                  className="absolute w-full h-full"
-                  animate={{
-                    background: `linear-gradient(135deg, 
-                      transparent 0%, 
-                      rgba(255, 169, 0, 0.04) 40%, 
-                      rgba(255, 69, 0, 0.03) 60%, 
-                      transparent 100%)`,
-                    backgroundSize: '200% 200%',
-                    backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-                  }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    ease: 'linear',
-                  }}
-                />
-              </div>
-
-              {/* Particules flottantes pour effet liquide dans le menu mobile */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                {[...Array(3)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full bg-r6-primary/5 blur-lg"
-                    style={{
-                      width: `${80 + i * 40}px`,
-                      height: `${80 + i * 40}px`,
-                      left: `${20 + i * 30}%`,
-                      top: `${10 + i * 20}%`,
-                    }}
-                    animate={{
-                      y: ['0%', '-15%', '0%'],
-                      x: ['0%', `${5 + i * 3}%`, '0%'],
-                      opacity: [0.2, 0.4, 0.2],
-                    }}
-                    transition={{
-                      duration: 3 + i * 1.5,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                      delay: i * 0.3,
-                    }}
-                  />
-                ))}
               </div>
 
             <div className="relative px-4 py-3 space-y-1 z-10">
