@@ -129,7 +129,7 @@ export default function MapsPage() {
 
                       <div className="p-6 flex-1 flex flex-col justify-between min-h-[220px]">
                         <div>
-                          <h3 className="text-xl font-bold text-white mb-2">{map.name}</h3>
+                          <h2 className="text-xl font-bold text-white mb-2">{map.name}</h2>
                           <div className="flex items-center space-x-2 text-white/60 mb-3"><i className="pi pi-map-marker"/> <span className="text-sm">{map.location}</span></div>
                           <div className="flex flex-wrap gap-2 mb-3">{(map.playlists || '').split(',').map((pl, i) => <span key={i} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">{pl.trim()}</span>)}</div>
                         </div>
@@ -146,7 +146,7 @@ export default function MapsPage() {
         {!loading && maps && maps.length === 0 && !error && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-12">
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4"><i className="pi pi-search text-white/50 text-2xl"/></div>
-            <h3 className="text-xl font-semibold text-white mb-2">Aucune carte trouvée</h3>
+            <h2 className="text-xl font-semibold text-white mb-2">Aucune carte trouvée</h2>
             <p className="text-white/60">Essayez de modifier vos critères de recherche ou de supprimer les filtres.</p>
           </motion.div>
         )}

@@ -286,9 +286,9 @@ export default function WeaponsPage() {
 
                       {/* Informations de l'arme */}
                       <div className="p-4 flex-1 flex flex-col">
-                        <h3 className="text-lg font-bold text-white mb-1">
+                        <h2 className="text-lg font-bold text-white mb-1">
                           {weapon.name}
-                        </h3>
+                        </h2>
                         
                         <div className="flex items-center space-x-2 text-white/60 mb-3">
                           <span className="text-sm">{weapon.type}</span>
@@ -353,9 +353,9 @@ export default function WeaponsPage() {
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="pi pi-search text-white/50 text-2xl"></i>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h2 className="text-xl font-semibold text-white mb-2">
               Aucune arme trouvée
-            </h3>
+            </h2>
             <p className="text-white/60">
               Essayez de modifier vos critères de recherche ou de supprimer les filtres.
             </p>
