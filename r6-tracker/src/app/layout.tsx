@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     default: "Rainbow Six Tracker - Statistiques Rainbow Six Siege en Temps Réel",
     template: "%s | Rainbow Six Tracker"
   },
-  description: "Rainbow Six Tracker : Suivez vos statistiques Rainbow Six Siege en temps réel. API Rainbow Six Siege complète pour consulter vos stats, opérateurs, armes et cartes. Le meilleur tracker R6 gratuit.",
+  description: "Rainbow Six Tracker : Suivez vos statistiques Rainbow Six Siege en temps réel. Consultez vos stats détaillées, opérateurs, armes et cartes. API Rainbow Six Siege complète et gratuite pour tous les joueurs R6.",
   keywords: [
     "rainbow six tracker",
     "rainbow six siege tracker",
@@ -114,6 +114,80 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        {/* Meta description explicite pour SEO */}
+        <meta 
+          name="description" 
+          content="Rainbow Six Tracker : Suivez vos statistiques Rainbow Six Siege en temps réel. Consultez vos stats détaillées, opérateurs, armes et cartes. API Rainbow Six Siege complète et gratuite pour tous les joueurs R6." 
+        />
+        <meta 
+          name="keywords" 
+          content="rainbow six tracker, r6 stats, rainbow six siege tracker, statistiques r6, api rainbow six siege, r6 opérateurs, rainbow six armes" 
+        />
+        <meta name="author" content="Rainbow Six Tracker Team" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        
+        {/* Préconnexions critiques pour améliorer le LCP */}
+        <link 
+          rel="preconnect" 
+          href="https://www.youtube.com" 
+          crossOrigin="anonymous"
+        />
+        <link 
+          rel="dns-prefetch" 
+          href="https://www.youtube.com"
+        />
+        <link 
+          rel="preconnect" 
+          href="https://i.ytimg.com" 
+          crossOrigin="anonymous"
+        />
+        <link 
+          rel="dns-prefetch" 
+          href="https://i.ytimg.com"
+        />
+        
+        {/* Préchargement des ressources critiques PrimeIcons */}
+        <link 
+          rel="preconnect" 
+          href="https://cdn.jsdelivr.net" 
+          crossOrigin="anonymous"
+        />
+        <link 
+          rel="dns-prefetch" 
+          href="https://cdn.jsdelivr.net"
+        />
+        
+        {/* Préchargement Google Fonts avec font-display swap */}
+        <link 
+          rel="preconnect" 
+          href="https://fonts.googleapis.com"
+        />
+        <link 
+          rel="preconnect" 
+          href="https://fonts.gstatic.com" 
+          crossOrigin="anonymous"
+        />
+        
+        {/* Préchargement de l'image LCP (logo) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/logo/r6x-logo-ww.avif"
+          fetchPriority="high"
+        />
+        
+        <link 
+          rel="preload" 
+          href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" 
+          as="style"
+        />
+        <link 
+          rel="preload" 
+          href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/fonts/primeicons.woff2" 
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <link 
           rel="stylesheet" 
           href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" 

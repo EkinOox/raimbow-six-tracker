@@ -99,8 +99,11 @@ export default function HomePage() {
             src="/images/img/accueil-hero.png"
             alt="R6 Background"
             fill
+            sizes="100vw"
             className="object-cover opacity-100"
             priority
+            fetchPriority="high"
+            quality={70}
           />
         </motion.div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -121,12 +124,14 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-r6 rounded-2xl shadow-r6-glow opacity-80"></div>
                 <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black/20 p-2">
                   <Image
-                    src="/images/logo/r6-logo.png"
+                    src="/images/logo/r6x-logo-ww.avif"
                     alt="R6 Tracker Logo"
                     width={80}
                     height={80}
                     className="w-full h-full object-contain"
                     priority
+                    fetchPriority="high"
+                    quality={85}
                   />
                 </div>
               </div>
@@ -190,7 +195,10 @@ export default function HomePage() {
                   src="/images/img/presentation-r6.png"
                   alt="Rainbow Six Siege Gameplay"
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                   className="object-cover"
+                  quality={70}
+                  loading="lazy"
                 />
               </div>
             </motion.div>
@@ -282,7 +290,10 @@ export default function HomePage() {
                         src={feature.image}
                         alt={feature.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        quality={65}
+                        loading="lazy"
                       />
                     </div>
                     <div className="w-12 h-12 bg-r6-primary/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-r6-primary/30 transition-colors">

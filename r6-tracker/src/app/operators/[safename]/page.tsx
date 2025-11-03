@@ -192,6 +192,7 @@ export default function OperatorDetailPage() {
                   src={operator.icon_url || '/images/logo/r6-logo.png'}
                   alt={operator.name}
                   fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -431,6 +432,7 @@ export default function OperatorDetailPage() {
                             src={getWeaponImageUrl(weapon.name)}
                             alt={weapon.name}
                             fill
+                            sizes="(max-width: 768px) 50vw, 300px"
                             className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
@@ -583,6 +585,7 @@ export default function OperatorDetailPage() {
                             src={getWeaponImageUrl(weapon.name)}
                             alt={weapon.name}
                             fill
+                            sizes="(max-width: 768px) 50vw, 300px"
                             className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;

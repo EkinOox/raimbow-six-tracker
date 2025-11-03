@@ -11,12 +11,12 @@ Allow: /comparaison
 
 # Désactiver les pages d'authentification
 Disallow: /api/
-Disallow: /auth
-Disallow: /dashboard
-Disallow: /dashboard-new
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /dashboard-new/
 
 # Sitemap
-Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/sitemap.xml
+Sitemap: https://rainbow-six-tracker.com/sitemap.xml
 
 # Crawl-delay (optionnel, pour éviter la surcharge)
 Crawl-delay: 1

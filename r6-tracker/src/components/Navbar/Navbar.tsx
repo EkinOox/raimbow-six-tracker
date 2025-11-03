@@ -86,26 +86,23 @@ export default function Navbar() {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-glass-bg-dark/50 backdrop-blur-sm ${
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-glass-bg-dark/50 backdrop-blur-sm animate-in slide-in-from-top ${
         isScrolled 
           ? 'border-b border-glass-border-dark/50 shadow-glass' 
           : ''
       }`}
+      style={{ animation: 'slideDown 0.5s ease-out' }}
     >
       {/* Effet Liquid Glass - Gradient animé qui suit la souris */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
-        animate={{
+      <div
+        className="absolute inset-0 pointer-events-none overflow-hidden transition-all duration-200"
+        style={{
           background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, 
             rgba(255, 169, 0, 0.08), 
             rgba(255, 69, 0, 0.05), 
-            transparent 80%)`,
+            transparent 80%)`
         }}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.2 }}
       />
       
 
@@ -444,6 +441,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </nav>
   );
 }
