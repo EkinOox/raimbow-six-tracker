@@ -228,7 +228,7 @@ export default function TeamComparison() {
       }
     } catch (error) {
       console.error('Erreur lors de la recherche:', error);
-      alert(error instanceof Error ? error.message : 'Erreur lors de la recherche du joueur');
+      alert('Erreur de recherche du joueur');
     } finally {
       setLoading1(false);
     }
@@ -327,7 +327,7 @@ export default function TeamComparison() {
       }
     } catch (error) {
       console.error('Erreur lors de la recherche:', error);
-      alert(error instanceof Error ? error.message : 'Erreur lors de la recherche du joueur');
+      alert('Erreur de recherche du joueur');
     } finally {
       setLoading2(false);
     }

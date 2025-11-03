@@ -173,7 +173,7 @@ function SimplePlayerSearch({ onPlayerFound }: SimplePlayerSearchProps) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Erreur lors de la recherche:', error);
       }
-      setError(error instanceof Error ? error.message : 'Erreur lors de la recherche');
+      setError('Erreur de recherche');
     } finally {
       setIsLoading(false);
     }

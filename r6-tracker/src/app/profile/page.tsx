@@ -59,7 +59,8 @@ export default function ProfilePage() {
         uplayProfile: data.user.uplayProfile || '',
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError('Erreur de chargement du profil');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -96,18 +97,20 @@ export default function ProfilePage() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Gérer les erreurs spécifiques
+        // Messages d'erreur simplifiés
         if (response.status === 409) {
-          // Conflit - déterminer quel champ est en erreur
-          if (data.message.includes('Uplay') || data.message.includes('profil Uplay')) {
-            setFieldErrors({ uplayProfile: data.message });
-          } else if (data.message.includes('nom d\'utilisateur') || data.message.includes('username')) {
-            setFieldErrors({ username: data.message });
+          // Conflit - profil Uplay ou username déjà pris
+          if (data.message.includes('Uplay') || data.message.includes('profil')) {
+            setFieldErrors({ uplayProfile: 'Ce profil Uplay est déjà utilisé' });
+          } else if (data.message.includes('username') || data.message.includes('utilisateur')) {
+            setFieldErrors({ username: 'Ce nom d\'utilisateur est déjà pris' });
           } else {
-            setError(data.message);
+            setError('Informations déjà utilisées par un autre compte');
           }
+        } else if (response.status === 400) {
+          setError('Informations invalides');
         } else {
-          setError(data.message || 'Erreur lors de la mise à jour du profil');
+          setError('Erreur lors de la mise à jour');
         }
         return;
       }
@@ -121,7 +124,8 @@ export default function ProfilePage() {
         setSuccess('');
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError('Erreur de connexion au serveur');
+      console.error(err);
     } finally {
       setSubmitting(false);
     }

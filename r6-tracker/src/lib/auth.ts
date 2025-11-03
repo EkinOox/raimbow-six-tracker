@@ -15,44 +15,72 @@ export const authConfig: NextAuthConfig = {
       },
       async authorize(credentials) {
         try {
+          console.log("🔐 [AUTH] Starting authentication process");
+          console.log("🔐 [AUTH] Credentials received:", { 
+            email: credentials?.email, 
+            hasPassword: !!credentials?.password 
+          });
+
           // Validation avec Zod
           const validatedFields = loginSchema.safeParse(credentials);
           
           if (!validatedFields.success) {
-            console.log("Validation failed:", validatedFields.error);
-            return null;
+            console.error("❌ [AUTH] Validation failed:", validatedFields.error.flatten());
+            throw new Error("Invalid credentials format");
           }
 
           const { email, password } = validatedFields.data;
+          console.log("✅ [AUTH] Credentials validated");
 
+          console.log("🔌 [AUTH] Connecting to database...");
           await connectDB();
+          console.log("✅ [AUTH] Database connected");
           
           // Trouver l'utilisateur
+          console.log("🔍 [AUTH] Searching for user:", email.toLowerCase());
           const user = await User.findOne({ email: email.toLowerCase() });
           
           if (!user) {
-            console.log("User not found");
-            return null;
+            console.error("❌ [AUTH] User not found:", email);
+            throw new Error("Invalid email or password");
           }
 
+          console.log("✅ [AUTH] User found:", { 
+            id: user._id, 
+            email: user.email,
+            hasPassword: !!user.password 
+          });
+
           // Vérifier le mot de passe
+          console.log("🔑 [AUTH] Verifying password...");
           const isPasswordValid = await bcrypt.compare(password, user.password);
           
           if (!isPasswordValid) {
-            console.log("Invalid password");
-            return null;
+            console.error("❌ [AUTH] Invalid password for user:", email);
+            throw new Error("Invalid email or password");
           }
 
+          console.log("✅ [AUTH] Password valid, authentication successful");
+
           // Retourner les données utilisateur
-          return {
+          const userData = {
             id: user._id.toString(),
             email: user.email,
             name: user.username,
             image: user.avatar || null,
             uplayProfile: user.uplayProfile || null,
           };
+
+          console.log("🎉 [AUTH] Returning user data:", { 
+            id: userData.id, 
+            email: userData.email,
+            name: userData.name 
+          });
+
+          return userData;
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error("💥 [AUTH] Authentication error:", error);
+          // Retourner null pour que NextAuth affiche l'erreur CredentialsSignin
           return null;
         }
       },
@@ -82,6 +110,10 @@ export const authConfig: NextAuthConfig = {
       }
       return session;
     },
+  },
+  pages: {
+    signIn: "/auth",
+    error: "/auth", // Page d'erreur personnalisée
   },
   cookies: {
     sessionToken: {

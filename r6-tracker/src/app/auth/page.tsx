@@ -13,6 +13,7 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -55,12 +56,13 @@ export default function AuthPage() {
         });
 
         if (result?.error) {
-          setError(result.error);
+          // Messages d'erreur simples et clairs
+          setError('Email ou mot de passe incorrect');
         } else if (result?.ok) {
           router.push('/dashboard-new');
         }
       } catch (err) {
-        setError('Erreur lors de la connexion');
+        setError('Erreur de connexion au serveur');
         console.error(err);
       } finally {
         setLoading(false);
@@ -74,7 +76,7 @@ export default function AuthPage() {
       }
 
       if (formData.password.length < 6) {
-        setError('Le mot de passe doit contenir au moins 6 caractères');
+        setError('Mot de passe trop court (minimum 6 caractères)');
         setLoading(false);
         return;
       }
@@ -94,7 +96,16 @@ export default function AuthPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || 'Erreur lors de l\'inscription');
+          // Messages d'erreur simplifiés
+          if (response.status === 409 || data.error?.includes('existe')) {
+            setError('Un compte existe déjà avec cet email');
+          } else if (data.error?.includes('email')) {
+            setError('Email invalide');
+          } else if (data.error?.includes('username')) {
+            setError('Nom d\'utilisateur invalide');
+          } else {
+            setError('Erreur lors de l\'inscription');
+          }
         } else {
           // Connexion automatique après inscription réussie
           const signInResult = await signIn('credentials', {
@@ -105,10 +116,12 @@ export default function AuthPage() {
 
           if (signInResult?.ok) {
             router.push('/dashboard-new');
+          } else {
+            setError('Compte créé mais erreur de connexion automatique');
           }
         }
       } catch (err) {
-        setError('Erreur réseau');
+        setError('Erreur de connexion au serveur');
         console.error(err);
       } finally {
         setLoading(false);
@@ -185,7 +198,10 @@ export default function AuthPage() {
                 exit={{ opacity: 0, height: 0 }}
                 className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg"
               >
-                <p className="text-red-400 text-sm">{error}</p>
+                <div className="flex items-start space-x-3">
+                  <i className="pi pi-exclamation-circle text-red-400 text-lg mt-0.5"></i>
+                  <p className="text-red-300 text-sm flex-1">{error}</p>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -235,15 +251,25 @@ export default function AuthPage() {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Mot de passe *
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 pr-12 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                >
+                  <i className={`pi ${showPassword ? 'pi-eye-slash' : 'pi-eye'} text-lg`}></i>
+                </button>
+              </div>
             </div>
 
             <AnimatePresence mode="wait">
