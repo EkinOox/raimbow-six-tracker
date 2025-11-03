@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     scrollRestoration: true,
   },
   
+  // Compression et minification
+  compress: true, // Active la compression gzip
+  poweredByHeader: false, // Supprime l'en-tête X-Powered-By
+  
   // Désactiver les source maps en production pour réduire la taille et éviter les erreurs
   productionBrowserSourceMaps: false,
   
@@ -140,6 +144,16 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'yt3.ggpht.com',
         pathname: '/**',
       },
     ],

@@ -7,6 +7,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
+import YouTubeLite from "@/components/YouTubeLite";
 
 const features = [
   {
@@ -131,7 +132,7 @@ export default function HomePage() {
                     className="w-full h-full object-contain"
                     priority
                     fetchPriority="high"
-                    quality={85}
+                    quality={60}
                   />
                 </div>
               </div>
@@ -238,15 +239,13 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         className="w-full mb-12"
       >
-        <div className="my-20 relative w-full h-[350px] bg-black/20 overflow-hidden shadow-2xl">
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/BI9fgQY0d5I?autoplay=1&mute=1&controls=0&loop=1&playlist=BI9fgQY0d5I&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0"
+        <div className="my-20 relative w-full h-[350px] bg-black/20 overflow-hidden shadow-2xl rounded-2xl">
+          <YouTubeLite
+            videoId="BI9fgQY0d5I"
             title="Rainbow Six Siege - Présentation Officielle"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          ></iframe>
+            autoplay={false}
+            muted={true}
+          />
         </div>
       </motion.div>
       
@@ -349,16 +348,13 @@ export default function HomePage() {
               Démo Saison en Cours
             </h3>
             <div className="relative aspect-video bg-black/20 rounded-2xl overflow-hidden shadow-2xl">
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/iqdhOZs9PmQ"
+              <YouTubeLite
+                videoId="iqdhOZs9PmQ"
                 title="R6 Tracker Demo Saison"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+                autoplay={false}
+                muted={false}
                 className="rounded-2xl"
-              ></iframe>
+              />
             </div>
           </motion.div>
         </div>

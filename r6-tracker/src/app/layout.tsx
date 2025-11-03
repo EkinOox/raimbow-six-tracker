@@ -126,47 +126,37 @@ export default function RootLayout({
         <meta name="author" content="Rainbow Six Tracker Team" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         
-        {/* Préconnexions critiques pour améliorer le LCP */}
-        <link 
-          rel="preconnect" 
-          href="https://www.youtube.com" 
-          crossOrigin="anonymous"
-        />
-        <link 
-          rel="dns-prefetch" 
-          href="https://www.youtube.com"
-        />
-        <link 
-          rel="preconnect" 
-          href="https://i.ytimg.com" 
-          crossOrigin="anonymous"
-        />
-        <link 
-          rel="dns-prefetch" 
-          href="https://i.ytimg.com"
-        />
-        
-        {/* Préchargement des ressources critiques PrimeIcons */}
+        {/* Préconnexions critiques - Maximum 4 pour les performances optimales */}
+        {/* 1. CDN PrimeIcons - Chargé sur toutes les pages */}
         <link 
           rel="preconnect" 
           href="https://cdn.jsdelivr.net" 
           crossOrigin="anonymous"
         />
-        <link 
-          rel="dns-prefetch" 
-          href="https://cdn.jsdelivr.net"
-        />
-        
-        {/* Préchargement Google Fonts avec font-display swap */}
+        {/* 2. YouTube - Iframe vidéo sur la page d'accueil */}
         <link 
           rel="preconnect" 
-          href="https://fonts.googleapis.com"
+          href="https://www.youtube.com" 
+          crossOrigin="anonymous"
         />
+        {/* 3. Google Fonts - Polices du site */}
         <link 
           rel="preconnect" 
           href="https://fonts.gstatic.com" 
           crossOrigin="anonymous"
         />
+        {/* 4. API Ubisoft - Données des joueurs */}
+        <link 
+          rel="preconnect" 
+          href="https://ubisoft-avatars.akamaized.net" 
+          crossOrigin="anonymous"
+        />
+        
+        {/* DNS-prefetch pour origines secondaires */}
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://staticctf.akamaized.net" />
+        <link rel="dns-prefetch" href="https://www.gstatic.com" />
         
         {/* Préchargement de l'image LCP (logo) */}
         <link
