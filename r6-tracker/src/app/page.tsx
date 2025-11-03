@@ -174,24 +174,52 @@ export default function HomePage() {
       </section>
       
       {/* Video Presentation Section */}
-      <section className="py-20 bg-gradient-to-r from-r6-primary/5 to-r6-accent/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-12"
-          >
-            <h2 className="text-3xl lg:text-4xl font-bold text-r6-light mb-4">
-              Découvrez Rainbow Six Siege
-            </h2>
-            <p className="text-lg text-r6-light/70 max-w-3xl mx-auto">
-              Plongez dans l&apos;univers tactique de Rainbow Six Siege, le jeu de tir à la première personne 
-              où stratégie et précision sont les clés de la victoire. Découvrez les opérateurs, les gadgets 
-              et les cartes qui font de ce jeu une expérience unique.
-            </p>
-          </motion.div>
+      <section className="bg-gradient-to-r from-r6-primary/5 to-r6-accent/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Image Section */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="order-2 lg:order-1"
+            >
+              <div className="relative w-full h-96 rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/images/img/presentation-r6.png"
+                  alt="Rainbow Six Siege Gameplay"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </motion.div>
+
+            {/* Content Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="order-1 lg:order-2 text-center lg:text-left"
+            >
+              <h2 className="text-3xl lg:text-4xl font-bold text-r6-light mb-6">
+                Découvrez Rainbow Six Siege
+              </h2>
+              <p className="text-lg text-r6-light/70 mb-8 leading-relaxed">
+                Plongez dans l&apos;univers tactique de Rainbow Six Siege, le jeu de tir à la première personne 
+                où stratégie et précision sont les clés de la victoire. Découvrez les opérateurs, les gadgets 
+                et les cartes qui font de ce jeu une expérience unique.
+              </p>
+              <Link
+                href="/auth"
+                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-r6 text-white font-semibold rounded-xl hover:scale-105 transition-transform duration-200 shadow-r6-glow"
+              >
+                <i className="pi pi-search mr-2"></i>
+                Explorer vos Stats
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </section>
       
@@ -202,7 +230,7 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
         className="w-full mb-12"
       >
-        <div className="relative w-full h-[350px] bg-black/20 overflow-hidden shadow-2xl">
+        <div className="my-20 relative w-full h-[350px] bg-black/20 overflow-hidden shadow-2xl">
           <iframe
             width="100%"
             height="100%"
@@ -215,7 +243,7 @@ export default function HomePage() {
       </motion.div>
       
       {/* Features Section */}
-      <section className="py-20">
+      <section className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
