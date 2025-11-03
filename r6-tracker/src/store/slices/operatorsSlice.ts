@@ -81,14 +81,16 @@ const operatorsSlice = createSlice({
       .addCase(fetchOperators.fulfilled, (state, action) => {
         state.loading = false;
         state.operators = action.payload.operators;
-        state.lastFetch = Date.now();
-        state.error = null;
-        console.log('✅ Opérateurs chargés dans Redux:', action.payload.operators.length);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Opérateurs chargés dans Redux:', action.payload.operators.length);
+        }
       })
       .addCase(fetchOperators.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Erreur lors du chargement des opérateurs';
-        console.error('❌ Erreur chargement opérateurs:', action.error.message);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('❌ Erreur chargement opérateurs:', action.error.message);
+        }
       });
   },
 });

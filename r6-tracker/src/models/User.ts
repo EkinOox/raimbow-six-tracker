@@ -18,6 +18,7 @@ export interface IUser extends Document {
 interface IUserModel extends Model<IUser> {
   findByEmail(email: string): Promise<IUser | null>;
   findByUsername(username: string): Promise<IUser | null>;
+  findByUplayProfile(uplayProfile: string): Promise<IUser | null>;
 }
 
 // Schéma MongoDB pour User
@@ -102,6 +103,14 @@ userSchema.statics.findByEmail = function (email: string) {
 userSchema.statics.findByUsername = function (username: string) {
   return this.findOne({ username });
 };
+
+// Méthode statique : trouver un utilisateur par profil Uplay
+userSchema.statics.findByUplayProfile = function (uplayProfile: string) {
+  return this.findOne({ uplayProfile });
+};
+
+// Créer un index unique pour uplayProfile (permet null mais pas de doublons pour les valeurs non-null)
+userSchema.index({ uplayProfile: 1 }, { unique: true, sparse: true });
 
 // Créer ou récupérer le modèle (évite les erreurs en développement avec hot-reload)
 const User: IUserModel = (mongoose.models.User as IUserModel) || mongoose.model<IUser, IUserModel>('User', userSchema);

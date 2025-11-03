@@ -123,6 +123,8 @@ export default function Navbar() {
                   height={32}
                   className="w-full h-full object-contain"
                   priority
+                  quality={90}
+                  sizes="40px"
                 />
               </div>
               <span className="text-xl font-bold text-r6-light">
@@ -245,6 +247,21 @@ export default function Navbar() {
                               <div>
                                 <p className="font-medium">Ma Dashboard</p>
                                 <p className="text-xs text-r6-light/60">Stats Uplay & Favoris</p>
+                              </div>
+                            </div>
+                          </Link>
+
+                          {/* Modifier mon profil */}
+                          <Link
+                            href="/profile"
+                            onClick={() => setShowUserMenu(false)}
+                            className="relative block px-4 py-3 text-sm text-r6-light hover:bg-r6-primary/10 hover:backdrop-blur-xl hover:text-r6-primary transition-colors border-b border-glass-border-dark z-10"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <i className="pi pi-user-edit text-base"></i>
+                              <div>
+                                <p className="font-medium">Modifier mon profil</p>
+                                <p className="text-xs text-r6-light/60">Gérer mon compte</p>
                               </div>
                             </div>
                           </Link>
@@ -400,6 +417,18 @@ export default function Navbar() {
                       <div>
                         <p className="text-sm font-medium">Dashboard</p>
                         <p className="text-xs text-r6-light/60">Stats & Favoris</p>
+                      </div>
+                    </Link>
+
+                    {/* Modifier mon profil */}
+                    <Link
+                      href="/profile"
+                      className="flex items-center space-x-3 px-3 py-2 mb-2 rounded-lg text-base font-medium text-r6-light hover:bg-r6-primary/10 hover:backdrop-blur-md hover:text-r6-primary transition-all"
+                    >
+                      <i className="pi pi-user-edit text-lg"></i>
+                      <div>
+                        <p className="text-sm font-medium">Mon profil</p>
+                        <p className="text-xs text-r6-light/60">Gérer mon compte</p>
                       </div>
                     </Link>
 

@@ -92,42 +92,44 @@ export const cacheMapImage = createAsyncThunk(
 );
 
 // Thunk pour récupérer les maps via notre API serveur
-export const fetchMaps = createAsyncThunk(
-  'maps/fetchMaps',
-  async (filters: MapFilters = {}) => {
-    console.log('🌐 Récupération des maps depuis notre API serveur...');
+export const fetchMaps = createAsyncThunk('maps/fetchMaps', async () => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🌐 Récupération des maps depuis notre API serveur...');
+    }
     
-    // Construire l'URL avec les filtres
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        params.append(key, value.toString());
+    const response = await fetch('/api/maps', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'force-cache',
+      next: {
+        revalidate: 86400
       }
     });
-    
-    const url = `/api/maps${params.toString() ? `?${params.toString()}` : ''}`;
-    
-    const response = await fetch(url);
-    
+
     if (!response.ok) {
-      throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+      throw new Error(`Erreur HTTP: ${response.status}`);
     }
-    
+
     const data = await response.json();
     
-    if (data.error) {
-      throw new Error(data.error);
+    // Gérer différents formats de réponse
+    let mapsArray: Map[] = [];
+    if (Array.isArray(data)) {
+      mapsArray = data;
+    } else if (data.maps && Array.isArray(data.maps)) {
+      mapsArray = data.maps;
+    } else if (process.env.NODE_ENV === 'development') {
+      console.warn('Format de données inattendu pour les cartes:', data);
     }
     
-    console.log(`✅ ${data.maps?.length || 0} maps récupérées`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`✅ ${data.maps?.length || 0} maps récupérées`);
+    }
     
-    return {
-      maps: data.maps || [],
-      count: data.count || 0,
-      cached: data.cached || false
-    };
-  }
-);
+    return { maps: mapsArray };
+  });
 
 const mapsSlice = createSlice({
   name: 'maps',

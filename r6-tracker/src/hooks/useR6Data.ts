@@ -84,8 +84,8 @@ export const useMaps = () => {
   const { maps, loading, error, lastFetch, filters, imageCache } = useAppSelector(state => state.maps);
 
   const loadMaps = useCallback(
-    (filters: MapFilters = {}) => {
-      dispatch(fetchMaps(filters));
+    () => {
+      dispatch(fetchMaps());
     },
     [dispatch]
   );
@@ -93,7 +93,6 @@ export const useMaps = () => {
   const updateFilters = useCallback(
     (filters: MapFilters) => {
       dispatch(setMapFilters(filters));
-      dispatch(fetchMaps(filters));
     },
     [dispatch]
   );

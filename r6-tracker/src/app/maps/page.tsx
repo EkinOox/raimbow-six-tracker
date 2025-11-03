@@ -106,7 +106,15 @@ export default function MapsPage() {
                   <Link href={`/maps/${slugify(map.name)}`} className="block">
                     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 transition-all duration-300 cursor-pointer h-full flex flex-col">
                       <div className="relative h-48 bg-gradient-to-br from-blue-600 to-purple-600 flex-shrink-0">
-                        <Image src={map.imageUrl || '/images/logo/r6-logo.png'} alt={map.name} fill className="object-cover" />
+                        <Image 
+                          src={map.imageUrl || '/images/logo/r6-logo.png'} 
+                          alt={map.name} 
+                          fill 
+                          className="object-cover"
+                          quality={75}
+                          loading="lazy"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
                         {!map.imageLoaded && <div className="absolute inset-0 flex items-center justify-center bg-black/50"><div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"/></div>}
                         <div className="absolute inset-0 bg-black/20" />
                         <div className="absolute top-3 right-3 z-10" onClick={(e) => e.stopPropagation()}>

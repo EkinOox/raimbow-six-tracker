@@ -52,7 +52,11 @@ function normalizePlatform(platform: string, method?: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, params } = await request.json();
+    const body = await request.json();
+    const { action } = body;
+    
+    // Support pour les deux formats de requête: { params: {...} } ou direct {...}
+    const params = body.params || body;
     
     const r6 = await getR6Info();
     let result;

@@ -32,36 +32,96 @@ export default function ProfilePage() {
       setError(null);
 
       // Récupérer les informations du compte
-      const infoResponse = await fetch(`/api/r6?username=${encodeURIComponent(playerUsername)}&platform=${playerPlatform}&type=info`);
+      const infoResponse = await fetch('/api/r6-data-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'getAccountInfo',
+          nameOnPlatform: playerUsername,
+          platformType: playerPlatform,
+        }),
+      });
       
       if (!infoResponse.ok) {
-        const errorData = await infoResponse.json();
-        throw new Error(errorData.details || errorData.error || 'Joueur non trouvé');
+        let errorMessage = 'Joueur non trouvé';
+        try {
+          const errorData = await infoResponse.json();
+          errorMessage = errorData.error || errorData.details || errorMessage;
+        } catch {
+          // L'API a retourné du HTML ou un format non-JSON
+          errorMessage = `Erreur ${infoResponse.status}: Le joueur n'existe pas ou l'API est indisponible`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const infoResult = await infoResponse.json();
+      let infoResult;
+      try {
+        const jsonResponse = await infoResponse.json();
+        // L'API proxy retourne { success: true, data: {...} }
+        infoResult = jsonResponse.data || jsonResponse;
+      } catch (parseError) {
+        console.error('Erreur parsing JSON info:', parseError);
+        throw new Error('Réponse invalide de l\'API. Vérifiez le nom d\'utilisateur.');
+      }
       
-      if (infoResult.success && infoResult.data) {
-        setPlayerInfo(infoResult.data);
+      if (infoResult) {
+        setPlayerInfo(infoResult);
       }
 
       // Récupérer les statistiques
-      const statsResponse = await fetch(`/api/r6?username=${encodeURIComponent(playerUsername)}&platform=${playerPlatform}&type=stats`);
+      const statsResponse = await fetch('/api/r6-data-proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'getPlayerStats',
+          nameOnPlatform: playerUsername,
+          platformType: playerPlatform,
+          platform_families: playerPlatform === 'pc' || playerPlatform === 'uplay' ? 'pc' : 'console',
+        }),
+      });
       
       if (statsResponse.ok) {
-        const statsResult = await statsResponse.json();
-        
-        console.log('📊 Données brutes de l\'API:', JSON.stringify(statsResult, null, 2));
-        
-        if (statsResult.success && statsResult.data) {
-          console.log('🔄 Transformation des stats...');
-          const transformedStats = transformPlayerStats(statsResult.data);
-          console.log('✅ Stats transformées:', JSON.stringify(transformedStats, null, 2));
-          setPlayerStats(transformedStats);
+        try {
+          const jsonResponse = await statsResponse.json();
+          // L'API proxy retourne { success: true, data: {...} }
+          const statsResult = jsonResponse.data || jsonResponse;
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log('📊 Données brutes de l\'API:', JSON.stringify(statsResult, null, 2));
+          }
+          
+          if (statsResult) {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🔄 Transformation des stats...');
+            }
+            const transformedStats = transformPlayerStats(statsResult);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('✅ Stats transformées:', JSON.stringify(transformedStats, null, 2));
+            }
+            setPlayerStats(transformedStats);
+          }
+        } catch (parseError) {
+          console.error('Erreur parsing JSON stats:', parseError);
+          // Les stats sont optionnelles, on continue sans elles
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement des données');
+      let errorMessage = 'Erreur lors du chargement des données';
+      
+      if (err instanceof Error) {
+        errorMessage = err.message;
+        
+        // Rendre le message plus explicite pour les erreurs JSON
+        if (errorMessage.includes('JSON') || errorMessage.includes('Unexpected token')) {
+          errorMessage = `Le joueur "${playerUsername}" est introuvable sur ${playerPlatform}. Vérifiez l'orthographe et la plateforme.`;
+        }
+      }
+      
+      setError(errorMessage);
       console.error('Erreur:', err);
     } finally {
       setLoading(false);
@@ -97,33 +157,80 @@ export default function ProfilePage() {
             <i className="pi pi-exclamation-triangle text-5xl text-red-400 mb-4"></i>
             <h2 className="text-2xl font-bold text-red-400 mb-2">Joueur non trouvé</h2>
             <p className="text-r6-light/80 mb-2">{error}</p>
-            <div className="mt-4 p-4 bg-r6-dark/50 rounded-lg text-left">
-              <p className="text-sm text-r6-light/60 mb-2">💡 Conseils :</p>
-              <ul className="text-sm text-r6-light/80 space-y-1 list-disc list-inside">
-                <li>Vérifiez l&apos;orthographe du nom d&apos;utilisateur</li>
-                <li>Assurez-vous que la plateforme est correcte (PC/Uplay, PlayStation, Xbox)</li>
-                <li>Le nom doit correspondre exactement au nom Ubisoft</li>
-                <li>Essayez sans espaces ni caractères spéciaux si possible</li>
-              </ul>
+            
+            <div className="mt-6 p-5 bg-r6-dark/50 rounded-lg text-left border border-orange-500/20">
+              <div className="flex items-start space-x-3 mb-3">
+                <i className="pi pi-lightbulb text-orange-400 text-xl flex-shrink-0 mt-1"></i>
+                <div>
+                  <p className="text-sm font-semibold text-orange-400 mb-2">Conseils de recherche</p>
+                  <ul className="text-sm text-r6-light/80 space-y-2">
+                    <li className="flex items-start">
+                      <span className="text-r6-primary mr-2">•</span>
+                      <span>Vérifiez l&apos;orthographe exacte du nom d&apos;utilisateur</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-r6-primary mr-2">•</span>
+                      <span>Assurez-vous de sélectionner la bonne plateforme (PC/Uplay, PlayStation, Xbox)</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-r6-primary mr-2">•</span>
+                      <span>Le nom doit correspondre <strong>exactement</strong> au nom Ubisoft Connect</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-r6-primary mr-2">•</span>
+                      <span>Respectez les majuscules, minuscules et caractères spéciaux</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-r6-primary mr-2">•</span>
+                      <span>Si le profil est privé ou récent, il peut ne pas être accessible</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
+            
+            {/* Sélecteur de plateforme */}
+            <div className="mt-6 p-4 bg-glass-bg-dark/50 rounded-lg">
+              <p className="text-sm text-r6-light/60 mb-3">Essayez une autre plateforme :</p>
+              <div className="flex gap-3 justify-center flex-wrap">
+                {(['uplay', 'playstation', 'xbox'] as const).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => {
+                      setPlatform(p);
+                      setError(null);
+                      fetchPlayerData(username, p);
+                    }}
+                    className={`px-4 py-2 rounded-lg transition-all ${
+                      platform === p
+                        ? 'bg-r6-primary text-white'
+                        : 'bg-glass-bg-dark/50 text-r6-light hover:bg-glass-bg-dark'
+                    }`}
+                  >
+                    {p === 'uplay' ? 'PC/Uplay' : p === 'playstation' ? 'PlayStation' : 'Xbox'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
             <div className="flex gap-4 justify-center flex-wrap mt-6">
               <button
                 onClick={() => fetchPlayerData(username, platform)}
-                className="px-6 py-3 bg-r6-primary hover:bg-r6-primary/80 text-white rounded-lg transition-all"
+                className="px-6 py-3 bg-r6-primary hover:bg-r6-primary/80 text-white rounded-lg transition-all flex items-center"
               >
                 <i className="pi pi-refresh mr-2"></i>
                 Réessayer
               </button>
               <Link
                 href="/search"
-                className="px-6 py-3 bg-glass-bg-dark/50 hover:bg-glass-bg-dark text-r6-light rounded-lg transition-all"
+                className="px-6 py-3 bg-glass-bg-dark/50 hover:bg-glass-bg-dark text-r6-light rounded-lg transition-all flex items-center"
               >
                 <i className="pi pi-search mr-2"></i>
                 Rechercher un joueur
               </Link>
               <Link
                 href="/"
-                className="px-6 py-3 bg-glass-bg-dark/50 hover:bg-glass-bg-dark text-r6-light rounded-lg transition-all"
+                className="px-6 py-3 bg-glass-bg-dark/50 hover:bg-glass-bg-dark text-r6-light rounded-lg transition-all flex items-center"
               >
                 <i className="pi pi-home mr-2"></i>
                 Retour à l&apos;accueil

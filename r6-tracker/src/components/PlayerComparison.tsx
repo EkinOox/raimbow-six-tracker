@@ -170,7 +170,9 @@ function SimplePlayerSearch({ onPlayerFound }: SimplePlayerSearchProps) {
       onPlayerFound(playerData);
 
     } catch (error) {
-      console.error('Erreur lors de la recherche:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Erreur lors de la recherche:', error);
+      }
       setError(error instanceof Error ? error.message : 'Erreur lors de la recherche');
     } finally {
       setIsLoading(false);

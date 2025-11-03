@@ -4,7 +4,7 @@ import Layout from "../components/Layout/Layout";
 import { ReduxProvider } from "../store/ReduxProvider";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
     default: "Rainbow Six Tracker - Statistiques Rainbow Six Siege en Temps Réel",
     template: "%s | Rainbow Six Tracker"
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     siteName: "Rainbow Six Tracker",
     title: "Rainbow Six Tracker - Statistiques Rainbow Six Siege & API",
     description: "Tracker Rainbow Six Siege complet : statistiques en temps réel, API Rainbow Six Siege, opérateurs, armes et cartes. Suivez vos performances R6.",
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     images: ["/images/logo/r6-logo.png"],
   },
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001',
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
@@ -91,7 +91,7 @@ export default function RootLayout({
     '@type': 'WebApplication',
     name: 'Rainbow Six Tracker',
     description: 'Tracker Rainbow Six Siege complet avec statistiques en temps réel et API Rainbow Six Siege',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     applicationCategory: 'Game',
     operatingSystem: 'Web',
     offers: {

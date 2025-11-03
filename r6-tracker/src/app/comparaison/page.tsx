@@ -1,49 +1,49 @@
 'use client';
 
-'use client';
-
 import { useState } from 'react';
 import PlayerComparison from '../../components/PlayerComparison';
 import TeamComparison from '../../components/TeamComparison';
 
 type ComparisonMode = 'select' | 'player' | 'team';
 
+// Composant BackButton réutilisable
+const BackButton = ({ onClick }: { onClick: () => void }) => (
+  <div className="p-6">
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+    >
+      <i className="pi pi-arrow-left"></i>
+      Retour au menu
+    </button>
+  </div>
+);
+
+// Composant PageWrapper réutilisable
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20">
+    {children}
+  </div>
+);
+
 export default function ComparisonPage() {
   const [mode, setMode] = useState<ComparisonMode>('select');
 
   if (mode === 'player') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20">
-        {/* Bouton retour */}
-        <div className="p-6">
-          <button
-            onClick={() => setMode('select')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
-          >
-            <i className="pi pi-arrow-left"></i>
-            Retour au menu
-          </button>
-        </div>
+      <PageWrapper>
+        <BackButton onClick={() => setMode('select')} />
         <PlayerComparison />
-      </div>
+      </PageWrapper>
     );
   }
 
   if (mode === 'team') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20">
-        {/* Bouton retour */}
-        <div className="p-6">
-          <button
-            onClick={() => setMode('select')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
-          >
-            <i className="pi pi-arrow-left"></i>
-            Retour au menu
-          </button>
-        </div>
+      <PageWrapper>
+        <BackButton onClick={() => setMode('select')} />
         <TeamComparison />
-      </div>
+      </PageWrapper>
     );
   }
 

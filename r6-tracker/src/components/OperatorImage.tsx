@@ -55,6 +55,8 @@ export default function OperatorImage({
         onLoad={handleLoad}
         priority={priority}
         loading={priority ? undefined : 'lazy'}
+        quality={priority ? 85 : 75}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         placeholder="blur"
         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzJhMmEzYSIvPjwvc3ZnPg=="
       />

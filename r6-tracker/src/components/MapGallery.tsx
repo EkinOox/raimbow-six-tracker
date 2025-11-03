@@ -36,6 +36,8 @@ export default function MapGallery({ grouped, slug, mapData }: Props) {
             height={1000} 
             className="w-full h-full object-contain" 
             priority
+            quality={85}
+            sizes="100vw"
           />
         ) : (
           <div className="text-white/60 p-8">Aucune image disponible pour cet étage.</div>
@@ -95,7 +97,10 @@ export default function MapGallery({ grouped, slug, mapData }: Props) {
                     alt={`${slug} thumb ${idx}`} 
                     width={160} 
                     height={90} 
-                    className="w-32 h-20 object-cover" 
+                    className="w-32 h-20 object-cover"
+                    quality={70}
+                    loading="lazy"
+                    sizes="160px"
                   />
                 </button>
               );
