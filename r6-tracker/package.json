@@ -7,7 +7,9 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "test:quick": "node quick-test.js"
+    "test:quick": "node quick-test.js",
+    "optimize:images": "node scripts/resize-images.js --dir public/images --max-edge 1600 --quality 80 --in-place --verbose",
+    "optimize:images:dry": "node scripts/resize-images.js --dir public/images --max-edge 1600 --quality 80 --dry-run --verbose"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
@@ -35,6 +37,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "sharp": "^0.34.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
