@@ -245,7 +245,7 @@ export default function ProfilePage() {
           </AnimatePresence>
 
           {/* Formulaire */}
-          <form onSubmit={handleSubmit} className="px-8 py-8">
+          <div className="px-8 py-8">
             <div className="space-y-6">
               {/* Nom d'utilisateur */}
               <motion.div
@@ -395,7 +395,7 @@ export default function ProfilePage() {
               className="mt-8 flex flex-col sm:flex-row gap-4"
             >
               {isEditing ? (
-                <>
+                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 w-full">
                   <button
                     type="submit"
                     disabled={submitting}
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                     <i className="pi pi-times"></i>
                     <span>Annuler</span>
                   </button>
-                </>
+                </form>
               ) : (
                 <button
                   type="button"
@@ -434,7 +434,7 @@ export default function ProfilePage() {
                 </button>
               )}
             </motion.div>
-          </form>
+          </div>
         </div>
 
         {/* Actions supplémentaires */}
