@@ -1,36 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
-import { verifyToken, extractTokenFromHeader } from '@/lib/jwt';
+import { auth } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Connexion à la base de données
     await connectDB();
 
-    // Extraire le token depuis les headers
-    const authHeader = request.headers.get('Authorization');
-    const token = extractTokenFromHeader(authHeader);
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Token d\'authentification manquant' },
-        { status: 401 }
-      );
-    }
-
-    // Vérifier le token
-    const decoded = verifyToken(token);
+    // Vérifier l'authentification avec NextAuth
+    const session = await auth();
     
-    if (!decoded) {
+    if (!session || !session.user?.id) {
       return NextResponse.json(
-        { error: 'Token invalide ou expiré' },
+        { error: 'Non authentifié' },
         { status: 401 }
       );
     }
 
     // Récupérer l'utilisateur
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(session.user.id);
     
     if (!user) {
       return NextResponse.json(

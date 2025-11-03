@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Favorite, { FavoriteType } from '@/models/Favorite';
-import { verifyToken, extractTokenFromHeader } from '@/lib/jwt';
+import { auth } from '@/lib/auth';
 
 /**
  * GET /api/favorites - Récupérer tous les favoris de l'utilisateur connecté
@@ -12,24 +12,17 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
 
-    // Vérifier l'authentification
-    const authHeader = request.headers.get('Authorization');
-    const token = extractTokenFromHeader(authHeader);
-
-    if (!token) {
+    // Vérifier l'authentification avec NextAuth
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
       return NextResponse.json(
-        { error: 'Token d\'authentification manquant' },
+        { error: 'Non authentifié' },
         { status: 401 }
       );
     }
 
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Token invalide ou expiré' },
-        { status: 401 }
-      );
-    }
+    const userId = session.user.id;
 
     // Récupérer le type depuis les query params
     const { searchParams } = request.nextUrl;
@@ -39,10 +32,10 @@ export async function GET(request: NextRequest) {
     
     if (type && Object.values(FavoriteType).includes(type as FavoriteType)) {
       // Filtrer par type
-      favorites = await Favorite.findByUserAndType(decoded.userId, type as FavoriteType);
+      favorites = await Favorite.findByUserAndType(userId, type as FavoriteType);
     } else {
       // Tous les favoris
-      favorites = await Favorite.findByUser(decoded.userId);
+      favorites = await Favorite.findByUser(userId);
     }
 
     // Grouper par type pour faciliter l'affichage
@@ -83,24 +76,17 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB();
 
-    // Vérifier l'authentification
-    const authHeader = request.headers.get('Authorization');
-    const token = extractTokenFromHeader(authHeader);
-
-    if (!token) {
+    // Vérifier l'authentification avec NextAuth
+    const session = await auth();
+    
+    if (!session || !session.user?.id) {
       return NextResponse.json(
-        { error: 'Token d\'authentification manquant' },
+        { error: 'Non authentifié' },
         { status: 401 }
       );
     }
 
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json(
-        { error: 'Token invalide ou expiré' },
-        { status: 401 }
-      );
-    }
+    const userId = session.user.id;
 
     // Récupérer les données du body
     const body = await request.json();
@@ -123,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     // Toggle le favori
     const result = await Favorite.toggleFavorite(
-      decoded.userId,
+      userId,
       itemType as FavoriteType,
       itemId,
       itemName,
