@@ -197,7 +197,7 @@ export default function DashboardPage() {
                   <FavoriteCard
                     key={fav._id}
                     favorite={fav}
-                    href="/maps"
+                    href={`/maps/${fav.itemId}`}
                     onRemove={() => handleRemoveFavorite(FavoriteType.MAP, fav.itemId, fav.itemName)}
                   />
                 ))}
