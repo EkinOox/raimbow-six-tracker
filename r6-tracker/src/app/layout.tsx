@@ -127,37 +127,21 @@ export default function RootLayout({
         <meta name="author" content="Rainbow Six Tracker Team" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         
-        {/* Préconnexions critiques - Maximum 4 pour les performances optimales */}
+        {/* Préconnexions critiques - Limité à 4 pour les performances */}
         {/* 1. CDN PrimeIcons - Chargé sur toutes les pages */}
         <link 
           rel="preconnect" 
           href="https://cdn.jsdelivr.net" 
           crossOrigin="anonymous"
         />
-        {/* 2. YouTube - Iframe vidéo sur la page d'accueil */}
-        <link 
-          rel="preconnect" 
-          href="https://www.youtube.com" 
-          crossOrigin="anonymous"
-        />
-        {/* 3. Google Fonts - Polices du site */}
-        <link 
-          rel="preconnect" 
-          href="https://fonts.gstatic.com" 
-          crossOrigin="anonymous"
-        />
-        {/* 4. API Ubisoft - Données des joueurs */}
-        <link 
-          rel="preconnect" 
-          href="https://ubisoft-avatars.akamaized.net" 
-          crossOrigin="anonymous"
-        />
         
-        {/* DNS-prefetch pour origines secondaires */}
+        {/* DNS-prefetch pour origines moins critiques */}
+        <link rel="dns-prefetch" href="https://www.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="dns-prefetch" href="https://staticctf.akamaized.net" />
-        <link rel="dns-prefetch" href="https://www.gstatic.com" />
+        <link rel="dns-prefetch" href="https://ubisoft-avatars.akamaized.net" />
         
         {/* Préchargement des ressources critiques */}
         <link 

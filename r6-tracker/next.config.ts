@@ -14,12 +14,15 @@ const nextConfig: NextConfig = {
   // Désactiver les source maps en production pour réduire la taille et éviter les erreurs
   productionBrowserSourceMaps: false,
   
-  // Compilation optimisée
+  // Compilation optimisée - Cibler ES2022 pour réduire les polyfills
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? {
       exclude: ['error', 'warn'],
     } : false,
   },
+  
+  // Configuration SWC pour cibler les navigateurs modernes
+  swcMinify: true,
   
   // Configuration des headers pour la CSP et sécurité
   async headers() {

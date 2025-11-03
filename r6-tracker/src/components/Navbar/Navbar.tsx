@@ -38,13 +38,21 @@ export default function Navbar() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const pathname = usePathname();
 
-  // Détecter le scroll pour l'effet glassmorphisme
+  // Détecter le scroll pour l'effet glassmorphisme - Optimisé avec passive listener et throttle
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -54,13 +62,21 @@ export default function Navbar() {
     setShowUserMenu(false);
   }, [pathname]);
 
-  // Effet liquid glass - suivre la souris
+  // Effet liquid glass - suivre la souris - Optimisé avec throttle
   useEffect(() => {
+    let ticking = false;
+    
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setMousePosition({ x: e.clientX, y: e.clientY });
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
