@@ -31,8 +31,23 @@ export default defineConfig({
     // Screenshots
     screenshotOnRunFailure: true,
     
+    // Security and cookies
+    chromeWebSecurity: false,
+    modifyObstructiveCode: false,
+    
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      // Charger les variables d'environnement depuis .env.local
+      require('dotenv').config({ path: '.env.local' });
+      
+      // Passer les variables d'environnement importantes à Cypress
+      config.env = {
+        ...config.env,
+        MONGODB_URI: process.env.MONGODB_URI,
+        MONGODB_DB_NAME: process.env.MONGODB_DB_NAME,
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      };
+      
       return config;
     },
   },

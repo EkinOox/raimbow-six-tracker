@@ -26,7 +26,7 @@ export default function AuthPage() {
   // Rediriger si déjà connecté
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard-new');
+      router.replace('/dashboard-new');
     }
   }, [isAuthenticated, router]);
 
@@ -56,13 +56,17 @@ export default function AuthPage() {
           email: formData.email,
           password: formData.password,
           redirect: false,
+          callbackUrl: '/dashboard-new',
         });
 
         if (result?.error) {
           // Messages d'erreur simples et clairs
           setError('Email ou mot de passe incorrect');
         } else if (result?.ok) {
-          router.push('/dashboard-new');
+          // Afficher un message de succès pendant la redirection
+          setSuccess('Connexion réussie ! Redirection en cours...');
+          // Utiliser replace pour éviter de garder la page auth dans l'historique
+          router.replace('/dashboard-new');
         }
       } catch (err) {
         setError('Erreur de connexion au serveur');
@@ -117,10 +121,14 @@ export default function AuthPage() {
             email: formData.email,
             password: formData.password,
             redirect: false,
+            callbackUrl: '/dashboard-new',
           });
 
           if (signInResult?.ok) {
-            router.push('/dashboard-new');
+            // Afficher un message de succès pendant la redirection
+            setSuccess('Compte créé avec succès ! Redirection en cours...');
+            // Utiliser replace pour éviter de garder la page auth dans l'historique
+            router.replace('/dashboard-new');
           } else {
             setError('Compte créé mais erreur de connexion automatique');
           }

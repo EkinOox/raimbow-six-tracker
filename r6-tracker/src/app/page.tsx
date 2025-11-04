@@ -16,7 +16,6 @@ const features = [
     description:
       "Trouvez instantanément les statistiques de n&apos;importe quel joueur sur toutes les plateformes.",
     href: "/search",
-    image: "https://placehold.co/400x300/1a1a2e/ffffff?text=Search",
   },
   {
     icon: "pi-chart-bar",
@@ -24,14 +23,12 @@ const features = [
     description:
       "Consultez les stats générales, ranked et casual avec des visualisations modernes.",
     href: "/dashboard-new",
-    image: "https://placehold.co/400x300/1a1a2e/ffffff?text=Stats",
   },
   {
     icon: "pi-arrow-right-arrow-left",
     title: "Comparaison",
     description: "Comparez les performances de plusieurs joueurs côte à côte.",
     href: "/comparaison",
-    image: "https://placehold.co/400x300/1a1a2e/ffffff?text=Compare",
   },
   {
     icon: "pi-users",
@@ -39,7 +36,6 @@ const features = [
     description:
       "Découvrez les statistiques par opérateur et optimisez votre gameplay.",
     href: "/operators",
-    image: "https://placehold.co/400x300/1a1a2e/ffffff?text=Operators",
   },
   {
     icon: "pi-shield",
@@ -47,14 +43,12 @@ const features = [
     description:
       "Explorez l'arsenal complet et trouvez les armes qui correspondent à votre style.",
     href: "/weapons",
-    image: "https://placehold.co/400x300/1a1a2e/ffffff?text=Weapons",
   },
   {
     icon: "pi-map",
     title: "Cartes",
     description: "Analysez vos performances sur chaque carte du jeu.",
     href: "/maps",
-    image: "https://placehold.co/400x300/1a1a2e/ffffff?text=Maps",
   },
 ];
 
@@ -287,16 +281,10 @@ export default function HomePage() {
               >
                 <Link href={feature.href}>
                   <div className="card-glass liquid-glass liquid-glass-hover group-hover:border-r6-primary/50 h-full">
-                    <div className="relative w-full h-48 mb-4 overflow-hidden rounded-lg">
-                      <Image
-                        src={feature.image}
-                        alt={feature.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        quality={65}
-                        loading="lazy"
-                      />
+                    <div className="relative w-full h-48 mb-4 overflow-hidden rounded-lg bg-gradient-to-br from-r6-primary/20 to-r6-accent/20 flex items-center justify-center">
+                      <i
+                        className={`pi ${feature.icon} text-6xl text-r6-primary group-hover:text-r6-accent group-hover:scale-110 transform transition-all duration-300`}
+                      ></i>
                     </div>
                     <div className="w-12 h-12 bg-r6-primary/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-r6-primary/30 transition-colors">
                       <i

@@ -85,9 +85,22 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    setShowUserMenu(false);
-    router.push('/');
+    try {
+      // Déconnexion avec NextAuth - efface automatiquement tous les cookies
+      await signOut({ 
+        redirect: false,
+        callbackUrl: '/' 
+      });
+      setShowUserMenu(false);
+      
+      // Redirection vers l'accueil après déconnexion
+      router.push('/');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+      // En cas d'erreur, forcer la redirection quand même
+      setShowUserMenu(false);
+      router.push('/');
+    }
   };
 
   return (
