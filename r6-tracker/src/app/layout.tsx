@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import Layout from "../components/Layout/Layout";
-import { ReduxProvider } from "../store/ReduxProvider";
-import { AuthProvider } from "../components/AuthProvider";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -10,7 +7,7 @@ export const metadata: Metadata = {
     default: "Rainbow Six Tracker - Statistiques Rainbow Six Siege en Temps Réel",
     template: "%s | Rainbow Six Tracker"
   },
-  description: "Rainbow Six Tracker : Suivez vos statistiques Rainbow Six Siege en temps réel. Consultez vos stats détaillées, opérateurs, armes et cartes. API Rainbow Six Siege complète et gratuite pour tous les joueurs R6.",
+  description: "Rainbow Six Tracker : Suivez vos statistiques Rainbow Six Siege en temps réel. Consultez vos stats détaillées, opérateurs, armes et cartes. API Rainbow Six Siege compléte et gratuite pour tous les joueurs R6.",
   keywords: [
     "rainbow six tracker",
     "rainbow six siege tracker",
@@ -71,7 +68,7 @@ export const metadata: Metadata = {
     site: "@R6Tracker",
     creator: "@R6Tracker",
     title: "Rainbow Six Tracker - Stats Rainbow Six Siege",
-    description: "Suivez vos statistiques Rainbow Six Siege avec notre tracker gratuit. API R6 complète.",
+    description: "Suivez vos statistiques Rainbow Six Siege avec notre tracker gratuit. API R6 compléte.",
     images: ["/images/logo/r6-logo.png"],
   },
   alternates: {
@@ -84,36 +81,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Rainbow Six Tracker',
-    description: 'Tracker Rainbow Six Siege complet avec statistiques en temps réel et API Rainbow Six Siege',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    applicationCategory: 'Game',
-    operatingSystem: 'Web',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'EUR',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '1250',
-    },
-    author: {
-      '@type': 'Organization',
-      name: 'Rainbow Six Tracker Team',
-    },
-    keywords: 'rainbow six tracker, statistique rainbow six siege, api rainbow six siege, r6 stats, tracker r6',
-  };
-
+}) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <head>
         {/* Meta description explicite pour SEO */}
         <meta 
@@ -127,19 +99,16 @@ export default function RootLayout({
         <meta name="author" content="Rainbow Six Tracker Team" />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         
-        {/* Préconnexions critiques - Limité à 4 pour les performances */}
-        {/* 1. CDN PrimeIcons - Chargé sur toutes les pages */}
+        {/* Préconnexions critiques */}
         <link 
           rel="preconnect" 
           href="https://cdn.jsdelivr.net" 
           crossOrigin="anonymous"
         />
-        
-        {/* DNS-prefetch pour origines moins critiques */}
         <link rel="dns-prefetch" href="https://www.youtube.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://staticctf.akamaized.net" />
         <link rel="dns-prefetch" href="https://ubisoft-avatars.akamaized.net" />
         
@@ -161,10 +130,6 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" 
         />
         <link rel="manifest" href="/manifest.json" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
         <meta name="google-site-verification" content={process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || ''} />
         <meta name="theme-color" content="#ff3d2c" />
       </head>
@@ -205,13 +170,8 @@ export default function RootLayout({
           <div className="ember-particle"></div>
           <div className="ember-particle"></div>
         </div>
-        <AuthProvider>
-          <ReduxProvider>
-            <Layout>
-              {children}
-            </Layout>
-          </ReduxProvider>
-        </AuthProvider>
+        
+        {children}
       </body>
     </html>
   );

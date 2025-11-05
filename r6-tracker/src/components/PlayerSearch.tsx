@@ -1,15 +1,10 @@
 'use client'
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Platform } from '../types/r6-data-types';
 import Image from 'next/image';
 import 'primeicons/primeicons.css';
-
-const platforms: { value: Platform; label: string; icon: string }[] = [
-  { value: 'uplay', label: 'PC (Uplay)', icon: 'pi pi-desktop' },
-  { value: 'playstation', label: 'PlayStation', icon: 'pi pi-play' },
-  { value: 'xbox', label: 'Xbox', icon: 'pi pi-box' },
-];
 
 // Types pour les vraies données de l'API
 interface AccountInfo {
@@ -78,6 +73,7 @@ const platformFamilyMap: Record<Platform, string[]> = {
 };
 
 export default function PlayerSearch() {
+  const t = useTranslations('search');
   const [username, setUsername] = useState('');
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('uplay');
   const [isLoading, setIsLoading] = useState(false);
@@ -86,15 +82,21 @@ export default function PlayerSearch() {
   const [playerStats, setPlayerStats] = useState<PlayerStatsResponse | null>(null);
   const [imageError, setImageError] = useState(false);
 
+  const platforms: { value: Platform; label: string; icon: string }[] = [
+    { value: 'uplay', label: t('platforms.uplay'), icon: 'pi pi-desktop' },
+    { value: 'playstation', label: t('platforms.playstation'), icon: 'pi pi-play' },
+    { value: 'xbox', label: t('platforms.xbox'), icon: 'pi pi-box' },
+  ];
+
   const validateUsername = (username: string): string | null => {
     if (!username || username.trim().length === 0) {
-      return 'Le nom d\'utilisateur est requis';
+      return t('validation.required');
     }
     if (username.trim().length < 3) {
-      return 'Le nom d\'utilisateur doit contenir au moins 3 caractères';
+      return t('validation.minLength');
     }
     if (username.trim().length > 15) {
-      return 'Le nom d\'utilisateur ne peut pas dépasser 15 caractères';
+      return t('validation.maxLength');
     }
     return null;
   };

@@ -1,0 +1,327 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "clear": "Clear",
+    "apply": "Apply",
+    "reset": "Reset"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "operators": "Operators",
+    "weapons": "Weapons",
+    "maps": "Maps",
+    "comparison": "Comparison",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "about": "About",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "myDashboard": "My Dashboard",
+    "editProfile": "Edit my profile",
+    "language": "Language"
+  },
+  "home": {
+    "hero": {
+      "title": "R6 Tracker",
+      "titleHighlight": "Tracker",
+      "description": "Track your Rainbow Six Siege statistics with a modern interface and real-time data. Analyze your performance and improve.",
+      "cta": {
+        "search": "Start Searching",
+        "dashboard": "View Dashboard"
+      }
+    },
+    "presentation": {
+      "title": "Discover Rainbow Six Siege",
+      "description": "Dive into the tactical universe of Rainbow Six Siege, the first-person shooter where strategy and precision are the keys to victory. Discover the operators, gadgets and maps that make this game a unique experience.",
+      "cta": "Explore Your Stats"
+    },
+    "features": {
+      "title": "Key Features",
+      "description": "Discover all the features that make R6 Tracker the ultimate tool to track your performance.",
+      "advancedSearch": {
+        "title": "Advanced Search",
+        "description": "Instantly find statistics for any player across all platforms."
+      },
+      "detailedStats": {
+        "title": "Detailed Statistics",
+        "description": "View general, ranked and casual stats with modern visualizations."
+      },
+      "comparison": {
+        "title": "Comparison",
+        "description": "Compare the performance of multiple players side by side."
+      },
+      "operators": {
+        "title": "Operators",
+        "description": "Discover statistics by operator and optimize your gameplay."
+      },
+      "weapons": {
+        "title": "Weapons",
+        "description": "Explore the complete arsenal and find weapons that match your style."
+      },
+      "maps": {
+        "title": "Maps",
+        "description": "Analyze your performance on each game map."
+      },
+      "learnMore": "Learn more"
+    },
+    "video": {
+      "title": "Discover R6 Tracker",
+      "description": "Watch our videos to discover features and the current season.",
+      "seasonDemo": "Current Season Demo"
+    },
+    "finalCta": {
+      "title": "Ready to Improve Your Game?",
+      "description": "Start analyzing your performance now and progress towards the rank you're aiming for.",
+      "button": "Start Now"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Login",
+      "noAccount": "No account yet?",
+      "register": "Sign up",
+      "forgotPassword": "Forgot password?"
+    },
+    "register": {
+      "title": "Register",
+      "username": "Username",
+      "email": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Sign up",
+      "hasAccount": "Already have an account?",
+      "login": "Login"
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "email": "Email address",
+      "submit": "Reset password",
+      "backToLogin": "Back to login"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "stats": {
+      "title": "Statistics",
+      "general": "General",
+      "ranked": "Ranked",
+      "casual": "Casual"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "noFavorites": "No favorites",
+      "addFavorite": "Add favorite"
+    }
+  },
+  "search": {
+    "title": "Player search",
+    "placeholder": "Enter a player name...",
+    "platform": "Platform",
+    "submit": "Search",
+    "noResults": "No results found",
+    "error": "Error during search",
+    "validation": {
+      "required": "Username is required",
+      "minLength": "Username must contain at least 3 characters",
+      "maxLength": "Username cannot exceed 15 characters"
+    },
+    "platforms": {
+      "uplay": "PC (Uplay)",
+      "playstation": "PlayStation",
+      "xbox": "Xbox"
+    }
+  },
+  "operators": {
+    "title": "Operators",
+    "description": "Explore all Rainbow Six Siege operators with their statistics, gadgets and tactical roles.",
+    "attackers": "Attackers",
+    "defenders": "Defenders",
+    "stats": "Statistics",
+    "loadout": "Loadout",
+    "abilities": "Abilities",
+    "filters": {
+      "search": "Search an operator",
+      "searchPlaceholder": "Ex: Ash, Jager...",
+      "side": "Side",
+      "role": "Role",
+      "speed": "Speed",
+      "health": "Health",
+      "unit": "Unit",
+      "country": "Country",
+      "sortBy": "Sort by",
+      "viewMode": "View mode",
+      "all": "All",
+      "atk": "Attack",
+      "def": "Defense",
+      "clearFilters": "Clear filters"
+    },
+    "healthRanges": {
+      "all": "All",
+      "light": "1 (Light)",
+      "medium": "2 (Medium)",
+      "heavy": "3 (Heavy)"
+    },
+    "sortOptions": {
+      "name": "Name (A-Z)",
+      "nameDesc": "Name (Z-A)",
+      "health": "Health (ascending)",
+      "healthDesc": "Health (descending)",
+      "speed": "Speed (ascending)",
+      "speedDesc": "Speed (descending)",
+      "season": "Season (old → recent)",
+      "seasonDesc": "Season (recent → old)"
+    },
+    "viewModes": {
+      "grid": "Grid",
+      "list": "List"
+    },
+    "found": "operator(s) found",
+    "loading": "Loading operators...",
+    "error": "Loading error",
+    "noResults": "No operator matches your criteria",
+    "tryAdjusting": "Try adjusting your search filters"
+  },
+  "weapons": {
+    "title": "Weapons",
+    "description": "Explore the complete Rainbow Six Siege arsenal with detailed statistics for each weapon.",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "filters": {
+      "search": "Search a weapon",
+      "searchPlaceholder": "Ex: AK-12, MP5...",
+      "type": "Weapon type",
+      "side": "Side",
+      "clearFilters": "Clear filters"
+    },
+    "types": {
+      "all": "All",
+      "assaultRifle": "Assault Rifle",
+      "smg": "SMG",
+      "lmg": "LMG",
+      "marksmanRifle": "Marksman Rifle",
+      "sniperRifle": "Sniper Rifle",
+      "shotgun": "Shotgun",
+      "machinePistol": "Machine Pistol",
+      "handgun": "Handgun"
+    },
+    "families": {
+      "all": "All",
+      "atk": "Attack",
+      "def": "Defense"
+    },
+    "found": "weapon(s) found",
+    "loading": "Loading weapons...",
+    "error": "Loading error",
+    "noResults": "No weapon matches your criteria",
+    "tryAdjusting": "Try adjusting your search filters",
+    "stats": {
+      "damage": "Damage",
+      "fireRate": "Fire rate",
+      "mobility": "Mobility",
+      "capacity": "Capacity",
+      "rpm": "RPM",
+      "mag": "Magazine"
+    }
+  },
+  "maps": {
+    "title": "Maps",
+    "description": "Explore all Rainbow Six Siege maps.",
+    "ranked": "Ranked",
+    "casual": "Casual",
+    "callouts": "Callouts",
+    "filters": {
+      "search": "Search a map",
+      "searchPlaceholder": "Ex: Oregon, Villa...",
+      "playlist": "Game mode",
+      "clearFilters": "Clear filters"
+    },
+    "playlists": {
+      "all": "All",
+      "ranked": "Ranked",
+      "standard": "Standard",
+      "teamDeathmatch": "Team Deathmatch",
+      "quickMatch": "Quick Match"
+    },
+    "found": "map(s) found",
+    "loading": "Loading maps...",
+    "error": "Loading error",
+    "noResults": "No map matches your criteria"
+  },
+  "comparison": {
+    "title": "Comparison Mode",
+    "subtitle": "Choose your comparison mode to analyze performances and predict results of your Rainbow Six Siege matches",
+    "addPlayer": "Add player",
+    "removePlayer": "Remove player",
+    "compare": "Compare",
+    "noPlayers": "Add players to compare their statistics",
+    "backToMenu": "Back to menu",
+    "player": {
+      "title": "1v1 Comparison",
+      "description": "Compare two players in a duel and discover who has the best chance of winning thanks to our algorithm based on MMR, K/D and ranked statistics.",
+      "features": {
+        "mmr": "Detailed MMR & K/D analysis",
+        "prediction": "Prediction with percentage",
+        "multiplatform": "Multi-platform (PC, PS, Xbox)"
+      },
+      "cta": "Start the duel"
+    },
+    "team": {
+      "title": "Team Comparison",
+      "description": "Analyze and compare two complete teams. Supports unbalanced matches (1v2, 3v5, etc.) with automatic balancing.",
+      "features": {
+        "teamSize": "Teams of 1 to 5 players",
+        "balancing": "Automatic balancing",
+        "avgStats": "Average team statistics"
+      },
+      "cta": "Organize the match"
+    },
+    "info": "Predictions are based on official Rainbow Six Siege data:",
+    "infoHighlight": "MMR, K/D ratio, Win rate and experience"
+  },
+  "profile": {
+    "title": "Profile",
+    "overview": "Overview",
+    "stats": "Statistics",
+    "operators": "Operators",
+    "weapons": "Weapons",
+    "maps": "Maps",
+    "notFound": "Player not found"
+  },
+  "about": {
+    "title": "About",
+    "description": "R6 Tracker is a modern web application to track your Rainbow Six Siege statistics.",
+    "version": "Version",
+    "contact": "Contact",
+    "legal": "Legal notice"
+  },
+  "footer": {
+    "description": "Track your Rainbow Six Siege statistics with style. Modern interface and real-time data.",
+    "quickLinks": "Quick Links",
+    "playerSearch": "Player Search",
+    "information": "Information",
+    "version": "Version",
+    "updated": "Updated",
+    "apiStatus": "API Operational",
+    "copyright": "Made with ❤️ for the Rainbow Six Siege community."
+  }
+}

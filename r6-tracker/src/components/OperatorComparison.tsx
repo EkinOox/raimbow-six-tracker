@@ -1,12 +1,12 @@
 'use client';
 
-// Composant de comparaison d'opérateurs côte à côte
+// Composant de comparaison d'opérateurs
 // Encodage: UTF-8
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Operator } from '@/types/r6-api-types';
 
 interface OperatorComparisonProps {

@@ -208,9 +208,11 @@ describe('Interactive Features Tests', () => {
       // Ralentir artificiellement la connexion pour voir les états de chargement
       cy.intercept('GET', '/api/**', (req) => {
         req.reply((res) => {
-          return new Promise((resolve) => {
-            setTimeout(() => resolve(res.send()), 1000);
+          // Ajouter un délai avant de répondre
+          const delay = new Promise((resolve) => {
+            setTimeout(resolve, 1000);
           });
+          return delay.then(() => res);
         });
       }).as('slowApi');
       

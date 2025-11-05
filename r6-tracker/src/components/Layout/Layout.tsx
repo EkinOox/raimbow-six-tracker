@@ -1,12 +1,10 @@
 'use client';
 
-// Layout principal avec Navbar et animations
-// Encodage: UTF-8
-
 import { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import Navbar from '../Navbar/Navbar';
 
 interface LayoutProps {
@@ -33,6 +31,8 @@ const pageVariants = {
 };
 
 export default function Layout({ children, className = '' }: LayoutProps) {
+  const t = useTranslations();
+  
   return (
     <div className="min-h-screen bg-gradient-dark relative overflow-hidden">
       {/* Background Pattern */}
@@ -83,28 +83,27 @@ export default function Layout({ children, className = '' }: LayoutProps) {
                 </span>
               </div>
               <p className="text-r6-light/70 text-sm">
-                Suivez vos statistiques Rainbow Six Siege avec style. 
-                Interface moderne et données en temps réel.
+                {t('footer.description')}
               </p>
             </div>
 
             {/* Liens rapides */}
             <div className="space-y-4">
-              <h3 className="text-r6-light font-semibold">Liens Rapides</h3>
+              <h3 className="text-r6-light font-semibold">{t('footer.quickLinks')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="/search" className="text-r6-light/70 hover:text-r6-primary transition-colors">
-                    Recherche de Joueurs
-                  </a>
+                  <Link href="/search" className="text-r6-light/70 hover:text-r6-primary transition-colors">
+                    {t('footer.playerSearch')}
+                  </Link>
                 </li>
                 <li>
                   <Link href="/operators" className="text-r6-light/70 hover:text-r6-primary transition-colors">
-                    Opérateurs
+                    {t('nav.operators')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/maps" className="text-r6-light/70 hover:text-r6-primary transition-colors">
-                    Cartes
+                    {t('nav.maps')}
                   </Link>
                 </li>
               </ul>
@@ -112,14 +111,14 @@ export default function Layout({ children, className = '' }: LayoutProps) {
 
             {/* Informations */}
             <div className="space-y-4">
-              <h3 className="text-r6-light font-semibold">Informations</h3>
+              <h3 className="text-r6-light font-semibold">{t('footer.information')}</h3>
               <div className="text-sm text-r6-light/70 space-y-2">
-                <p>Version: 1.0.0</p>
-                <p>Mise à jour: Octobre 2025</p>
+                <p>{t('footer.version')}: 1.0.0</p>
+                <p>{t('footer.updated')}: Octobre 2025</p>
                 <p>
                   <span className="inline-flex items-center space-x-2">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    <span>API Opérationnelle</span>
+                    <span>{t('footer.apiStatus')}</span>
                   </span>
                 </p>
               </div>
@@ -129,7 +128,7 @@ export default function Layout({ children, className = '' }: LayoutProps) {
           {/* Copyright */}
           <div className="border-t border-glass-border-dark/50 mt-8 pt-8 text-center">
             <p className="text-r6-light/50 text-sm">
-              © 2025 R6 Tracker. Créé avec ❤️ pour la communauté Rainbow Six Siege.
+              © 2025 R6 Tracker. {t('footer.copyright')}
             </p>
           </div>
         </div>

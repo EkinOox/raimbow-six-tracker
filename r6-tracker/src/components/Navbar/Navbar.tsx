@@ -5,31 +5,34 @@
 // Encodage: UTF-8
 
 import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { signOut } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
+import LanguageSelector from '../LanguageSelector';
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   href: string;
   icon: string;
 }
 
 // Navigation principale - Dashboard retirée (accessible via profil uniquement)
 const navItems: NavItem[] = [
-  { label: 'Accueil', href: '/', icon: 'pi-home' },
-  { label: 'Recherche', href: '/search', icon: 'pi-search' },
-  { label: 'Comparaison', href: '/comparaison', icon: 'pi-arrow-right-arrow-left' },
-  { label: 'Opérateurs', href: '/operators', icon: 'pi-users' },
-  { label: 'Armes', href: '/weapons', icon: 'pi-bookmark' },
-  { label: 'Cartes', href: '/maps', icon: 'pi-map' },
-  { label: 'À Propos', href: '/about', icon: 'pi-info-circle' },
+  { labelKey: 'nav.home', href: '/', icon: 'pi-home' },
+  { labelKey: 'nav.search', href: '/search', icon: 'pi-search' },
+  { labelKey: 'nav.comparison', href: '/comparaison', icon: 'pi-arrow-right-arrow-left' },
+  { labelKey: 'nav.operators', href: '/operators', icon: 'pi-users' },
+  { labelKey: 'nav.weapons', href: '/weapons', icon: 'pi-bookmark' },
+  { labelKey: 'nav.maps', href: '/maps', icon: 'pi-map' },
+  { labelKey: 'nav.about', href: '/about', icon: 'pi-info-circle' },
 ];
 
 export default function Navbar() {
+  const t = useTranslations();
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -172,7 +175,7 @@ export default function Navbar() {
                     }`}
                   >
                     <i className={`pi ${item.icon} text-sm`}></i>
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                     
                     {/* Indicateur de page active */}
                     {isActive && (
@@ -192,6 +195,11 @@ export default function Navbar() {
                 </motion.div>
               );
             })}
+
+            {/* Sélecteur de langue */}
+            <div className="ml-2">
+              <LanguageSelector />
+            </div>
 
             {/* Auth unique - Connexion ou Menu Profil */}
             <div className="ml-4">
@@ -263,7 +271,7 @@ export default function Navbar() {
                             <div className="flex items-center space-x-3">
                               <i className="pi pi-chart-bar text-base"></i>
                               <div>
-                                <p className="font-medium">Ma Dashboard</p>
+                                <p className="font-medium">{t('nav.myDashboard')}</p>
                                 <p className="text-xs text-r6-light/60">Stats Uplay & Favoris</p>
                               </div>
                             </div>
@@ -278,7 +286,7 @@ export default function Navbar() {
                             <div className="flex items-center space-x-3">
                               <i className="pi pi-user-edit text-base"></i>
                               <div>
-                                <p className="font-medium">Modifier mon profil</p>
+                                <p className="font-medium">{t('nav.editProfile')}</p>
                                 <p className="text-xs text-r6-light/60">Gérer mon compte</p>
                               </div>
                             </div>
@@ -308,7 +316,7 @@ export default function Navbar() {
                             className="relative w-full px-4 py-3 text-sm text-left text-red-400 hover:bg-red-500/10 hover:backdrop-blur-xl transition-colors flex items-center space-x-3 z-10"
                           >
                             <i className="pi pi-sign-out text-base"></i>
-                            <span className="font-medium">Déconnexion</span>
+                            <span className="font-medium">{t('nav.logout')}</span>
                           </button>
                         </div>
                       </motion.div>
@@ -321,7 +329,7 @@ export default function Navbar() {
                   className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-r6 text-white hover:shadow-lg hover:shadow-r6-primary/30 transition-all"
                 >
                   <i className="pi pi-user text-sm"></i>
-                  <span className="text-sm font-medium">Connexion</span>
+                  <span className="text-sm font-medium">{t('nav.login')}</span>
                 </Link>
               )}
             </div>
@@ -401,7 +409,7 @@ export default function Navbar() {
                       }`}
                     >
                       <i className={`pi ${item.icon} text-lg`}></i>
-                      <span>{item.label}</span>
+                      <span>{t(item.labelKey)}</span>
                     </Link>
                   </motion.div>
                 );
@@ -409,6 +417,12 @@ export default function Navbar() {
 
               {/* Auth Section Mobile */}
               <div className="pt-4 mt-4 border-t border-glass-border-dark">
+                {/* Sélecteur de langue mobile */}
+                <div className="mb-4 px-3">
+                  <p className="text-xs text-r6-light/60 mb-2">{t('nav.language')}</p>
+                  <LanguageSelector />
+                </div>
+                
                 {isAuthenticated && user ? (
                   <>
                     {/* Profil Header */}
@@ -433,7 +447,7 @@ export default function Navbar() {
                     >
                       <i className="pi pi-chart-bar text-lg"></i>
                       <div>
-                        <p className="text-sm font-medium">Dashboard</p>
+                        <p className="text-sm font-medium">{t('nav.dashboard')}</p>
                         <p className="text-xs text-r6-light/60">Stats & Favoris</p>
                       </div>
                     </Link>
@@ -445,7 +459,7 @@ export default function Navbar() {
                     >
                       <i className="pi pi-user-edit text-lg"></i>
                       <div>
-                        <p className="text-sm font-medium">Mon profil</p>
+                        <p className="text-sm font-medium">{t('nav.profile')}</p>
                         <p className="text-xs text-r6-light/60">Gérer mon compte</p>
                       </div>
                     </Link>
@@ -470,7 +484,7 @@ export default function Navbar() {
                       className="w-full flex items-center space-x-3 px-3 py-2 mt-3 pt-3 border-t border-glass-border-dark rounded-lg text-base font-medium text-red-400 hover:bg-red-500/10 hover:backdrop-blur-md transition-all"
                     >
                       <i className="pi pi-sign-out text-lg"></i>
-                      <span>Déconnexion</span>
+                      <span>{t('nav.logout')}</span>
                     </button>
                   </>
                 ) : (
@@ -479,7 +493,7 @@ export default function Navbar() {
                     className="flex items-center justify-center space-x-2 px-4 py-3 rounded-lg text-base font-medium bg-gradient-r6 text-white hover:shadow-lg transition-all"
                   >
                     <i className="pi pi-user"></i>
-                    <span>Connexion</span>
+                    <span>{t('nav.login')}</span>
                   </Link>
                 )}
               </div>
